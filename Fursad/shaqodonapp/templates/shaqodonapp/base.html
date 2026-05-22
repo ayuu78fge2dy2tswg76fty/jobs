@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shaqodon Dashboard - Fursad{% endblock %}</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #10b981; /* Emerald */
+            --primary-light: #34d399;
+            --primary-dark: #059669;
+            --secondary: #6366f1; /* Indigo */
+            --bg-body: #0a0f18;
+            --bg-sidebar: #111827;
+            --bg-card: #1f2937;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #374151;
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 80px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            text-decoration: none;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        .sidebar-brand i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            min-width: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .sidebar-brand span {
+            font-size: 1.4rem;
+            font-weight: 800;
+            white-space: nowrap;
+            opacity: 1;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .sidebar-brand span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            text-decoration: none;
+            color: var(--text-muted);
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            min-width: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-link span {
+            font-weight: 500;
+            opacity: 1;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .nav-link:hover {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        .nav-link.active i, .nav-link.active span {
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed + .main-wrapper {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* Topbar */
+        .topbar {
+            height: 70px;
+            background: rgba(10, 15, 24, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .toggle-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-name {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid var(--border);
+        }
+
+        /* Content Area */
+        .content {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-info p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Tooltip-like for collapsed state */
+        .sidebar.collapsed .nav-link:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            left: calc(100% + 10px);
+            background: var(--bg-card);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            z-index: 1001;
+            white-space: nowrap;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -100%;
+            }
+            .sidebar.active {
+                left: 0;
+                width: var(--sidebar-width) !important;
+            }
+            .sidebar.active .sidebar-brand span,
+            .sidebar.active .nav-link span {
+                opacity: 1 !important;
+                width: auto !important;
+            }
+            .main-wrapper {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="/" class="sidebar-brand">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>Fursad</span>
+        </a>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="{% url 'shaqodonapp:shaqodon_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'shaqodon_dashboard' %}active{% endif %}" data-title="Dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'shaqodonapp:shaqodon_jobs' %}" class="nav-link {% if request.resolver_match.url_name == 'shaqodon_jobs' %}active{% endif %}" data-title="Browse Jobs">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Browse Jobs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'shaqodonapp:shaqodon_companies' %}" class="nav-link {% if request.resolver_match.url_name == 'shaqodon_companies' %}active{% endif %}" data-title="Companies">
+                    <i class="fa-solid fa-building"></i>
+                    <span>Companies</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'shaqodonapp:shaqodon_applications' %}" class="nav-link {% if request.resolver_match.url_name == 'shaqodon_applications' %}active{% endif %}" data-title="Applications">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>My Applications</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'shaqodonapp:shaqodon_profile' %}" class="nav-link {% if request.resolver_match.url_name == 'shaqodon_profile' %}active{% endif %}" data-title="Profile">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>My Profile</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="{% url 'shaqodonapp:shaqodon_logout' %}" class="nav-link" data-title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="toggle-btn" id="sidebarToggle">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+
+            <div class="user-info">
+                <div class="user-details">
+                    <span class="user-name">{{ request.session.shaqodon_fullname }}</span>
+                    <span class="user-role">Shaqodoon</span>
+                </div>
+                {% if request.session.shaqodon_img %}
+                    <img src="{{ request.session.shaqodon_img }}" alt="Profile" class="user-avatar">
+                {% else %}
+                    <div class="user-avatar" style="background: var(--secondary); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">
+                        {{ request.session.shaqodon_fullname|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="content">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert django-message" style="padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--primary); color: var(--text-main); transition: all 0.5s ease; opacity: 1;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        // Load sidebar state
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+        }
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            
+            // For mobile
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('active');
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+        // Auto-hide messages
+        document.querySelectorAll('.django-message').forEach(msg => {
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            }, 4000);
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

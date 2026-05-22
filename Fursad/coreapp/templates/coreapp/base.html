@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fursad - Job Portal{% endblock %}</title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #3b82f6; /* Blue */
+            --primary-hover: #2563eb;
+            --bg-dark: #0f172a; /* Deep Slate */
+            --bg-darker: #020617; /* Very Deep Slate */
+            --bg-card: #1e293b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-color: #10b981; /* Emerald */
+            --danger-color: #ef4444; /* Red */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 10px 18px;
+            border-radius: 14px;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links a.active {
+            color: white;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links a i {
+            font-size: 1.1rem;
+        }
+
+        /* Avatar Container */
+        .avatar-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+            border: 2px solid var(--border-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .avatar:hover {
+            border-color: var(--text-light);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--bg-dark);
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            padding: 2.5rem;
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Auth Views Container */
+        .auth-view {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .auth-view.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .modal-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Alert/Confirmation Message */
+        .confirmation-popup {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            background-color: var(--bg-card);
+            border-left: 4px solid var(--accent-color);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .confirmation-popup.show {
+            right: 20px;
+        }
+
+        .confirmation-popup i {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+        }
+
+        /* Premier Footer */
+        .premier-footer {
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 4rem 5% 1.5rem;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premier-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+            margin-bottom: 1.2rem;
+        }
+        
+        .footer-brand i { color: var(--primary-color); }
+
+        .footer-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .footer-col h3 {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s, padding-left 0.3s;
+            display: inline-block;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+
+        .contact-info li {
+            color: var(--text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info li i {
+            color: var(--primary-color);
+            margin-top: 4px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .nav-links { display: none; }
+            .footer-container { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 576px) {
+            .footer-container { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <a href="{% url 'home' %}" class="navbar-brand">
+            <i class="fa-solid fa-briefcase"></i> Fursad
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+            <li><a href="{% url 'contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><i class="fa-solid fa-address-book"></i> Contacts</a></li>
+            <li><a href="{% url 'jobs' %}" class="{% if request.resolver_match.url_name == 'jobs' %}active{% endif %}"><i class="fa-solid fa-magnifying-glass-chart"></i> Jobs</a></li>
+            <li><a href="{% url 'companies' %}" class="{% if request.resolver_match.url_name == 'companies' %}active{% endif %}"><i class="fa-solid fa-building"></i> Companies</a></li>
+            <li><a href="{% url 'services' %}" class="{% if request.resolver_match.url_name == 'services' %}active{% endif %}"><i class="fa-solid fa-layer-group"></i> Other Services</a></li>
+        </ul>
+
+        <!-- Avatar directly opens the auth modal -->
+        <div class="avatar-container" onclick="openAuthModal('loginView');">
+            <div class="avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Confirmation Popup for Registration -->
+    <div class="confirmation-popup" id="confPopup">
+        <i class="fa-solid fa-circle-check"></i>
+        <div>
+            <strong>Success!</strong>
+            <p>Thank you, wait until admin activate you.</p>
+        </div>
+    </div>
+
+    <!-- Unified Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content auth-container">
+            <i class="fa-solid fa-xmark modal-close" onclick="closeModal('authModal')"></i>
+            
+            <!-- Modal Header with Tabs -->
+            <div class="auth-tabs" style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <button onclick="switchUserType('company')" id="tab-company" class="auth-tab active" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-weight: 600; transition: 0.3s; border-radius: 8px;">
+                    <i class="fa-solid fa-building"></i> Company
+                </button>
+                <button onclick="switchUserType('shaqodon')" id="tab-shaqodon" class="auth-tab" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-weight: 600; transition: 0.3s; border-radius: 8px;">
+                    <i class="fa-solid fa-user-graduate"></i> Jobseeker
+                </button>
+                <button onclick="switchUserType('admin')" id="tab-admin" class="auth-tab" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-weight: 600; transition: 0.3s; border-radius: 8px;">
+                    <i class="fa-solid fa-user-shield"></i> Admin
+                </button>
+            </div>
+
+            <!-- COMPANY VIEWS -->
+            <div id="companySection">
+                <!-- Login Form (Default) -->
+                <div id="loginView" class="auth-view active">
+                    <h2 class="modal-title">Company Login</h2>
+                    <div style="background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary-color); padding: 10px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-circle-info text-primary"></i> Only <strong>Active Companies</strong> can login.
+                    </div>
+                    <form method="POST" action="{% url 'company_login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Email or Username</label>
+                            <input type="text" name="identifier" class="form-control" required placeholder="Enter email or username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login
+                        </button>
+                        <div class="modal-footer">
+                            <a href="#" onclick="switchAuthView('forgotEmailView'); return false;">Forgot Password?</a>
+                            <br><br>
+                            Don't have an account? <a href="#" onclick="switchAuthView('registerView'); return false;">Register Company</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerView" class="auth-view">
+                    <h2 class="modal-title">Register Company</h2>
+                    <form method="POST" action="{% url 'company_register' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" name="name" class="form-control" required placeholder="e.g. Hormuud Telecom">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Email</label>
+                            <input type="email" name="email" class="form-control" required placeholder="contact@company.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" name="username" class="form-control" required placeholder="company_username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-user-plus"></i> Create Account
+                        </button>
+                        <div class="modal-footer">
+                            Already have an account? <a href="#" onclick="switchAuthView('loginView'); return false;">Login here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SHAQODON (JOBSEEKER) VIEWS -->
+            <div id="shaqodonSection" style="display: none;">
+                <!-- Login Form -->
+                <div id="shaqodonLoginView" class="auth-view active">
+                    <h2 class="modal-title">Jobseeker Login</h2>
+                    <form method="POST" action="{% url 'shaqodonapp:shaqodon_login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Email or Username</label>
+                            <input type="text" name="identifier" class="form-control" required placeholder="Enter email or username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background: var(--accent-color);">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login
+                        </button>
+                        <div class="modal-footer">
+                            <a href="#" onclick="switchAuthView('forgotEmailView'); return false;">Forgot Password?</a>
+                            <br><br>
+                            Don't have an account? <a href="#" onclick="switchAuthView('shaqodonRegisterView'); return false;">Register as Jobseeker</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="shaqodonRegisterView" class="auth-view">
+                    <h2 class="modal-title">Jobseeker Register</h2>
+                    <form method="POST" action="{% url 'shaqodonapp:shaqodon_register' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" name="fullname" class="form-control" required placeholder="e.g. Ahmed Ali">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control" required placeholder="ahmed@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" name="username" class="form-control" required placeholder="ahmed_dev">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" name="phone" class="form-control" placeholder="+252 61...">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background: var(--accent-color);">
+                            <i class="fa-solid fa-user-plus"></i> Create Account
+                        </button>
+                        <div class="modal-footer">
+                            Already have an account? <a href="#" onclick="switchAuthView('shaqodonLoginView'); return false;">Login here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- ADMIN VIEWS -->
+            <div id="adminSection" style="display: none;">
+                <!-- Admin Login Form -->
+                <div id="adminLoginView" class="auth-view active">
+                    <h2 class="modal-title">Admin Login</h2>
+                    <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--danger-color); padding: 10px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-shield-halved text-danger"></i> Access restricted to <strong>Administrators</strong>.
+                    </div>
+                    <form method="POST" action="{% url 'adminapp:admin_login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Username or Email</label>
+                            <input type="text" name="identifier" class="form-control" required placeholder="Enter admin username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background: var(--danger-color);">
+                            <i class="fa-solid fa-lock"></i> Admin Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- COMMON VIEWS (Forgot Password) -->
+            <!-- Forgot Password - Step 1: Email -->
+            <div id="forgotEmailView" class="auth-view">
+                <h2 class="modal-title">Reset Password</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">Enter your email to receive a 6-digit code.</p>
+                <form onsubmit="event.preventDefault(); switchAuthView('forgotCodeView');">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" class="form-control" required placeholder="your@email.com">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Next <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <div class="modal-footer">
+                        Remembered? <a href="#" onclick="switchAuthView('loginView'); return false;">Back to Login</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Forgot Password - Step 2: 6-Digit Code & Reset -->
+            <div id="forgotCodeView" class="auth-view">
+                <h2 class="modal-title">Enter Code</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">Enter the 6-digit number sent to your email.</p>
+                <form onsubmit="event.preventDefault(); alert('Password Reset Successful!'); switchAuthView('loginView'); closeModal('authModal');">
+                    <div class="form-group">
+                        <label>6-Digit Code</label>
+                        <input type="text" class="form-control" required placeholder="e.g. 123456" pattern="\d{6}" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" class="form-control" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-check"></i> Reset Password
+                    </button>
+                    <div class="modal-footer">
+                        <a href="#" onclick="switchAuthView('forgotEmailView'); return false;">Didn't receive code?</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main Content Block -->
+    <main>
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <!-- Premier Footer -->
+    <footer class="premier-footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <a href="{% url 'home' %}" class="footer-brand">
+                    <i class="fa-solid fa-briefcase"></i> Fursad
+                </a>
+                <p class="footer-desc">The premier job portal connecting top companies with the best talent in Somalia. Discover your dream job today.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>For Candidates</h3>
+                <ul>
+                    <li><a href="#">Browse Jobs</a></li>
+                    <li><a href="#">Candidate Dashboard</a></li>
+                    <li><a href="#">Job Alerts</a></li>
+                    <li><a href="#">Bookmarks</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>For Employers</h3>
+                <ul>
+                    <li><a href="#">Post a Job</a></li>
+                    <li><a href="#">Browse Candidates</a></li>
+                    <li><a href="#">Employer Dashboard</a></li>
+                    <li><a href="#">Pricing Plans</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Info</h3>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> sinay, Galkacyo</li>
+                    <li><i class="fa-solid fa-phone"></i> +252 907525744</li>
+                    <li><i class="fa-solid fa-envelope"></i> info@fursad.so</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Fursad Job Portal. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="{% url 'privacy' %}">Privacy Policy</a>
+                <a href="{% url 'terms' %}">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Django Messages Handling -->
+    {% if messages %}
+    <div id="djangoMessages" style="display: none;">
+        {% for message in messages %}
+        <div data-tags="{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <script>
+        // Check Django messages and show popup
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageContainer = document.getElementById('djangoMessages');
+            if (messageContainer && messageContainer.children.length > 0) {
+                const msg = messageContainer.children[0];
+                const tags = msg.getAttribute('data-tags');
+                const text = msg.innerText;
+                
+                const popup = document.getElementById('confPopup');
+                const popupIcon = popup.querySelector('i');
+                const popupStrong = popup.querySelector('strong');
+                const popupP = popup.querySelector('p');
+                
+                popupP.innerText = text;
+                
+                if (tags.includes('error')) {
+                    popup.style.borderLeftColor = 'var(--danger-color)';
+                    popupIcon.className = 'fa-solid fa-circle-xmark';
+                    popupIcon.style.color = 'var(--danger-color)';
+                    popupStrong.innerText = 'Error!';
+                } else if (tags.includes('warning')) {
+                    popup.style.borderLeftColor = 'var(--warning-color)';
+                    popupIcon.className = 'fa-solid fa-triangle-exclamation';
+                    popupIcon.style.color = 'var(--warning-color)';
+                    popupStrong.innerText = 'Notice!';
+                } else {
+                    popup.style.borderLeftColor = 'var(--accent-color)';
+                    popupIcon.className = 'fa-solid fa-circle-check';
+                    popupIcon.style.color = 'var(--accent-color)';
+                    popupStrong.innerText = 'Success!';
+                }
+                
+                popup.classList.add('show');
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                }, 5000);
+            }
+        });
+        // Modal & Auth Views Functions
+        function switchUserType(type) {
+            const companySection = document.getElementById('companySection');
+            const shaqodonSection = document.getElementById('shaqodonSection');
+            const adminSection = document.getElementById('adminSection');
+            const tabCompany = document.getElementById('tab-company');
+            const tabShaqodon = document.getElementById('tab-shaqodon');
+            const tabAdmin = document.getElementById('tab-admin');
+
+            // Reset all tabs
+            [tabCompany, tabShaqodon, tabAdmin].forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.background = 'transparent';
+                tab.style.color = 'var(--text-muted)';
+            });
+
+            // Hide all sections
+            [companySection, shaqodonSection, adminSection].forEach(section => {
+                section.style.display = 'none';
+            });
+
+            if (type === 'company') {
+                companySection.style.display = 'block';
+                tabCompany.classList.add('active');
+                tabCompany.style.background = 'rgba(59, 130, 246, 0.1)';
+                tabCompany.style.color = 'var(--primary-color)';
+                switchAuthView('loginView');
+            } else if (type === 'shaqodon') {
+                shaqodonSection.style.display = 'block';
+                tabShaqodon.classList.add('active');
+                tabShaqodon.style.background = 'rgba(16, 185, 129, 0.1)';
+                tabShaqodon.style.color = 'var(--accent-color)';
+                switchAuthView('shaqodonLoginView');
+            } else if (type === 'admin') {
+                adminSection.style.display = 'block';
+                tabAdmin.classList.add('active');
+                tabAdmin.style.background = 'rgba(239, 68, 68, 0.1)';
+                tabAdmin.style.color = 'var(--danger-color)';
+                switchAuthView('adminLoginView');
+            }
+        }
+        function openAuthModal(viewId) {
+            document.getElementById('authModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+            if (viewId) switchAuthView(viewId);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchAuthView(viewId) {
+            // Hide all views
+            document.querySelectorAll('.auth-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            // Show requested view
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        // Close modal on clicking overlay
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+
+    </script>
+</body>
+</html>

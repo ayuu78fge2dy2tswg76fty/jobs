@@ -1,0 +1,18 @@
+asgiref==3.11.1
+Django==6.0.4
+# Pillow (Image Processing)
+Pillow==11.3.0
+# python-dotenv (Environment Variables)
+python-dotenv==1.2.1
+# django-ckeditor-5 for rich text editor
+django-ckeditor-5==2.4.0
+# PyJWT for JWT Authentication
+PyJWT==2.10.1
+# requests (for API calls)
+requests==2.32.5
+# django-cors-headers for CORS support
+django-cors-headers==5.1.0
+# sqlparse for SQL parsing
+sqlparse==0.5.5
+# tzdata for timezone data
+tzdata==2026.1

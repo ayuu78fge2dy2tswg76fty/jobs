@@ -1,0 +1,949 @@
+{% extends 'companyapp/base.html' %}
+
+{% block title %}Manage Jobs - Fursad{% endblock %}
+{% block header_title %}Manage Jobs{% endblock %}
+
+{% block content %}
+<style>
+    .action-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .filter-bar {
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 250px;
+        position: relative;
+    }
+
+    .search-input i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+    }
+
+    .search-input input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-light);
+    }
+
+    .search-input input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .filter-select {
+        padding: 0.75rem 1rem;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-light);
+        min-width: 150px;
+    }
+
+    /* Stats Grid reused from dashboard */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-left: 4px solid var(--primary-color);
+    }
+    .stat-card.success { border-left-color: var(--accent-color); }
+    .stat-card.danger { border-left-color: var(--danger-color); }
+
+    .stat-details {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .stat-value { font-size: 1.75rem; font-weight: 700; color: var(--text-light); }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.2;
+    }
+
+    /* Table Styles */
+    .table-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .premier-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .premier-table th, .premier-table td {
+        padding: 1.25rem 1.5rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .premier-table th {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        background-color: rgba(0,0,0,0.2);
+    }
+
+    .premier-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-status {
+        padding: 0.35rem 0.85rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-active { background: rgba(16, 185, 129, 0.1); color: var(--accent-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-closed { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); border: 1px solid rgba(245, 158, 11, 0.2); }
+
+    .action-links a {
+        color: var(--text-muted);
+        margin-right: 1rem;
+        font-size: 1.1rem;
+        transition: color 0.2s;
+    }
+    .action-links a:hover { color: var(--primary-color); }
+    .action-links a.delete:hover { color: var(--danger-color); }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Center by default */
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        overflow-y: auto; /* Enable scrolling for tall content */
+        padding: 2rem 1rem; /* Space around the modal */
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal-content {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 500px;
+        position: relative;
+        margin: auto; /* Critical for centering + scrolling without clipping */
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 50%;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.2s;
+        z-index: 10;
+    }
+
+    .modal-close:hover {
+        background: var(--danger-color);
+        color: white;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 24px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--border-color);
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 3px;
+        bottom: 3px;
+        background-color: var(--text-muted);
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: rgba(16, 185, 129, 0.2);
+        border-color: var(--accent-color);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(22px);
+        background-color: var(--accent-color);
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.2rem;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-light);
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .btn {
+        width: 100%;
+        padding: 0.875rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.2s, opacity 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+    }
+
+    /* Image Preview Style */
+    .image-preview {
+        width: 100%;
+        height: 140px;
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background: var(--bg-dark);
+        position: relative;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .image-preview:hover {
+        border-color: var(--primary-color);
+        background: rgba(59, 130, 246, 0.05);
+    }
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: none;
+    }
+    .image-preview .placeholder {
+        color: var(--text-muted);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+    }
+    .image-preview:hover .placeholder {
+        color: var(--primary-color);
+        transform: scale(1.05);
+    }
+    .image-preview .change-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.7);
+        color: white;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.85rem;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+        transition: all 0.3s;
+    }
+    .image-preview.has-image:hover .change-overlay {
+        display: flex;
+    }
+</style>
+
+<div class="action-header">
+    <div>
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-light);">My Posted Jobs</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Manage all the jobs posted by your company</p>
+    </div>
+    <a href="#" onclick="openPostJobModal(); return false;" class="btn-add">
+        <i class="fa-solid fa-plus"></i> Post New Job
+    </a>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-details">
+            <span class="stat-value">{{ total_jobs|default:"0" }}</span>
+            <span class="stat-label">Total Jobs</span>
+        </div>
+        <i class="fa-solid fa-briefcase stat-icon" style="color: var(--primary-color);"></i>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-details">
+            <span class="stat-value">{{ active_jobs|default:"0" }}</span>
+            <span class="stat-label">Active Jobs</span>
+        </div>
+        <i class="fa-solid fa-circle-check stat-icon" style="color: var(--accent-color);"></i>
+    </div>
+    <div class="stat-card danger">
+        <div class="stat-details">
+            <span class="stat-value">{{ closed_jobs|default:"0" }}</span>
+            <span class="stat-label">Closed Jobs</span>
+        </div>
+        <i class="fa-solid fa-circle-xmark stat-icon" style="color: var(--danger-color);"></i>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar" style="display: flex; gap: 1.5rem; background: var(--bg-card); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 2rem; align-items: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <div class="search-input" style="flex: 2; position: relative;">
+        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+        <input type="text" id="jobSearch" placeholder="Search by job title, location or keyword..." 
+            style="width: 100%; padding: 0.8rem 1rem 0.8rem 3rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-light); font-size: 1rem; transition: all 0.3s;"
+            onkeyup="filterJobs()">
+    </div>
+    <div style="flex: 1; min-width: 180px; position: relative;">
+        <i class="fa-solid fa-signal" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); z-index: 1;"></i>
+        <select class="filter-select" id="statusFilter" onchange="filterJobs()"
+            style="width: 100%; padding: 0.8rem 1rem 0.8rem 2.8rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-light); cursor: pointer; outline: none; appearance: auto;">
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="closed">Closed</option>
+        </select>
+    </div>
+    <div id="resultsCounter" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; min-width: 100px; text-align: right;">
+        Showing all jobs
+    </div>
+</div>
+
+<!-- Jobs Table -->
+<div class="table-container">
+    <div class="table-responsive">
+        <table class="premier-table" id="jobsTable">
+            <thead>
+                <tr>
+                    <th><i class="fa-solid fa-heading" style="margin-right: 5px;"></i> Job Title</th>
+                    <th><i class="fa-solid fa-layer-group" style="margin-right: 5px;"></i> Category</th>
+                    <th><i class="fa-regular fa-calendar-days" style="margin-right: 5px;"></i> Posted Date</th>
+                    <th><i class="fa-solid fa-users" style="margin-right: 5px;"></i> Applications</th>
+                    <th><i class="fa-solid fa-toggle-on" style="margin-right: 5px;"></i> Status</th>
+                    <th><i class="fa-solid fa-bolt" style="margin-right: 5px;"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if jobs %}
+                    {% for job in jobs %}
+                    <tr>
+                        <td style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid var(--border-color); flex-shrink: 0;">
+                                {% if job.j_logo %}
+                                    <img src="{{ job.j_logo.url }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                    <i class="fa-solid fa-briefcase" style="font-size: 1.2rem; color: var(--primary-color);"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <strong style="color: var(--text-light); display: block;">{{ job.j_title }}</strong>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">{{ job.j_location }}</div>
+                            </div>
+                        </td>
+                        <td style="color: var(--text-muted);">{{ job.get_j_jobtype_display|default:job.j_jobtype }}</td>
+                        <td style="color: var(--text-muted);">{{ job.j_posted|date:"M d, Y" }}</td>
+                        <td>
+                            <span style="background: rgba(59, 130, 246, 0.1); color: var(--primary-color); padding: 0.25rem 0.75rem; border-radius: 6px; font-weight: 600;">
+                                {{ job.applications_count|default:"0" }} Applied
+                            </span>
+                        </td>
+                        <td>
+                            {% if job.j_active %}
+                                <span class="badge-status status-active">Active</span>
+                            {% else %}
+                                <span class="badge-status status-closed">Closed</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-links">
+                            <a href="#" onclick="openViewModal('{{ job.j_title|escapejs }}', '{{ job.j_location|escapejs }}', '{{ job.get_j_jobtype_display|default:job.j_jobtype|escapejs }}', '{{ job.j_salary|default:''|escapejs }}', '{{ job.j_EXP|date:'Y-m-d'|escapejs }}', '{% if job.j_active %}Active{% else %}Closed{% endif %}', '{{ job.j_description|escapejs }}', '{{ job.j_company.c_name|escapejs }}', '{{ job.j_posted|date:'M d, Y'|escapejs }}', '{% if job.j_logo %}{{ job.j_logo.url }}{% endif %}'); return false;" title="View"><i class="fa-regular fa-eye"></i></a>
+                            <a href="#" onclick="openEditModal('{{ job.id }}', '{{ job.j_title|escapejs }}', '{{ job.j_location|escapejs }}', '{{ job.j_jobtype|escapejs }}', '{% if job.j_active %}Active{% else %}Closed{% endif %}', '{{ job.j_description|escapejs }}', '{{ job.j_salary|default:''|escapejs }}', '{{ job.j_EXP|date:'Y-m-d'|escapejs }}', '{% if job.j_logo %}{{ job.j_logo.url }}{% endif %}'); return false;" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="#" onclick="openDeleteModal('{{ job.id }}', '{{ job.j_title|escapejs }}'); return false;" class="delete" title="Delete"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                            <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <h3 style="color: var(--text-light); margin-bottom: 0.5rem;">No Jobs Found</h3>
+                            <p>You haven't posted any jobs yet. Click "Post New Job" to get started.</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <div id="noResults" style="display: none; text-align: center; padding: 4rem; color: var(--text-muted);">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.2;"></i>
+            <h3>No matching jobs found</h3>
+            <p>Try adjusting your search or filters to find what you're looking for.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Post Job Modal -->
+<div class="modal-overlay" id="postJobModal">
+    <div class="modal-content" style="max-width: 700px;">
+        <i class="fa-solid fa-xmark modal-close" onclick="closeJobModal('postJobModal')"></i>
+        <h2 class="modal-title">Post New Job</h2>
+        <form action="{% url 'companyapp:company_jobs' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="post_job">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-pen-nib"></i> Job Title</label>
+                    <input type="text" name="j_title" class="form-control" required placeholder="e.g. Senior Developer">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-briefcase"></i> Job Type</label>
+                    <select name="j_jobtype" class="form-control" required style="appearance: auto; padding: 0.75rem 1rem;">
+                        <option value="full_time">Full Time</option>
+                        <option value="part_time">Part Time</option>
+                        <option value="contract">Contract</option>
+                        <option value="internship">Internship</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-location-dot"></i> Location</label>
+                    <input type="text" name="j_location" class="form-control" required placeholder="e.g. Mogadishu, Somalia">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-sack-dollar"></i> Salary (USD)</label>
+                    <input type="number" name="j_salary" step="0.01" class="form-control" placeholder="e.g. 1500.00">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-regular fa-calendar-xmark"></i> Deadline (Date)</label>
+                    <input type="date" name="j_EXP" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-regular fa-image"></i> Job Logo</label>
+                    <input type="file" name="j_logo" id="postLogo" accept="image/*" style="display: none;" onchange="previewImage(this, 'postPreview')">
+                    <div class="image-preview" id="postPreview" onclick="document.getElementById('postLogo').click()">
+                        <div class="placeholder">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem;"></i>
+                            <span>Click to upload job logo</span>
+                        </div>
+                        <img src="" alt="Preview">
+                        <div class="change-overlay">
+                            <i class="fa-solid fa-camera" style="margin-right: 8px;"></i> Change Logo
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fa-solid fa-align-left"></i> Job Description</label>
+                <textarea name="j_description" class="form-control" rows="4" required style="resize: none;" placeholder="Describe the responsibilities, requirements, and benefits..."></textarea>
+            </div>
+            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); padding: 1rem 1.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div>
+                    <label style="margin-bottom: 0.25rem;"><i class="fa-solid fa-eye" style="color: var(--accent-color);"></i> Job Visibility</label>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Make this job active and visible to applicants immediately</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="j_active" value="True" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                <i class="fa-solid fa-paper-plane"></i> Publish Job
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- View Job Modal -->
+<div class="modal-overlay" id="viewJobModal">
+    <div class="modal-content" style="max-width: 600px;">
+        <i class="fa-solid fa-xmark modal-close" onclick="closeJobModal('viewJobModal')"></i>
+        
+        <!-- Header with Logo -->
+        <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 1.5rem;">
+            <div id="viewLogo" style="width: 70px; height: 70px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid var(--border-color);">
+                <i class="fa-solid fa-briefcase" style="font-size: 2rem; color: var(--primary-color);"></i>
+            </div>
+            <div>
+                <h2 class="modal-title" style="text-align: left; margin-bottom: 0.25rem;" id="viewTitle">Job Title</h2>
+                <div style="color: var(--primary-color); display: flex; gap: 1rem; font-size: 0.9rem;">
+                    <span id="viewCompany"><i class="fa-solid fa-building"></i> Company</span>
+                    <span id="viewLocation"><i class="fa-solid fa-location-dot"></i> Location</span>
+                    <span id="viewPosted" style="color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> Posted Date</span>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-briefcase" style="margin-right: 5px;"></i> Job Type</div>
+                <div style="font-weight: 600;" id="viewType">Full Time</div>
+            </div>
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-sack-dollar" style="margin-right: 5px;"></i> Salary</div>
+                <div style="font-weight: 600;" id="viewSalary">$0.00</div>
+            </div>
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-regular fa-calendar-xmark" style="margin-right: 5px;"></i> Experience Needed</div>
+                <div style="font-weight: 600;" id="viewExp">N/A</div>
+            </div>
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-toggle-on" style="margin-right: 5px;"></i> Status</div>
+                <div style="font-weight: 600;" id="viewStatus">Active</div>
+            </div>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light);"><i class="fa-solid fa-align-left" style="margin-right: 5px;"></i> Job Description</h3>
+        <div style="background: var(--bg-darker); padding: 1rem; border-radius: 8px; color: var(--text-muted); line-height: 1.6; max-height: 150px; overflow-y: auto;" id="viewDesc">
+            Description goes here...
+        </div>
+    </div>
+</div>
+
+<!-- Edit Job Modal -->
+<div class="modal-overlay" id="editJobModal">
+    <div class="modal-content" style="max-width: 700px;">
+        <i class="fa-solid fa-xmark modal-close" onclick="closeJobModal('editJobModal')"></i>
+        <h2 class="modal-title">Edit Job</h2>
+        <form action="{% url 'companyapp:company_jobs' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="edit_job">
+            <input type="hidden" name="job_id" id="editJobId">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-pen-nib"></i> Job Title</label>
+                    <input type="text" name="j_title" id="editTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-briefcase"></i> Job Type</label>
+                    <select name="j_jobtype" id="editType" class="form-control" required style="appearance: auto; padding: 0.75rem 1rem;">
+                        <option value="full_time">Full Time</option>
+                        <option value="part_time">Part Time</option>
+                        <option value="contract">Contract</option>
+                        <option value="internship">Internship</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-location-dot"></i> Location</label>
+                    <input type="text" name="j_location" id="editLocation" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-sack-dollar"></i> Salary (USD)</label>
+                    <input type="number" name="j_salary" id="editSalary" step="0.01" class="form-control" placeholder="e.g. 1500.00">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-regular fa-calendar-xmark"></i> Deadline (Date)</label>
+                    <input type="date" name="j_EXP" id="editExp" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-regular fa-image"></i> Job Logo</label>
+                    <input type="file" name="j_logo" id="editLogo" accept="image/*" style="display: none;" onchange="previewImage(this, 'editPreview')">
+                    <div class="image-preview" id="editPreview" onclick="document.getElementById('editLogo').click()">
+                        <div class="placeholder">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem;"></i>
+                            <span>Click to upload job logo</span>
+                        </div>
+                        <img src="" alt="Preview">
+                        <div class="change-overlay">
+                            <i class="fa-solid fa-camera" style="margin-right: 8px;"></i> Change Logo
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fa-solid fa-align-left"></i> Job Description</label>
+                <textarea name="j_description" id="editDesc" class="form-control" rows="4" required style="resize: none;"></textarea>
+            </div>
+            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); padding: 1rem 1.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div>
+                    <label style="margin-bottom: 0.25rem;"><i class="fa-solid fa-eye" style="color: var(--accent-color);"></i> Job Visibility</label>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Make this job active and visible to applicants immediately</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="j_active" value="True" id="editActive">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteJobModal">
+    <div class="modal-content" style="text-align: center; max-width: 400px;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: var(--danger-color); display: flex; justify-content: center; align-items: center; font-size: 2rem; margin: 0 auto 1.5rem;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h2 class="modal-title" style="margin-bottom: 0.5rem;">Are you sure?</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Do you really want to delete <strong id="deleteJobTitle" style="color: var(--text-light);"></strong>? This process cannot be undone.</p>
+        
+        <form action="{% url 'companyapp:company_jobs' %}" method="POST" id="deleteJobForm" style="display: none;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_job">
+            <input type="hidden" name="job_id" id="deleteJobId">
+        </form>
+
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn" style="background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-light);" onclick="closeJobModal('deleteJobModal')">Cancel</button>
+            <button class="btn" style="background: var(--danger-color); color: white;" onclick="document.getElementById('deleteJobForm').submit()">Yes, Delete it!</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toastNotification" style="position: fixed; bottom: 20px; right: -350px; background: var(--accent-color); color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 1rem; z-index: 3000; transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
+    <i class="fa-solid fa-circle-check" style="font-size: 1.5rem;"></i>
+    <div>
+        <strong style="display: block; font-size: 1rem;">Success</strong>
+        <span id="toastMsg" style="font-size: 0.85rem; opacity: 0.9;">Action completed successfully.</span>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="django-toast" style="position: fixed; top: 20px; right: 20px; background: {% if message.tags == 'success' %}var(--accent-color){% else %}var(--danger-color){% endif %}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 1rem; z-index: 3000; transition: opacity 0.5s ease;">
+            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-xmark{% endif %}" style="font-size: 1.5rem;"></i>
+            <div>
+                <strong style="display: block; font-size: 1rem;">{% if message.tags == 'success' %}Success{% else %}Error{% endif %}</strong>
+                <span style="font-size: 0.85rem; opacity: 0.9;">{{ message }}</span>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script>
+    // Remove Django toasts automatically
+    document.addEventListener('DOMContentLoaded', () => {
+        const toasts = document.querySelectorAll('.django-toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        });
+    });
+
+    // Simple frontend filtering
+    document.getElementById('jobSearch').addEventListener('input', filterJobs);
+    document.getElementById('statusFilter').addEventListener('change', filterJobs);
+
+    function filterJobs() {
+        const searchText = document.getElementById('jobSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+        const rows = document.querySelectorAll('#jobsTable tbody tr');
+        const resultsCounter = document.getElementById('resultsCounter');
+        const noResults = document.getElementById('noResults');
+        const table = document.getElementById('jobsTable');
+        
+        let visibleCount = 0;
+        let totalRows = 0;
+
+        rows.forEach(row => {
+            // Skip the "No Jobs Found" initial row if it exists
+            if (row.cells.length === 1 && row.innerText.includes("No Jobs Found")) {
+                row.style.display = 'none';
+                return;
+            }
+            
+            totalRows++;
+            const title = row.cells[0].innerText.toLowerCase();
+            const status = row.cells[4].innerText.toLowerCase();
+
+            const matchesSearch = title.includes(searchText);
+            const matchesStatus = statusFilter === '' || status.includes(statusFilter);
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Update results counter
+        if (searchText === '' && statusFilter === '') {
+            resultsCounter.innerText = `Total: ${totalRows} jobs`;
+        } else {
+            resultsCounter.innerText = `Found: ${visibleCount} jobs`;
+        }
+
+        // Show/hide no results message
+        if (visibleCount === 0 && totalRows > 0) {
+            noResults.style.display = 'block';
+            table.querySelector('thead').style.display = 'none';
+        } else if (totalRows > 0) {
+            noResults.style.display = 'none';
+            table.querySelector('thead').style.display = 'table-header-group';
+        }
+    }
+    
+    // Run filter on load to update counter
+    document.addEventListener('DOMContentLoaded', filterJobs);
+
+    // Modal and Toast Functionality
+    let currentDeleteJobTitle = '';
+    let currentDeleteRow = null;
+
+    function openPostJobModal() {
+        // Reset file input
+        document.getElementById('postLogo').value = '';
+        // Reset preview
+        const previewContainer = document.getElementById('postPreview');
+        previewContainer.classList.remove('has-image');
+        previewContainer.querySelector('img').style.display = 'none';
+        previewContainer.querySelector('.placeholder').style.display = 'flex';
+        document.getElementById('postJobModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function previewImage(input, previewId) {
+        const previewContainer = document.getElementById(previewId);
+        const img = previewContainer.querySelector('img');
+        const placeholder = previewContainer.querySelector('.placeholder');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+                previewContainer.classList.add('has-image');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function openViewModal(title, location, type, salary, exp, status, desc, company, posted, logoUrl) {
+        document.getElementById('viewTitle').innerText = title;
+        document.getElementById('viewCompany').innerHTML = `<i class="fa-solid fa-building"></i> ${company}`;
+        document.getElementById('viewLocation').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${location}`;
+        document.getElementById('viewPosted').innerHTML = `<i class="fa-regular fa-calendar"></i> ${posted}`;
+        
+        document.getElementById('viewType').innerText = type;
+        document.getElementById('viewSalary').innerText = salary || 'N/A';
+        document.getElementById('viewExp').innerText = exp || 'N/A';
+        document.getElementById('viewStatus').innerText = status;
+        document.getElementById('viewDesc').innerText = desc || 'No description provided.';
+        
+        const logoDiv = document.getElementById('viewLogo');
+        if (logoUrl && logoUrl.trim() !== '') {
+            logoDiv.innerHTML = `<img src="${logoUrl}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">`;
+        } else {
+            logoDiv.innerHTML = `<i class="fa-solid fa-briefcase" style="font-size: 2rem; color: var(--primary-color);"></i>`;
+        }
+        
+        document.getElementById('viewJobModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function openEditModal(id, title, location, type, status, desc, salary, exp, logoUrl) {
+        // Reset file input
+        document.getElementById('editLogo').value = '';
+        document.getElementById('editJobId').value = id;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('editLocation').value = location;
+        
+        // Handle logo preview
+        const previewContainer = document.getElementById('editPreview');
+        const img = previewContainer.querySelector('img');
+        const placeholder = previewContainer.querySelector('.placeholder');
+        
+        if (logoUrl && logoUrl.trim() !== '') {
+            img.src = logoUrl;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+            previewContainer.classList.add('has-image');
+        } else {
+            img.style.display = 'none';
+            placeholder.style.display = 'flex';
+            previewContainer.classList.remove('has-image');
+        }
+
+        // Select correct option
+        const select = document.getElementById('editType');
+        for(let i=0; i<select.options.length; i++) {
+            if(select.options[i].text === type || select.options[i].value === type) {
+                select.selectedIndex = i;
+                break;
+            }
+        }
+        
+        document.getElementById('editDesc').value = desc || '';
+        document.getElementById('editActive').checked = (status === 'Active');
+        document.getElementById('editSalary').value = salary || '';
+        document.getElementById('editExp').value = exp || '';
+        
+        document.getElementById('editJobModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function openDeleteModal(id, title) {
+        document.getElementById('deleteJobId').value = id;
+        document.getElementById('deleteJobTitle').innerText = title;
+        document.getElementById('deleteJobModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeJobModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toastNotification');
+        document.getElementById('toastMsg').innerText = message;
+        toast.style.right = '20px';
+        setTimeout(() => {
+            toast.style.right = '-350px';
+        }, 4000);
+    }
+</script>
+{% endblock content %}

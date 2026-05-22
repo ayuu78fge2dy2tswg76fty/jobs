@@ -1,0 +1,188 @@
+{% extends 'shaqodonapp/base.html' %}
+
+{% block title %}Find Jobs | Shaqodon{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">Discover Opportunities</h1>
+        <p style="color: var(--text-muted);">Find the perfect job that matches your skills.</p>
+    </div>
+
+    <!-- Search & Filter Section -->
+    <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; padding: 2rem; margin-bottom: 3.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+        <form id="searchForm" method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: end;">
+            <!-- Keywords -->
+            <div style="display: flex; flex-direction: column; gap: 8px; grid-column: span 2;">
+                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 0.7rem;"></i> Find your role
+                </label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-keyboard" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--primary); opacity: 0.7;"></i>
+                    <input type="text" name="q" value="{{ query }}" placeholder="Search by title, company, or skill..." oninput="debounceSearch()" style="width: 100%; padding: 16px 16px 16px 50px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s; font-size: 1rem;" onfocus="this.style.borderColor='var(--primary)'; this.style.background='rgba(255,255,255,0.08)'; this.style.boxShadow='0 0 20px rgba(16, 185, 129, 0.1)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(255,255,255,0.04)'; this.style.boxShadow='none'">
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Location</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-location-dot" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--danger-color); pointer-events: none; z-index: 2;"></i>
+                    <select name="location" onchange="this.form.submit()" style="width: 100%; padding: 16px 16px 16px 40px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; cursor: pointer; appearance: none; position: relative;">
+                        <option value="" style="background: #1e293b;">All Locations</option>
+                        {% for loc in locations %}
+                            <option value="{{ loc }}" {% if selected_location == loc %}selected{% endif %} style="background: #1e293b;">{{ loc }}</option>
+                        {% endfor %}
+                    </select>
+                    <i class="fa-solid fa-chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none;"></i>
+                </div>
+            </div>
+
+            <!-- Job Type -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Job Type</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-briefcase" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--secondary); pointer-events: none; z-index: 2;"></i>
+                    <select name="type" onchange="this.form.submit()" style="width: 100%; padding: 16px 16px 16px 40px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; cursor: pointer; appearance: none;">
+                        <option value="" style="background: #1e293b;">All Types</option>
+                        <option value="full_time" {% if selected_type == 'full_time' %}selected{% endif %} style="background: #1e293b;">Full Time</option>
+                        <option value="part_time" {% if selected_type == 'part_time' %}selected{% endif %} style="background: #1e293b;">Part Time</option>
+                        <option value="contract" {% if selected_type == 'contract' %}selected{% endif %} style="background: #1e293b;">Contract</option>
+                        <option value="internship" {% if selected_type == 'internship' %}selected{% endif %} style="background: #1e293b;">Internship</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none;"></i>
+                </div>
+            </div>
+
+            <!-- Company -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Company</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-building" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary-light); pointer-events: none; z-index: 2;"></i>
+                    <select name="company" onchange="this.form.submit()" style="width: 100%; padding: 16px 16px 16px 40px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; cursor: pointer; appearance: none;">
+                        <option value="" style="background: #1e293b;">All Companies</option>
+                        {% for comp in companies %}
+                            <option value="{{ comp.id }}" {% if selected_company == comp.id|stringformat:"i" %}selected{% endif %} style="background: #1e293b;">{{ comp.c_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <i class="fa-solid fa-chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none;"></i>
+                </div>
+            </div>
+            
+            {% if query or selected_location or selected_type or selected_company %}
+            <div style="grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 1rem;">
+                <a href="{% url 'shaqodonapp:shaqodon_jobs' %}" style="color: var(--danger-color); text-decoration: none; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; background: rgba(239, 68, 68, 0.05); transition: 0.3s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'">
+                    <i class="fa-solid fa-trash-can"></i> Clear All Filters
+                </a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+<script>
+    let searchTimeout = null;
+    function debounceSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            document.getElementById('searchForm').submit();
+        }, 1000); // 1 second delay for a better user experience
+    }
+</script>
+
+    <!-- Jobs Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem;">
+        {% for job in jobs %}
+        <div class="job-card-premium" style="
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 2rem;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        " onmouseover="this.style.transform='translateY(-12px) scale(1.02)'; this.style.backgroundColor='rgba(30, 41, 59, 0.7)'; this.style.borderColor='var(--primary)'; this.style.boxShadow='0 30px 60px -12px rgba(0,0,0,0.5), 0 0 20px rgba(16, 185, 129, 0.2)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.backgroundColor='rgba(30, 41, 59, 0.4)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.boxShadow='none'">
+            
+            <!-- Logo & Title Section (Facebook Profile Style) -->
+            <div style="display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.5rem; position: relative; z-index: 2;">
+                <div style="position: relative;">
+                    <div style="width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--bg-card); box-shadow: 0 8px 16px rgba(0,0,0,0.3); overflow: hidden; background: #fff; display: flex; align-items: center; justify-content: center;">
+                        {% if job.j_logo %}
+                            <img src="{{ job.j_logo.url }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <i class="fa-solid fa-building" style="font-size: 1.8rem; color: #cbd5e1;"></i>
+                        {% endif %}
+                    </div>
+                    <!-- Small Status Indicator (Facebook Style) -->
+                    <div style="position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%; background: #22c55e; border: 2px solid var(--bg-card);"></div>
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 4px; letter-spacing: -0.5px;">{{ job.j_title }}</h3>
+                    <p style="color: var(--primary-light); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+                        {{ job.j_company.c_name }} <i class="fa-solid fa-circle-check" style="font-size: 0.75rem;"></i>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tags Section (Moved Up) -->
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; position: relative; z-index: 2;">
+                <span style="font-size: 0.75rem; color: var(--text-main); background: rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-location-dot" style="color: var(--danger-color);"></i> {{ job.j_location }}
+                </span>
+                <span style="font-size: 0.75rem; color: var(--text-main); background: rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-clock" style="color: var(--secondary);"></i> {{ job.get_j_jobtype_display }}
+                </span>
+                {% if job.j_salary %}
+                <span style="font-size: 0.75rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 6px 12px; border-radius: 100px; border: 1px solid rgba(251, 191, 36, 0.2); display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-coins"></i> ${{ job.j_salary }}
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Description Snippet (Middle) -->
+            <div style="margin-bottom: 2rem; position: relative; z-index: 2;">
+                <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    {{ job.j_description|truncatechars:100 }}.......
+                </p>
+            </div>
+
+
+            <!-- Footer Section -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); margin-top: auto; position: relative; z-index: 2;">
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">
+                    <i class="fa-regular fa-calendar-check" style="margin-right: 5px;"></i> {{ job.j_posted|timesince }} ago
+                </span>
+                <a href="{% url 'shaqodonapp:shaqodon_job_detail' job.id %}" style="
+                    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                    color: white;
+                    text-decoration: none;
+                    padding: 10px 22px;
+                    border-radius: 14px;
+                    font-size: 0.85rem;
+                    font-weight: 700;
+                    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.boxShadow='0 15px 30px rgba(16, 185, 129, 0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 10px 20px rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(0)'">
+                    Apply Now
+                </a>
+            </div>
+
+            <!-- Background Decorative Element -->
+            <div style="position: absolute; bottom: -20px; right: -20px; width: 80px; height: 80px; background: var(--primary); opacity: 0.03; filter: blur(40px); border-radius: 50%;"></div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 6rem 2rem; background: rgba(31, 41, 55, 0.3); border-radius: 30px; border: 2px dashed var(--border);">
+            <div style="font-size: 4.5rem; color: var(--border); margin-bottom: 2rem;">
+                <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 1rem; color: white;">No opportunities found</h2>
+            <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto;">Try adjusting your search criteria or check back later for new listings.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+
+</div>
+{% endblock %}

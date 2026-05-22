@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Company Dashboard - Fursad{% endblock %}</title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #3b82f6; /* Blue */
+            --primary-hover: #2563eb;
+            --bg-dark: #0f172a; /* Deep Slate */
+            --bg-darker: #020617; /* Very Deep Slate */
+            --bg-card: #1e293b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-color: #10b981; /* Emerald */
+            --danger-color: #ef4444; /* Red */
+            --warning-color: #f59e0b; /* Amber */
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 80px;
+            --header-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-light);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-card);
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand i {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .sidebar.collapsed .brand span {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 0;
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .nav-link span {
+            margin-left: 0.75rem;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .nav-item {
+            padding: 0 0.5rem;
+        }
+
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.875rem 0;
+        }
+
+        .sidebar.collapsed .nav-link i {
+            margin: 0;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Main Content wrapper */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-wrapper.expanded {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* Top Header */
+        .top-header {
+            height: var(--header-height);
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .action-icon {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.2s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-icon:hover {
+            color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+
+        .company-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .company-profile:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .profile-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            overflow: hidden;
+        }
+
+        .profile-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .profile-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Common Card Styles */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .main-wrapper.expanded {
+                margin-left: 0;
+            }
+            .profile-info {
+                display: none;
+            }
+        }
+
+        /* Alert Messages */
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .alert-error, .alert-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .alert-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        .alert-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Notification Dropdown */
+        .notification-wrapper {
+            position: relative;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: calc(100% + 15px);
+            right: 0;
+            width: 320px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1001;
+        }
+
+        .notification-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .notification-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-header h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .notification-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+            transition: background 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .notification-item.removing {
+            transform: translateX(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-remove-notif {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+        }
+
+        .notification-item:hover .btn-remove-notif {
+            opacity: 1;
+        }
+
+        .btn-remove-notif:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .no-notifications {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        .no-notifications i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .no-notifications p {
+            font-size: 0.85rem;
+        }
+
+        .notification-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .icon-blue { background: rgba(59, 130, 246, 0.15); color: var(--primary-color); }
+        .icon-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-color); }
+        .icon-yellow { background: rgba(245, 158, 11, 0.15); color: var(--warning-color); }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.2rem;
+            display: block;
+        }
+
+        .notification-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            display: block;
+        }
+
+        .notification-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+            display: block;
+            opacity: 0.6;
+        }
+
+        .notification-footer {
+            padding: 1rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .notification-footer a {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="{% url 'companyapp:company_dashboard' %}" class="brand">
+                <i class="fa-solid fa-briefcase"></i> <span>Fursad</span>
+            </a>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-item">
+                <a href="{% url 'companyapp:company_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'company_dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+
+            <div class="nav-item">
+                <a href="{% url 'companyapp:company_jobs' %}" class="nav-link {% if request.resolver_match.url_name == 'company_jobs' %}active{% endif %}">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <span>Manage Jobs</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'companyapp:company_applications' %}" class="nav-link {% if request.resolver_match.url_name == 'company_applications' %}active{% endif %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Applications</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'companyapp:company_profile' %}" class="nav-link {% if request.resolver_match.url_name == 'company_profile' %}active{% endif %}">
+                    <i class="fa-solid fa-building"></i>
+                    <span>Company Profile</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'companyapp:company_analyze' %}" class="nav-link {% if request.resolver_match.url_name == 'company_analyze' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+            </div>
+            
+            <div style="flex: 1;"></div>
+            
+            <div class="nav-item">
+                <a href="{% url 'companyapp:company_logout' %}" class="nav-link" style="color: var(--danger-color);">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper" id="mainWrapper">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="toggle-btn" id="toggleSidebar">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+                <h2 style="font-size: 1.25rem; font-weight: 600;">{% block header_title %}Dashboard{% endblock %}</h2>
+            </div>
+
+            <div class="header-actions">
+                <div class="notification-wrapper">
+                    <a href="#" class="action-icon" id="notificationIcon">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="badge">3</span>
+                    </a>
+                    
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <span onclick="clearAllNotifications()" style="font-size: 0.75rem; color: var(--primary-color); cursor: pointer; font-weight: 600;">Clear all</span>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="notification-item" onclick="window.location.href='{% url 'companyapp:company_applications' %}'">
+                                <button class="btn-remove-notif" onclick="removeNotification(event, this)" title="Dismiss">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <div class="notification-icon-box icon-blue">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <span class="notification-title">New Application Received</span>
+                                    <span class="notification-desc">Ahmed Ali applied for Senior Developer position.</span>
+                                    <span class="notification-time">2 mins ago</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="window.location.href='{% url 'companyapp:company_jobs' %}'">
+                                <button class="btn-remove-notif" onclick="removeNotification(event, this)" title="Dismiss">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <div class="notification-icon-box icon-yellow">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <span class="notification-title">Job Expiring Soon</span>
+                                    <span class="notification-desc">Your job post "UI Designer" will expire in 2 days.</span>
+                                    <span class="notification-time">5 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="notification-item" onclick="window.location.href='{% url 'companyapp:company_profile' %}'">
+                                <button class="btn-remove-notif" onclick="removeNotification(event, this)" title="Dismiss">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <div class="notification-icon-box icon-green">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <span class="notification-title">Account Verified</span>
+                                    <span class="notification-desc">Your company documents have been successfully verified.</span>
+                                    <span class="notification-time">Yesterday</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="no-notifications" id="noNotifications">
+                            <i class="fa-solid fa-bell-slash"></i>
+                            <p>No new notifications</p>
+                        </div>
+                        <div class="notification-footer">
+                            <a href="#">View All Notifications</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-profile">
+                    <div class="profile-img">
+                        {% if request.session.company_logo %}
+                            <img src="{{ request.session.company_logo }}" alt="Logo">
+                        {% else %}
+                            <i class="fa-solid fa-building"></i>
+                        {% endif %}
+                    </div>
+                    <div class="profile-info">
+                        <span class="profile-name">{{ request.session.company_name|default:"Company Name" }}</span>
+                        <span class="profile-role">Company</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <main class="content-area">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} django-message" style="transition: all 0.5s ease; opacity: 1;">
+                            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' or message.tags == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}" style="margin-right: 10px;"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% block content %}
+            {% endblock content %}
+        </main>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const mainWrapper = document.getElementById('mainWrapper');
+        const toggleBtn = document.getElementById('toggleSidebar');
+
+        toggleBtn.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('mobile-open');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                mainWrapper.classList.toggle('expanded');
+            }
+        });
+
+        // Close sidebar on mobile when clicking outside
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    sidebar.classList.remove('mobile-open');
+                }
+            }
+        });
+
+        // Auto-hide messages
+        document.querySelectorAll('.django-message').forEach(msg => {
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            }, 4000);
+        });
+
+        // Notification Toggle
+        const notificationIcon = document.getElementById('notificationIcon');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+
+        if (notificationIcon && notificationDropdown) {
+            notificationIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                notificationDropdown.classList.toggle('active');
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!notificationIcon.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                    notificationDropdown.classList.remove('active');
+                }
+            });
+        }
+
+        function removeNotification(event, btn) {
+            event.stopPropagation(); // Prevent triggering the item click
+            const item = btn.closest('.notification-item');
+            item.classList.add('removing');
+            
+            setTimeout(() => {
+                item.remove();
+                updateNotificationBadge();
+                checkEmptyNotifications();
+            }, 400);
+        }
+
+        function clearAllNotifications() {
+            const items = document.querySelectorAll('.notification-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('removing');
+                }, index * 100);
+            });
+
+            setTimeout(() => {
+                document.getElementById('notificationList').innerHTML = '';
+                updateNotificationBadge();
+                checkEmptyNotifications();
+            }, (items.length * 100) + 400);
+        }
+
+        function updateNotificationBadge() {
+            const count = document.querySelectorAll('.notification-item').length;
+            const badge = document.querySelector('#notificationIcon .badge');
+            if (count > 0) {
+                badge.innerText = count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function checkEmptyNotifications() {
+            const count = document.querySelectorAll('.notification-item').length;
+            const emptyState = document.getElementById('noNotifications');
+            const list = document.getElementById('notificationList');
+            const footer = document.querySelector('.notification-footer');
+            const clearAllBtn = document.querySelector('.notification-header span');
+
+            if (count === 0) {
+                emptyState.style.display = 'block';
+                list.style.display = 'none';
+                footer.style.display = 'none';
+                clearAllBtn.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                list.style.display = 'block';
+                footer.style.display = 'block';
+                clearAllBtn.style.display = 'inline-block';
+            }
+        }
+    </script>
+</body>
+</html>

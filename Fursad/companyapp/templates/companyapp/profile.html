@@ -1,0 +1,566 @@
+{% extends 'companyapp/base.html' %}
+
+{% block title %}Company Profile - Fursad{% endblock %}
+{% block header_title %}Company Profile{% endblock %}
+
+{% block content %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0; right: 0;
+        width: 300px;
+        height: 100%;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .profile-logo-container {
+        width: 120px;
+        height: 120px;
+        border-radius: 20px;
+        background: var(--bg-card);
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .profile-logo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-logo-container i {
+        font-size: 3.5rem;
+        color: var(--primary-color);
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .verified-badge {
+        font-size: 1.25rem;
+        color: var(--accent-color);
+    }
+
+    .profile-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .meta-item i {
+        color: var(--primary-color);
+    }
+
+    .btn-edit {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        color: var(--text-light);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .btn-edit:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--primary-color);
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding-bottom: 1rem;
+    }
+
+    .card-title i {
+        color: var(--primary-color);
+    }
+
+    .about-text {
+        color: var(--text-muted);
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+
+    .stats-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .stat-box {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.2s;
+    }
+
+    .stat-box:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-light);
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        overflow-y: auto;
+        padding: 2rem 1rem;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal-content {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+        margin: auto;
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 50%;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.2s;
+        z-index: 10;
+    }
+
+    .modal-close:hover {
+        background: var(--danger-color);
+        color: white;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-light);
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .btn {
+        width: 100%;
+        padding: 0.875rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.2s, opacity 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+    }
+
+    /* Modern Image Preview Style */
+    .image-preview {
+        width: 100%;
+        height: 140px;
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background: var(--bg-dark);
+        position: relative;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .image-preview:hover {
+        border-color: var(--primary-color);
+        background: rgba(59, 130, 246, 0.05);
+    }
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: none;
+    }
+    .image-preview .placeholder {
+        color: var(--text-muted);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+    }
+    .image-preview:hover .placeholder {
+        color: var(--primary-color);
+        transform: scale(1.05);
+    }
+    .image-preview .change-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.7);
+        color: white;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.85rem;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+        transition: all 0.3s;
+    }
+    .image-preview.has-image:hover .change-overlay {
+        display: flex;
+    }
+</style>
+
+<!-- Profile Header -->
+<div class="profile-header">
+    <div class="profile-logo-container">
+        {% if company.c_logo %}
+            <img src="{{ company.c_logo.url }}" alt="{{ company.c_name }} Logo">
+        {% else %}
+            <i class="fa-solid fa-building"></i>
+        {% endif %}
+    </div>
+    
+    <div class="profile-info">
+        <h1 class="profile-name">
+            {{ company.c_name|default:"Unnamed Company" }}
+            {% if company.c_active %}
+                <i class="fa-solid fa-circle-check verified-badge" title="Verified Active Company"></i>
+            {% endif %}
+        </h1>
+        
+        <div class="profile-meta">
+            <div class="meta-item">
+                <i class="fa-solid fa-envelope"></i> {{ company.c_email }}
+            </div>
+            <div class="meta-item">
+                <i class="fa-solid fa-phone"></i> {{ company.c_phone|default:"Not provided" }}
+            </div>
+            <div class="meta-item">
+                <i class="fa-solid fa-calendar-check"></i> Member since {{ company.c_joined|date:"M Y" }}
+            </div>
+        </div>
+        
+        <button class="btn-edit" onclick="openEditProfileModal()">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+        </button>
+    </div>
+</div>
+
+<!-- Content Area -->
+<div class="content-grid">
+    <!-- About Section -->
+    <div class="card">
+        <h2 class="card-title"><i class="fa-solid fa-circle-info"></i> About Company</h2>
+        <div class="about-text">
+            {% if company.c_description %}
+                {{ company.c_description|linebreaks }}
+            {% else %}
+                <div style="text-align: center; padding: 2rem 0; opacity: 0.5;">
+                    <i class="fa-solid fa-file-pen" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p>No description provided yet. Click 'Edit Profile' to add details about your company.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Stats Section -->
+    <div class="card">
+        <h2 class="card-title"><i class="fa-solid fa-chart-line"></i> Activity Overview</h2>
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary-color);">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ total_jobs_posted|default:"0" }}</span>
+                    <span class="stat-label">Total Jobs Posted</span>
+                </div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-color);">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">{% if company.c_active %}Active{% else %}Pending{% endif %}</span>
+                    <span class="stat-label">Account Status</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editProfileModal">
+    <div class="modal-content">
+        <i class="fa-solid fa-xmark modal-close" onclick="closeModal('editProfileModal')"></i>
+        <h2 class="modal-title">Edit Company Profile</h2>
+        
+        <form action="{% url 'companyapp:company_profile' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_profile">
+            
+            <div class="form-group">
+                <label><i class="fa-solid fa-building"></i> Company Name</label>
+                <input type="text" name="c_name" class="form-control" value="{{ company.c_name }}" required>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" name="c_email" class="form-control" value="{{ company.c_email }}" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-phone"></i> Phone Number</label>
+                    <input type="text" name="c_phone" class="form-control" value="{{ company.c_phone|default:'' }}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fa-solid fa-image"></i> Company Logo</label>
+                <input type="file" name="c_logo" id="profileLogo" accept="image/*" style="display: none;" onchange="previewProfileImage(this)">
+                <div class="image-preview {% if company.c_logo %}has-image{% endif %}" id="profilePreview" onclick="document.getElementById('profileLogo').click()">
+                    <div class="placeholder" {% if company.c_logo %}style="display: none;"{% endif %}>
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem;"></i>
+                        <span>Click to upload company logo</span>
+                    </div>
+                    <img src="{% if company.c_logo %}{{ company.c_logo.url }}{% endif %}" alt="Preview" {% if company.c_logo %}style="display: block;"{% endif %}>
+                    <div class="change-overlay">
+                        <i class="fa-solid fa-camera" style="margin-right: 8px;"></i> Change Logo
+                    </div>
+                </div>
+                <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">Leave empty to keep current logo.</span>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fa-solid fa-align-left"></i> Company Description</label>
+                <textarea name="c_description" class="form-control" rows="5" required style="resize: none;">{{ company.c_description|default:'' }}</textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notifications logic from base/jobs is included here if needed, or Django messages are rendered globally -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="django-toast" style="position: fixed; top: 20px; right: 20px; background: {% if message.tags == 'success' %}var(--accent-color){% else %}var(--danger-color){% endif %}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 1rem; z-index: 3000; transition: opacity 0.5s ease;">
+            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-xmark{% endif %}" style="font-size: 1.5rem;"></i>
+            <div>
+                <strong style="display: block; font-size: 1rem;">{% if message.tags == 'success' %}Success{% else %}Error{% endif %}</strong>
+                <span style="font-size: 0.85rem; opacity: 0.9;">{{ message }}</span>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script>
+    function openEditProfileModal() {
+        document.getElementById('editProfileModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function previewProfileImage(input) {
+        const previewContainer = document.getElementById('profilePreview');
+        const img = previewContainer.querySelector('img');
+        const placeholder = previewContainer.querySelector('.placeholder');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+                previewContainer.classList.add('has-image');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    // Auto-hide toasts
+    document.addEventListener('DOMContentLoaded', () => {
+        const toasts = document.querySelectorAll('.django-toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        });
+    });
+</script>
+
+{% endblock content %}

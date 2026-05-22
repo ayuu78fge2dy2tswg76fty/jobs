@@ -1,0 +1,547 @@
+{% extends 'adminapp/base.html' %}
+
+{% block title %}Jobseeker Profile - {{ jobseeker.s_fullname }}{% endblock %}
+{% block header_title %}{{ jobseeker.s_fullname }} Profile{% endblock %}
+{% block header_subtitle %}Detailed view of candidate information and application history.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Profile Header */
+    .profile-header {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 5px;
+        background: linear-gradient(90deg, var(--accent-emerald), var(--accent-blue));
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: var(--accent-emerald);
+        border: 2px solid rgba(16, 185, 129, 0.2);
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+    }
+    
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .profile-info h2 {
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-active {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .status-inactive {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--accent-danger);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .gender-badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    
+    .gender-male { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); }
+    .gender-female { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+
+    .profile-meta {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+
+    .profile-meta span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .profile-meta i {
+        color: var(--accent-emerald);
+    }
+
+    /* Tabs Navigation */
+    .tabs-nav {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0px;
+    }
+    
+    .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .tab-btn:hover {
+        color: var(--text-primary);
+    }
+    
+    .tab-btn.active {
+        color: var(--accent-emerald);
+        border-bottom-color: var(--accent-emerald);
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.4s ease forwards;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid Layout */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    .info-title {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+    }
+
+    .info-title i {
+        color: var(--accent-blue);
+    }
+
+    .info-list {
+        list-style: none;
+    }
+
+    .info-list li {
+        margin-bottom: 1.2rem;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 0.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-size: 1.05rem;
+        color: var(--text-primary);
+        font-weight: 500;
+        background: var(--bg-card);
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .password-reveal {
+        color: var(--accent-amber);
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    /* Stats mini grid */
+    .mini-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .mini-stat-card {
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        text-align: center;
+    }
+
+    .mini-stat-card h3 {
+        font-size: 2.5rem;
+        color: var(--accent-emerald);
+        margin-bottom: 0.5rem;
+    }
+
+    .mini-stat-card p {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Tables */
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    .modern-table th {
+        text-align: left;
+        padding: 0 1rem 0.5rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .modern-table td {
+        padding: 1rem;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modern-table tr td:first-child {
+        border-left: 1px solid var(--border-color);
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .modern-table tr td:last-child {
+        border-right: 1px solid var(--border-color);
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+    
+    .action-badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .badge-blue { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .badge-green { background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge-red { background: rgba(239, 68, 68, 0.1); color: var(--accent-danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge-amber { background: rgba(245, 158, 11, 0.1); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.2); }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        margin-bottom: 1.5rem;
+        transition: color 0.2s;
+    }
+    .back-btn:hover {
+        color: var(--text-primary);
+    }
+    
+    @media (max-width: 1024px) {
+        .content-grid { grid-template-columns: 1fr; }
+        .mini-stats { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'adminapp:jobseekers' %}" class="back-btn">
+    <i class="fa-solid fa-arrow-left"></i> Back to Jobseekers
+</a>
+
+<!-- Profile Header -->
+<div class="profile-header">
+    <div class="profile-avatar">
+        {% if jobseeker.s_profile_img %}
+            <img src="{{ jobseeker.s_profile_img.url }}" alt="{{ jobseeker.s_fullname }}">
+        {% else %}
+            {{ jobseeker.s_fullname|make_list|first|upper }}
+        {% endif %}
+    </div>
+    <div class="profile-info">
+        <h2>
+            {{ jobseeker.s_fullname }}
+            {% if jobseeker.s_status %}
+                <span class="status-badge status-active"><i class="fa-solid fa-check"></i> Active</span>
+            {% else %}
+                <span class="status-badge status-inactive"><i class="fa-solid fa-ban"></i> Suspended</span>
+            {% endif %}
+            
+            <span class="gender-badge {% if jobseeker.s_geneder|lower == 'male' %}gender-male{% else %}gender-female{% endif %}">
+                {{ jobseeker.s_geneder|title }}
+            </span>
+        </h2>
+        <div class="profile-meta">
+            <span><i class="fa-solid fa-envelope"></i> {{ jobseeker.s_email }}</span>
+            <span><i class="fa-solid fa-phone"></i> {{ jobseeker.s_phone|default:"N/A" }}</span>
+            <span><i class="fa-solid fa-calendar-days"></i> Joined {{ jobseeker.s_created|date:"M d, Y" }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs Navigation -->
+<div class="tabs-nav">
+    <button class="tab-btn active" data-tab="overview">
+        <i class="fa-solid fa-circle-info"></i> Overview & Info
+    </button>
+    <button class="tab-btn" data-tab="applications">
+        <i class="fa-solid fa-file-lines"></i> Application History <span class="action-badge badge-emerald" style="background: var(--accent-emerald); color: white; margin-left: 5px;">{{ total_applications }}</span>
+    </button>
+</div>
+
+<!-- Tab Content: Overview -->
+<div class="tab-content active" id="overview">
+    <div class="content-grid">
+        <!-- Left Column: Private Info -->
+        <div class="info-card">
+            <h3 class="info-title"><i class="fa-solid fa-lock"></i> Private Information</h3>
+            <ul class="info-list">
+                <li>
+                    <div class="info-label">Username</div>
+                    <div class="info-value"><i class="fa-solid fa-at" style="color: var(--text-muted); margin-right: 10px;"></i> {{ jobseeker.s_username }}</div>
+                </li>
+                <li>
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value"><i class="fa-solid fa-envelope" style="color: var(--text-muted); margin-right: 10px;"></i> {{ jobseeker.s_email }}</div>
+                </li>
+                <li>
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value"><i class="fa-solid fa-phone" style="color: var(--text-muted); margin-right: 10px;"></i> {{ jobseeker.s_phone|default:"Not Provided" }}</div>
+                </li>
+                <li>
+                    <div class="info-label">Raw Password</div>
+                    <div class="info-value" id="passwordBox">
+                        <span><i class="fa-solid fa-key" style="color: var(--text-muted); margin-right: 10px;"></i> <span id="pwdText">••••••••</span></span>
+                        <span class="password-reveal" onclick="togglePassword('{{ jobseeker.s_password|escapejs }}')"><i class="fa-solid fa-eye"></i> Show</span>
+                    </div>
+                    <small style="color: var(--accent-danger); display: block; margin-top: 5px;"><i class="fa-solid fa-triangle-exclamation"></i> Keep this secure. Only visible to Super Admin.</small>
+                </li>
+            </ul>
+            
+            <div style="margin-top: 2rem; display: flex; gap: 10px;">
+                {% if not jobseeker.s_status %}
+                    <a href="{% url 'adminapp:jobseeker_toggle' jobseeker.id %}" class="action-badge badge-green" style="text-decoration: none; padding: 10px; flex: 1; text-align: center;">
+                        <i class="fa-solid fa-check-circle"></i> Reactivate Account
+                    </a>
+                {% else %}
+                    <a href="{% url 'adminapp:jobseeker_toggle' jobseeker.id %}" class="action-badge badge-amber" style="text-decoration: none; padding: 10px; flex: 1; text-align: center;">
+                        <i class="fa-solid fa-ban"></i> Suspend Account
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: Quick Stats -->
+        <div>
+            <div class="mini-stats">
+                <div class="mini-stat-card">
+                    <h3>{{ total_applications }}</h3>
+                    <p>Total Apps</p>
+                </div>
+                <div class="mini-stat-card" style="border-color: rgba(16, 185, 129, 0.3);">
+                    <h3 style="color: var(--accent-emerald);">{{ accepted_applications }}</h3>
+                    <p>Accepted</p>
+                </div>
+                <div class="mini-stat-card" style="border-color: rgba(239, 68, 68, 0.3);">
+                    <h3 style="color: var(--accent-danger);">{{ rejected_applications }}</h3>
+                    <p>Rejected</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3 class="info-title"><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Manage this candidate's account status directly from here.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <a href="{% url 'adminapp:jobseeker_delete' jobseeker.id %}" class="action-badge badge-red" style="text-decoration: none; padding: 12px; text-align: center; font-size: 0.9rem;" onclick="return confirm('WARNING: Are you sure you want to completely delete {{ jobseeker.s_fullname }}? This action cannot be undone.');">
+                        <i class="fa-solid fa-trash"></i> Delete Jobseeker Account
+                    </a>
+                    <button class="action-badge" style="background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--border-color); text-align: center; padding: 12px; font-size: 0.9rem; cursor: pointer;" onclick="document.querySelector('[data-tab=\'applications\']').click();">
+                        <i class="fa-solid fa-arrow-right"></i> View Full Application History
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tab Content: Applications -->
+<div class="tab-content" id="applications">
+    <div class="info-card" style="margin-bottom: 3rem;">
+        <h3 class="info-title"><i class="fa-solid fa-file-lines"></i> Application History</h3>
+        {% if applications %}
+        <div style="overflow-x: auto;">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Applied Job</th>
+                        <th>Location</th>
+                        <th>CV Attached</th>
+                        <th>Status</th>
+                        <th>Applied Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td style="font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; border-radius: 6px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); color: var(--accent-blue); font-weight: bold;">
+                                {{ app.a_job.j_company.c_name|make_list|first|upper }}
+                            </div>
+                            {{ app.a_job.j_company.c_name }}
+                        </td>
+                        <td style="color: var(--text-secondary);">{{ app.a_job.j_title }}</td>
+                        <td style="color: var(--text-secondary);">{{ app.a_current_location|default:"N/A" }}</td>
+                        <td>
+                            {% if app.a_cv %}
+                                <a href="{{ app.a_cv.url }}" target="_blank" class="action-badge badge-blue" style="text-decoration: none;">
+                                    <i class="fa-solid fa-download"></i> View CV
+                                </a>
+                            {% else %}
+                                <span class="action-badge badge-red">No CV</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if app.a_status == 'pending' %}
+                                <span class="action-badge badge-amber">Pending</span>
+                            {% elif app.a_status == 'accepted' %}
+                                <span class="action-badge badge-green">Accepted</span>
+                            {% elif app.a_status == 'rejected' %}
+                                <span class="action-badge badge-red">Rejected</span>
+                            {% else %}
+                                <span class="action-badge badge-blue">{{ app.a_status|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td style="color: var(--text-muted); font-size: 0.9rem;">{{ app.a_applied_date|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); text-align: center; padding: 3rem 0; font-size: 1.1rem;">
+            <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: var(--border-hover); display: block;"></i>
+            This candidate has not applied to any jobs yet.
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Tab Navigation Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active classes
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                // Add active class to clicked button and target content
+                btn.classList.add('active');
+                const targetId = btn.getAttribute('data-tab');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+    });
+
+    // Password Reveal Logic
+    let isPasswordVisible = false;
+    function togglePassword(actualPassword) {
+        const pwdText = document.getElementById('pwdText');
+        const revealBtn = document.querySelector('.password-reveal');
+        
+        if (!isPasswordVisible) {
+            pwdText.textContent = actualPassword || 'No password set';
+            pwdText.style.color = 'var(--text-primary)';
+            revealBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide';
+            isPasswordVisible = true;
+        } else {
+            pwdText.textContent = '••••••••';
+            pwdText.style.color = '';
+            revealBtn.innerHTML = '<i class="fa-solid fa-eye"></i> Show';
+            isPasswordVisible = false;
+        }
+    }
+</script>
+{% endblock %}

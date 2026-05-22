@@ -1,0 +1,359 @@
+{% extends 'adminapp/base.html' %}
+
+{% block title %}Admin Dashboard - Fursad Premium{% endblock %}
+{% block header_title %}Overview Dashboard{% endblock %}
+{% block header_subtitle %}Welcome back, here's what's happening on Fursad today.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.8rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--border-hover);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+    }
+
+    .stat-card.companies::before { background: var(--accent-blue); }
+    .stat-card.jobseekers::before { background: var(--accent-emerald); }
+    .stat-card.jobs::before { background: var(--accent-violet); }
+    .stat-card.pending::before { background: var(--accent-amber); }
+
+    .stat-card:hover.companies { box-shadow: 0 10px 25px -5px var(--accent-blue-glow); }
+    .stat-card:hover.jobseekers { box-shadow: 0 10px 25px -5px var(--accent-emerald-glow); }
+    .stat-card:hover.jobs { box-shadow: 0 10px 25px -5px var(--accent-violet-glow); }
+    .stat-card:hover.pending { box-shadow: 0 10px 25px -5px var(--accent-amber-glow); }
+
+    .stat-content h3 {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-bottom: 0.8rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .stat-content .value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .companies .stat-icon { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); }
+    .jobseekers .stat-icon { background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); }
+    .jobs .stat-icon { background: rgba(139, 92, 246, 0.1); color: var(--accent-violet); }
+    .pending .stat-icon { background: rgba(245, 158, 11, 0.1); color: var(--accent-amber); }
+
+    /* Recent Activity Section */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .card-container {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-title i {
+        color: var(--accent-amber);
+    }
+
+    .view-all-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .view-all-btn:hover {
+        color: var(--text-primary);
+        border-color: var(--text-secondary);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Table */
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    .modern-table th {
+        text-align: left;
+        padding: 0 1rem 0.5rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .modern-table td {
+        padding: 1rem;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        transition: background 0.2s;
+    }
+
+    .modern-table tr td:first-child {
+        border-left: 1px solid var(--border-color);
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .modern-table tr td:last-child {
+        border-right: 1px solid var(--border-color);
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .modern-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .company-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .company-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: rgba(59, 130, 246, 0.2);
+        color: var(--accent-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .company-name {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .company-email {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent-amber);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .action-btn {
+        background: var(--accent-blue);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+    }
+
+    .action-btn:hover {
+        background: #2563eb;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--border-hover);
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        .content-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Statistics -->
+<div class="stats-grid">
+    <div class="stat-card companies">
+        <div class="stat-content">
+            <h3>Total Companies</h3>
+            <div class="value">{{ total_companies }}</div>
+        </div>
+        <div class="stat-icon">
+            <i class="fa-solid fa-building"></i>
+        </div>
+    </div>
+    
+    <div class="stat-card jobseekers">
+        <div class="stat-content">
+            <h3>Total Jobseekers</h3>
+            <div class="value">{{ total_jobseekers }}</div>
+        </div>
+        <div class="stat-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+    </div>
+    
+    <div class="stat-card jobs">
+        <div class="stat-content">
+            <h3>Active Jobs</h3>
+            <div class="value">{{ open_jobs }}</div>
+        </div>
+        <div class="stat-icon">
+            <i class="fa-solid fa-briefcase"></i>
+        </div>
+    </div>
+    
+    <div class="stat-card pending">
+        <div class="stat-content">
+            <h3>Pending Verifications</h3>
+            <div class="value">{{ pending_verifications }}</div>
+        </div>
+        <div class="stat-icon">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Content Grid -->
+<div class="content-grid">
+    <!-- Recent Companies to Verify -->
+    <div class="card-container">
+        <div class="card-header">
+            <h2 class="card-title">
+                <i class="fa-solid fa-shield-cat"></i> Companies Awaiting Verification
+            </h2>
+            <a href="{% url 'adminapp:companies' %}" class="view-all-btn">View All</a>
+        </div>
+        
+        {% if recent_verifications %}
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Company Details</th>
+                    <th>Date Joined</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in recent_verifications %}
+                <tr>
+                    <td>
+                        <div class="company-cell">
+                            <div class="company-avatar">
+                                {{ company.c_name|make_list|first|upper }}
+                            </div>
+                            <div>
+                                <div class="company-name">{{ company.c_name }}</div>
+                                <div class="company-email">{{ company.c_email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="color: var(--text-secondary); font-size: 0.9rem;">
+                        {{ company.c_joined|date:"M d, Y" }}
+                    </td>
+                    <td>
+                        <span class="status-badge">
+                            <i class="fa-solid fa-circle-dot" style="font-size: 0.5rem;"></i> Pending
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'adminapp:company_activate' company.id %}" class="action-btn">Verify Now</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa-regular fa-face-smile-beam"></i>
+            <h3>All Caught Up!</h3>
+            <p>There are no companies waiting for verification at this time.</p>
+        </div>
+        {% endif %}
+    </div>
+
+
+</div>
+{% endblock %}

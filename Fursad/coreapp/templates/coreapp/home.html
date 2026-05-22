@@ -1,0 +1,431 @@
+{% extends 'coreapp/base.html' %}
+
+{% block title %}Fursad - Find Your Dream Job{% endblock %}
+
+{% block content %}
+<style>
+    /* Home Page Specific Styles */
+    .hero-section {
+        padding: 6rem 5%;
+        background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+    }
+
+    .hero-badge {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: fadeInDown 0.5s ease;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to right, #fff, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInDown 0.6s ease;
+    }
+
+    .hero-title span {
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin-bottom: 3rem;
+        animation: fadeInDown 0.7s ease;
+    }
+
+    /* Search Bar */
+    .search-container {
+        width: 100%;
+        max-width: 800px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid var(--border-color);
+        padding: 0.75rem;
+        border-radius: 100px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        backdrop-filter: blur(10px);
+        animation: slideUp 0.8s ease;
+    }
+
+    .search-input-group {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        border-right: 1px solid var(--border-color);
+    }
+
+    .search-input-group:last-of-type {
+        border-right: none;
+    }
+
+    .search-input-group i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        margin-right: 1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: var(--text-light);
+        font-size: 1rem;
+    }
+
+    .search-input:focus {
+        outline: none;
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: 100px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Stats Section */
+    .stats-container {
+        display: flex;
+        gap: 4rem;
+        margin-top: 4rem;
+        animation: slideUp 1s ease;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+    }
+
+    /* Categories Section */
+    .section-padding {
+        padding: 5rem 5%;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .section-title span {
+        color: var(--primary-color);
+    }
+
+    .view-all {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: gap 0.3s;
+    }
+
+    .view-all:hover {
+        gap: 0.8rem;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .category-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: left;
+        transition: transform 0.3s, border-color 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .category-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-color);
+    }
+
+    .category-card:hover::before {
+        opacity: 1;
+    }
+
+    .cat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cat-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-light);
+    }
+
+    .cat-count {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    /* Features Section */
+    .features-section {
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+    }
+
+    .feature-item {
+        text-align: center;
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-desc {
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.5rem; }
+        .search-container { flex-direction: column; border-radius: 16px; padding: 1rem; gap: 1rem; }
+        .search-input-group { border-right: none; border-bottom: 1px solid var(--border-color); padding: 1rem 0; width: 100%; }
+        .search-btn { width: 100%; justify-content: center; }
+        .stats-container { flex-wrap: wrap; justify-content: center; gap: 2rem; }
+        .feature-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-badge">
+        <i class="fa-solid fa-bolt"></i> Best Job Portal in Somalia
+    </div>
+    <h1 class="hero-title">Discover Your <span>Dream Job</span><br>With Fursad</h1>
+    <p class="hero-subtitle">Connect with top companies, showcase your skills, and take the next step in your professional career. Active companies are waiting for you!</p>
+    
+    <div class="search-container">
+        <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" placeholder="Job title, keywords, or company">
+        </div>
+        <div class="search-input-group">
+            <i class="fa-solid fa-location-dot"></i>
+            <input type="text" class="search-input" placeholder="City or region">
+        </div>
+        <button class="search-btn">
+            Find Jobs <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-item">
+            <span class="stat-number"><span class="counter" data-target="10">0</span>k+</span>
+            <span class="stat-label">Active Jobs</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number"><span class="counter" data-target="5">0</span>k+</span>
+            <span class="stat-label">Companies</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number"><span class="counter" data-target="2">0</span>M+</span>
+            <span class="stat-label">Candidates</span>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const counters = document.querySelectorAll('.counter');
+        const duration = 2000; // 2 seconds for the animation
+
+        const startCounter = (counter) => {
+            const target = +counter.getAttribute('data-target');
+            const startTime = performance.now();
+
+            const updateCount = (currentTime) => {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                
+                // Ease out cubic for smooth finish
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const currentCount = Math.floor(easeOutCubic * target);
+
+                counter.innerText = currentCount;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCount);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            requestAnimationFrame(updateCount);
+        };
+
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    startCounter(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => observer.observe(counter));
+    });
+</script>
+
+<!-- Top Categories -->
+<section class="section-padding">
+    <div class="section-header">
+        <h2 class="section-title">Explore by <span>Category</span></h2>
+        <a href="#" class="view-all">All Categories <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+
+    <div class="categories-grid">
+        <div class="category-card">
+            <div class="cat-icon"><i class="fa-solid fa-laptop-code"></i></div>
+            <h3 class="cat-title">Technology</h3>
+            <p class="cat-count">1,240 open positions</p>
+        </div>
+        <div class="category-card">
+            <div class="cat-icon" style="color: var(--accent-color); background: rgba(16, 185, 129, 0.1);"><i class="fa-solid fa-chart-line"></i></div>
+            <h3 class="cat-title">Finance & Business</h3>
+            <p class="cat-count">850 open positions</p>
+        </div>
+        <div class="category-card">
+            <div class="cat-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);"><i class="fa-solid fa-stethoscope"></i></div>
+            <h3 class="cat-title">Healthcare</h3>
+            <p class="cat-count">620 open positions</p>
+        </div>
+        <div class="category-card">
+            <div class="cat-icon" style="color: #8b5cf6; background: rgba(139, 92, 246, 0.1);"><i class="fa-solid fa-bullhorn"></i></div>
+            <h3 class="cat-title">Marketing</h3>
+            <p class="cat-count">430 open positions</p>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="section-padding features-section">
+    <div class="feature-grid">
+        <div class="feature-item">
+            <i class="fa-solid fa-shield-halved feature-icon"></i>
+            <h3 class="feature-title">Verified Companies</h3>
+            <p class="feature-desc">We ensure only active, verified companies can post jobs and access candidate profiles, ensuring a safe ecosystem.</p>
+        </div>
+        <div class="feature-item">
+            <i class="fa-solid fa-bolt feature-icon"></i>
+            <h3 class="feature-title">Fast Application</h3>
+            <p class="feature-desc">Apply to your dream jobs with just a single click. Our advanced matching algorithm connects you to the right fit.</p>
+        </div>
+        <div class="feature-item">
+            <i class="fa-solid fa-headset feature-icon"></i>
+            <h3 class="feature-title">24/7 Support</h3>
+            <p class="feature-desc">Our dedicated team is always here to help you navigate the platform and maximize your career opportunities.</p>
+        </div>
+    </div>
+</section>
+{% endblock content %}

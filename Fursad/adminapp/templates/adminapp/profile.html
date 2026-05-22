@@ -1,0 +1,489 @@
+{% extends 'adminapp/base.html' %}
+
+{% block title %}Manage Admins - Fursad Premium{% endblock %}
+{% block header_title %}Admin Management{% endblock %}
+{% block header_subtitle %}Manage platform administrators and their access levels.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Card Styles */
+    .card-container {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px dashed rgba(255,255,255,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+        color: white;
+        width: 100%;
+        justify-content: center;
+    }
+    .btn-primary:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    /* Admins Table */
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    .modern-table th {
+        text-align: left;
+        padding: 0 1rem 0.5rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .modern-table td {
+        padding: 1rem;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modern-table tr td:first-child { border-left: 1px solid var(--border-color); border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+    .modern-table tr td:last-child { border-right: 1px solid var(--border-color); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
+    .role-badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .role-super { background: rgba(139, 92, 246, 0.1); color: var(--accent-violet); border: 1px solid rgba(139, 92, 246, 0.2); }
+    .role-staff { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.2); }
+
+    .action-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 8px 10px;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    .action-btn.view:hover { color: var(--accent-emerald); background: rgba(16, 185, 129, 0.1); }
+    .action-btn.edit:hover { color: var(--accent-blue); background: rgba(59, 130, 246, 0.1); }
+    .action-btn.delete:hover { color: var(--accent-danger); background: rgba(239, 68, 68, 0.1); }
+
+    .btn-add {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        padding: 10px 18px;
+        font-size: 0.95rem;
+    }
+    .btn-add:hover { background: var(--accent-emerald); color: white; }
+
+    /* Modals */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+        display: flex; align-items: center; justify-content: center; z-index: 9999;
+        opacity: 0; visibility: hidden; transition: all 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    
+    .modal-container {
+        background: var(--bg-surface); border: 1px solid var(--border-color);
+        border-radius: 20px; width: 100%; max-width: 550px;
+        transform: translateY(30px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+    }
+    .modal-overlay.active .modal-container { transform: translateY(0) scale(1); }
+    
+    .modal-header {
+        padding: 1.5rem 2rem; border-bottom: 1px dashed rgba(255,255,255,0.05);
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h3 { font-size: 1.25rem; margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+    .modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;}
+    .modal-close:hover { color: var(--accent-danger); }
+    
+    .modal-body { padding: 2rem; }
+
+    /* View Modal Details */
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .detail-value { color: var(--text-primary); font-weight: 500; font-size: 1rem; }
+
+    /* Custom Checkbox */
+    .checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .checkbox-wrapper input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-violet); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- All Admins Management -->
+<div class="card-container">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fa-solid fa-users-gear" style="color: var(--accent-violet);"></i> Administrators Directory</h3>
+        {% if request.user.is_superuser %}
+        <button class="btn btn-add" onclick="openAddModal()">
+            <i class="fa-solid fa-plus"></i> Add New Admin
+        </button>
+        {% endif %}
+    </div>
+    
+    <div style="overflow-x: auto;">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Admin Details</th>
+                    <th>Email Address</th>
+                    <th>Role Level</th>
+                    <th>Joined Date</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in admins %}
+                <tr>
+                    <td style="font-weight: 500; color: var(--text-primary);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; border: 1px solid rgba(59, 130, 246, 0.2);">
+                                {{ admin.username|make_list|first|upper }}
+                            </div>
+                            <div>
+                                <div>{{ admin.username }}</div>
+                                {% if request.user.id == admin.id %}
+                                    <span style="font-size: 0.7rem; color: var(--accent-emerald);">Current User</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td style="color: var(--text-secondary);">
+                        <i class="fa-solid fa-envelope" style="color: var(--text-muted); margin-right: 5px;"></i> 
+                        {{ admin.email|default:"No Email Provided" }}
+                    </td>
+                    <td>
+                        {% if admin.is_superuser %}
+                            <span class="role-badge role-super">Super Admin</span>
+                        {% else %}
+                            <span class="role-badge role-staff">Staff Admin</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.9rem;">
+                        {{ admin.date_joined|date:"M d, Y" }}
+                    </td>
+                    
+                    <td style="text-align: right;">
+                        <button class="action-btn view" title="View Details"
+                            onclick="openViewModal('{{ admin.username|escapejs }}', '{{ admin.email|escapejs }}', '{{ admin.is_superuser|yesno:'Super Admin,Staff Admin' }}', '{{ admin.date_joined|date:'F d, Y' }}', '{{ admin.last_login|date:'F d, Y h:i A'|default:'Never logged in' }}', '{{ admin.password|escapejs }}')">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        
+                        <button class="action-btn edit" title="Edit Admin"
+                            onclick="openEditModal('{{ admin.id }}', '{{ admin.username|escapejs }}', '{{ admin.email|escapejs }}', '{{ admin.is_superuser|yesno:"true,false" }}')">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        {% if request.user.id != admin.id %}
+                        <button class="action-btn delete" title="Delete Admin"
+                            onclick="openDeleteModal('{% url 'adminapp:admin_delete' admin.id %}', '{{ admin.username|escapejs }}')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- View Admin Modal -->
+<div class="modal-overlay" id="viewAdminModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-id-badge" style="color: var(--accent-emerald);"></i> Admin Profile Details</h3>
+            <button class="modal-close" onclick="closeViewModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet)); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white; box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h2 id="viewUsername" style="color: var(--text-primary); font-size: 1.5rem; margin-bottom: 0.5rem;">Username</h2>
+                <span id="viewRole" class="role-badge role-super">Role</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label"><i class="fa-solid fa-envelope" style="margin-right: 5px;"></i> Email Address</span>
+                <span class="detail-value" id="viewEmail">email@example.com</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label"><i class="fa-solid fa-calendar-days" style="margin-right: 5px;"></i> Account Created</span>
+                <span class="detail-value" id="viewJoined">Jan 1, 2024</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label"><i class="fa-solid fa-clock-rotate-left" style="margin-right: 5px;"></i> Last Login</span>
+                <span class="detail-value" id="viewLastLogin" style="color: var(--text-muted);">Never logged in</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label"><i class="fa-solid fa-key" style="margin-right: 5px;"></i> Password Hash</span>
+                <div class="detail-value" style="display: flex; align-items: center; gap: 10px;">
+                    <span id="viewPassword" data-pwd="" style="font-family: monospace; font-size: 0.85rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">••••••••••••••••</span>
+                    <button type="button" onclick="toggleAdminPassword()" style="background: transparent; border: none; color: var(--accent-amber); cursor: pointer; font-size: 0.9rem;">
+                        <i class="fa-solid fa-eye" id="viewPasswordIcon"></i> Show
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% if request.user.is_superuser %}
+<!-- Add Admin Modal -->
+<div class="modal-overlay" id="addAdminModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-user-plus" style="color: var(--accent-emerald);"></i> Add New Admin</h3>
+            <button class="modal-close" onclick="closeAddModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" action="{% url 'adminapp:admin_add' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required placeholder="admin@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required placeholder="Create strong password">
+                </div>
+                <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" name="is_superuser">
+                        <span style="color: var(--text-primary); font-weight: 500; font-size: 1.05rem;">Make Super Administrator</span>
+                    </label>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px; margin-left: 28px; line-height: 1.5;">Super Admins have full access to the platform and can add/delete other administrators.</p>
+                </div>
+                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, var(--accent-emerald), #059669);">Create Admin Account</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Admin Modal -->
+<div class="modal-overlay" id="editAdminModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-pen-to-square" style="color: var(--accent-blue);"></i> Edit Admin Info</h3>
+            <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" id="editAdminForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" id="editUsername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" id="editEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current password">
+                </div>
+                <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" name="is_superuser" id="editSuperuser">
+                        <span style="color: var(--text-primary); font-weight: 500; font-size: 1.05rem;">Make Super Administrator</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Admin Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="confirmDeleteModal">
+    <div class="modal-container" style="max-width: 400px; text-align: center; padding: 2.5rem;">
+        <div style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1.5rem; background: rgba(239, 68, 68, 0.1); color: var(--accent-danger); border: 1px solid rgba(239, 68, 68, 0.2);">
+            <i class="fa-solid fa-user-xmark"></i>
+        </div>
+        <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--text-primary);">Remove Admin?</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6;" id="deleteAdminText">Are you sure you want to remove this admin?</p>
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn" style="flex: 1; background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--border-color);" onclick="closeDeleteModal()">Cancel</button>
+            <a href="#" class="btn" id="btnConfirmDelete" style="flex: 1; background: var(--accent-danger); color: white;">Yes, Remove</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Modals Handling
+    const viewModal = document.getElementById('viewAdminModal');
+    const addModal = document.getElementById('addAdminModal');
+    const editModal = document.getElementById('editAdminModal');
+    const deleteModal = document.getElementById('confirmDeleteModal');
+
+    function openViewModal(username, email, role, joined, lastLogin, passwordHash) {
+        document.getElementById('viewUsername').textContent = username;
+        document.getElementById('viewEmail').textContent = email || 'No Email Provided';
+        
+        const roleEl = document.getElementById('viewRole');
+        roleEl.textContent = role;
+        if (role === 'Super Admin') {
+            roleEl.className = 'role-badge role-super';
+        } else {
+            roleEl.className = 'role-badge role-staff';
+        }
+
+        document.getElementById('viewJoined').textContent = joined;
+        document.getElementById('viewLastLogin').textContent = lastLogin;
+        
+        // Setup Password Hash UI
+        const pwdSpan = document.getElementById('viewPassword');
+        pwdSpan.setAttribute('data-pwd', passwordHash || 'No Password');
+        pwdSpan.textContent = '••••••••••••••••';
+        document.getElementById('viewPasswordIcon').className = 'fa-solid fa-eye';
+        document.getElementById('viewPasswordIcon').nextSibling.textContent = ' Show';
+
+        viewModal.classList.add('active');
+    }
+    
+    let isPwdVisible = false;
+    function toggleAdminPassword() {
+        const pwdSpan = document.getElementById('viewPassword');
+        const icon = document.getElementById('viewPasswordIcon');
+        
+        if(!isPwdVisible) {
+            pwdSpan.textContent = pwdSpan.getAttribute('data-pwd');
+            icon.className = 'fa-solid fa-eye-slash';
+            icon.nextSibling.textContent = ' Hide';
+            isPwdVisible = true;
+        } else {
+            pwdSpan.textContent = '••••••••••••••••';
+            icon.className = 'fa-solid fa-eye';
+            icon.nextSibling.textContent = ' Show';
+            isPwdVisible = false;
+        }
+    }
+
+    function closeViewModal() { 
+        viewModal.classList.remove('active'); 
+        isPwdVisible = false; // Reset on close
+    }
+
+    function openAddModal() { addModal.classList.add('active'); }
+    function closeAddModal() { addModal.classList.remove('active'); }
+
+    function openEditModal(id, username, email, isSuper) {
+        document.getElementById('editAdminForm').action = `/adminapp/profile/${id}/edit/`;
+        document.getElementById('editUsername').value = username;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editSuperuser').checked = isSuper === 'true';
+        editModal.classList.add('active');
+    }
+    function closeEditModal() { editModal.classList.remove('active'); }
+
+    function openDeleteModal(url, username) {
+        document.getElementById('btnConfirmDelete').href = url;
+        document.getElementById('deleteAdminText').innerHTML = `Are you sure you want to completely remove <strong>${username}</strong>'s access to the portal? This action cannot be undone.`;
+        deleteModal.classList.add('active');
+    }
+    function closeDeleteModal() { deleteModal.classList.remove('active'); }
+
+    window.addEventListener('click', (e) => {
+        if(e.target === viewModal) closeViewModal();
+        if(e.target === addModal) closeAddModal();
+        if(e.target === editModal) closeEditModal();
+        if(e.target === deleteModal) closeDeleteModal();
+    });
+</script>
+{% endif %}
+{% endblock %}

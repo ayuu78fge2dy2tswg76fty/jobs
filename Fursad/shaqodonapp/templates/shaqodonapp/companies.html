@@ -1,0 +1,73 @@
+{% extends 'shaqodonapp/base.html' %}
+
+{% block title %}Explore Companies | Shaqodon{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <div style="margin-bottom: 3rem; text-align: center;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 0.5rem; letter-spacing: -1px;">Explore Top Companies</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Connect with industry leaders and find your next career move with the best employers in the region.</p>
+    </div>
+
+    <!-- Companies Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;">
+        {% for company in companies %}
+        <div class="company-card-premium" style="
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        " onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--primary)'; this.style.background='rgba(30, 41, 59, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.background='rgba(30, 41, 59, 0.4)'">
+            
+            <!-- Glow Background -->
+            <div style="position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: var(--primary); filter: blur(60px); opacity: 0.1;"></div>
+
+            <!-- Logo -->
+            <div style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--bg-card); background: #fff; margin: 0 auto 1.5rem auto; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative; z-index: 2;">
+                {% if company.c_logo %}
+                    <img src="{{ company.c_logo.url }}" alt="{{ company.c_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 100%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #cbd5e1;">
+                        <i class="fa-solid fa-building" style="font-size: 2.5rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Content -->
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 8px;">{{ company.c_name }}</h2>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 1.25rem;">
+                <span style="font-size: 0.85rem; color: var(--primary-light); font-weight: 700;">Verified Employer</span>
+                <i class="fa-solid fa-circle-check" style="color: var(--primary); font-size: 0.85rem;"></i>
+            </div>
+
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 4.8rem;">
+                {{ company.c_description|default:"Leading company committed to innovation and excellence in their industry, providing great opportunities for talented professionals." }}
+            </p>
+
+            <div style="display: flex; gap: 10px; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="flex: 1; text-align: left;">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Active Jobs</p>
+                    <p style="font-size: 1.2rem; font-weight: 800; color: white;">Explore Now</p>
+                </div>
+                <a href="{% url 'shaqodonapp:shaqodon_company_detail' company.id %}" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='var(--primary)'; this.style.borderColor='var(--primary)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.1)'">
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 6rem 2rem; background: rgba(30, 41, 59, 0.2); border: 2px dashed rgba(255,255,255,0.05); border-radius: 32px;">
+            <div style="font-size: 4rem; color: rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
+                <i class="fa-solid fa-building-circle-exclamation"></i>
+            </div>
+            <h3 style="color: var(--text-muted); font-size: 1.5rem; font-weight: 700;">No companies available</h3>
+            <p style="color: var(--text-muted); margin-top: 10px;">Check back later to discover great companies to work for.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

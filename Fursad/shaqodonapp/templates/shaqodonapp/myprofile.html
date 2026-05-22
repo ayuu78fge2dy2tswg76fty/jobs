@@ -1,0 +1,142 @@
+{% extends 'shaqodonapp/base.html' %}
+
+{% block title %}My Profile | Shaqodon{% endblock %}
+
+{% block content %}
+<div class="animate-fade" style="max-width: 800px; margin: 0 auto;">
+    <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        
+        <!-- Profile Header/Banner -->
+        <div style="height: 160px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); position: relative;">
+            <div style="position: absolute; bottom: -60px; left: 40px; width: 140px; height: 140px; border-radius: 50%; border: 6px solid var(--bg-card); background: #fff; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                {% if shaqodon.s_profile_img %}
+                    <img src="{{ shaqodon.s_profile_img.url }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 100%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #cbd5e1;">
+                        <i class="fa-solid fa-user" style="font-size: 4rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <!-- Glow effect -->
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: var(--primary); filter: blur(100px); opacity: 0.1;"></div>
+        </div>
+
+        <div style="padding: 80px 40px 40px 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem;">
+                <div>
+                    <h1 style="font-size: 2.2rem; font-weight: 800; color: white; margin-bottom: 5px; letter-spacing: -1px;">{{ shaqodon.s_fullname }}</h1>
+                    <p style="color: var(--primary-light); font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-circle-check" style="font-size: 0.9rem;"></i> Verified Jobseeker
+                    </p>
+                </div>
+                <button id="editToggleBtn" onclick="toggleProfileEdit()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px 28px; border-radius: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px;" onmouseover="this.style.transform='scale(1.05)'; this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(255,255,255,0.05)'">
+                    <i class="fa-solid fa-pen-fancy"></i> Edit My Profile
+                </button>
+            </div>
+
+            <!-- Profile Overview (View Mode) -->
+            <div id="profileView" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.1); color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Email Address</p>
+                    </div>
+                    <p style="font-size: 1.15rem; font-weight: 600; color: white;">{{ shaqodon.s_email }}</p>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Phone Number</p>
+                    </div>
+                    <p style="font-size: 1.15rem; font-weight: 600; color: white;">{{ shaqodon.s_phone|default:"Not linked" }}</p>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-venus-mars"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Gender</p>
+                    </div>
+                    <p style="font-size: 1.15rem; font-weight: 600; color: white; text-transform: capitalize;">{{ shaqodon.s_geneder }}</p>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-user-tag"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Username</p>
+                    </div>
+                    <p style="font-size: 1.15rem; font-weight: 600; color: white;">@{{ shaqodon.s_username }}</p>
+                </div>
+            </div>
+
+            <!-- Profile Edit Form (Hidden Mode) -->
+            <div id="profileEdit" style="display: none; animation: slideUp 0.4s ease;">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Full Name</label>
+                            <input type="text" name="fullname" value="{{ shaqodon.s_fullname }}" required style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Email Address</label>
+                            <input type="email" name="email" value="{{ shaqodon.s_email }}" required style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Phone Number</label>
+                            <input type="text" name="phone" value="{{ shaqodon.s_phone }}" style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Update Profile Picture</label>
+                            <div style="position: relative; background: rgba(255,255,255,0.03); border: 2px dashed rgba(255,255,255,0.1); border-radius: 16px; padding: 25px; text-align: center; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+                                <input type="file" name="profile_img" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+                                <i class="fa-solid fa-camera-retro" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                                <p style="font-size: 0.9rem; color: var(--text-muted);">Click here to upload a new profile photo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" style="flex: 2; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; border-radius: 18px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);">Update Profile</button>
+                        <button type="button" onclick="toggleProfileEdit()" style="flex: 1; padding: 16px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; font-weight: 700; cursor: pointer;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+<script>
+    let isProfileEditMode = false;
+    function toggleProfileEdit() {
+        isProfileEditMode = !isProfileEditMode;
+        const view = document.getElementById('profileView');
+        const edit = document.getElementById('profileEdit');
+        const btn = document.getElementById('editToggleBtn');
+        
+        if (isProfileEditMode) {
+            view.style.display = 'none';
+            edit.style.display = 'block';
+            btn.style.display = 'none';
+        } else {
+            view.style.display = 'grid';
+            edit.style.display = 'none';
+            btn.style.display = 'flex';
+        }
+    }
+</script>
+{% endblock %}
