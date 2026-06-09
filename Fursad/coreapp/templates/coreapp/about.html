@@ -141,18 +141,32 @@
 
 <style>
     .team-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 310px));
-        gap: 8rem 3rem;
-        margin-top: 8rem;
-        justify-content: center; /* Center the cards */
-        max-width: 1200px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 0 2rem;
+        display: flex;
+        gap: 3rem;
+        margin-top: 2rem;
+        padding: 7rem 5% 5rem 5%;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        max-width: 100vw;
+    }
+
+    @media (min-width: 1024px) {
+        .team-grid {
+            justify-content: center;
+        }
+    }
+
+    .team-grid::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
     }
 
     .team-card {
+        scroll-snap-align: center;
+        flex: 0 0 320px;
+        max-width: 85vw; /* Responsive on very small screens */
         background: linear-gradient(145deg, rgba(30, 41, 59, 0.45), rgba(15, 23, 42, 0.7));
         backdrop-filter: blur(25px);
         -webkit-backdrop-filter: blur(25px);
@@ -167,7 +181,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 100%;
     }
 
     .team-card::before {
@@ -315,4 +328,41 @@
     .social-email:hover { background: #ea4335 !important; border-color: #ea4335 !important; box-shadow: 0 10px 20px rgba(234, 67, 53, 0.3) !important; }
     .social-whatsapp:hover { background: #25d366 !important; border-color: #25d366 !important; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3) !important; }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const teamGrid = document.querySelector('.team-grid');
+        if (!teamGrid) return;
+        
+        let scrollSpeed = 1; 
+        let scrollDirection = 1;
+        let autoScrollTimer;
+
+        function startAutoScroll() {
+            clearInterval(autoScrollTimer);
+            autoScrollTimer = setInterval(() => {
+                // Pause if user is hovering or touching
+                if (!teamGrid.matches(':hover') && !teamGrid.matches(':active')) {
+                    teamGrid.scrollLeft += scrollSpeed * scrollDirection;
+                    
+                    // Reverse direction when reaching ends
+                    if (teamGrid.scrollLeft >= (teamGrid.scrollWidth - teamGrid.clientWidth - 2)) {
+                        scrollDirection = -1;
+                    } else if (teamGrid.scrollLeft <= 0) {
+                        scrollDirection = 1;
+                    }
+                }
+            }, 30);
+        }
+        
+        // Start the auto-scroll
+        startAutoScroll();
+        
+        // Pause on touch to allow manual scroll
+        teamGrid.addEventListener('touchstart', () => clearInterval(autoScrollTimer));
+        teamGrid.addEventListener('touchend', () => {
+            setTimeout(startAutoScroll, 1000);
+        });
+    });
+</script>
 {% endblock %}

@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-bpl#-)55zuxw^!9rn!!0jcr=r^0#)%ku*c9fdc9e1q0_=%us(^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.100.76','localhost','127.0.0.1','*']
+ALLOWED_HOSTS = ['*','localhost','127.0.0.1',' 192.168.0.110']
+# AUTH_USER_MODEL = 'adminapp.CustomUser'
 
 
 # Application definition
@@ -79,12 +80,21 @@ WSGI_APPLICATION = 'Fursad.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': 'Fursad_A_DB_',
+        'HOST': 'DESKTOP-UN31UCL\\MSSQLSER1',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'trusted_connection': 'yes',
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

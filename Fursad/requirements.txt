@@ -16,3 +16,8 @@ django-cors-headers==5.1.0
 sqlparse==0.5.5
 # tzdata for timezone data
 tzdata==2026.1
+
+    """
+    Shaqodon (employee) permanently deletes their own application.
+    This removes the application from BOTH sides (company and employee).
+    """

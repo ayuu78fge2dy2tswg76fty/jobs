@@ -108,4 +108,5 @@ def company_register(request):
             messages.success(request, 'Wait until admin activate you')
             
         return redirect(request.META.get('HTTP_REFERER', 'home'))
-    return redirect('home')
+    else:
+        return redirect('home')

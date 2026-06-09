@@ -6,9 +6,25 @@
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<style>
+    @media (max-width: 768px) {
+        .chart-row {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+        .insight-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        .stats-top-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+
 <div class="animate-fade">
     <!-- Quick Stats -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="stats-top-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
         <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 1.5rem; display: flex; flex-direction: column; gap: 8px;">
             <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Total Positions</span>
             <span style="color: white; font-size: 2rem; font-weight: 800;">{{ total_jobs }}</span>
@@ -24,7 +40,7 @@
     </div>
 
     <!-- Charts Row 1: Jobs and Status -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+    <div class="chart-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
         <!-- Applications per Job -->
         <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
             <h3 style="color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
@@ -47,7 +63,7 @@
     </div>
 
     <!-- Charts Row 2: Gender and Location -->
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 3rem;">
+    <div class="chart-row" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 3rem;">
         <!-- Gender Breakdown -->
         <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
             <h3 style="color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
@@ -72,7 +88,7 @@
     <!-- Detailed Insights -->
     <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2.5rem;">
         <h3 style="color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem;">Strategic Insights</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <div class="insight-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
             <div style="padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: 16px;">
                 <h4 style="color: var(--primary-color); margin-bottom: 10px;">Top Performing Job</h4>
                 <p style="color: var(--text-muted); font-size: 0.95rem;">

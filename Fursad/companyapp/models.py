@@ -19,10 +19,10 @@ class Company_DB(models.Model):
     
 
 
-    def save(self,*args,**kwargs):
-        if self.c_password:
-            self.c_password = make_password(self.c_password)
-        super().save(*args,**kwargs)
+    # def save(self,*args,**kwargs):
+    #     if self.c_password:
+    #         self.c_password = make_password(self.c_password)
+    #     super().save(*args,**kwargs)
 
  
         

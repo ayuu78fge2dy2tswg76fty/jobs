@@ -3,7 +3,7 @@
 {% block title %}Find Jobs | Fursad{% endblock %}
 
 {% block content %}
-<div class="animate-fade">
+<div class="animate-fade" style="padding-bottom: 6rem;">
     <div style="margin-bottom: 3rem; text-align: center;">
         <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem; letter-spacing: -1.5px;">Explore Career Opportunities</h1>
         <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Join thousands of professionals finding their dream roles at top companies.</p>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Jobs Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
         {% for job in jobs %}
         <div class="job-card-premium" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; padding: 2rem; display: flex; flex-direction: column; transition: 0.4s;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--primary)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'">
             <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">

@@ -374,6 +374,34 @@
     .image-preview.has-image:hover .change-overlay {
         display: flex;
     }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+        .profile-name {
+            justify-content: center;
+        }
+        .profile-meta {
+            justify-content: center;
+        }
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+        .btn-edit {
+            width: 100%;
+            justify-content: center;
+        }
+        form > div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+        }
+        .modal-content {
+            padding: 1.5rem !important;
+        }
+    }
 </style>
 
 <!-- Profile Header -->

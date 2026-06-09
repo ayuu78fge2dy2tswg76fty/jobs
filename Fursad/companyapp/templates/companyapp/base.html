@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -8,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+     <link rel="icon" type="image/png" href="{% static 'logo.png' %}">
     <style>
         :root {
             --primary-color: #3b82f6; /* Blue */
@@ -47,10 +48,10 @@
             width: var(--sidebar-width);
             background-color: var(--bg-card);
             border-right: 1px solid var(--border-color);
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: fixed;
             height: 100vh;
-            z-index: 1000;
+            z-index: 900;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -189,7 +190,6 @@
             margin-left: var(--sidebar-collapsed-width);
         }
 
-        /* Top Header */
         .top-header {
             height: var(--header-height);
             background-color: rgba(30, 41, 59, 0.8);
@@ -201,7 +201,7 @@
             padding: 0 2rem;
             position: sticky;
             top: 0;
-            z-index: 999;
+            z-index: 950;
         }
 
         .toggle-btn {
@@ -210,13 +210,19 @@
             color: var(--text-light);
             font-size: 1.5rem;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
             transition: background-color 0.2s;
+            position: relative;
+            z-index: 9999;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            pointer-events: all;
         }
 
         .toggle-btn:hover {
@@ -356,19 +362,53 @@
             .sidebar {
                 transform: translateX(-100%);
                 width: var(--sidebar-width);
+                box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+                z-index: 920;
             }
             .sidebar.mobile-open {
                 transform: translateX(0);
             }
             .main-wrapper {
-                margin-left: 0;
+                margin-left: 0 !important;
             }
             .main-wrapper.expanded {
-                margin-left: 0;
+                margin-left: 0 !important;
             }
             .profile-info {
                 display: none;
             }
+            .top-header {
+                padding: 0 1rem;
+                z-index: 960;
+            }
+            .content-area {
+                padding: 1rem;
+            }
+            .header-actions {
+                gap: 0.8rem;
+            }
+            .brand {
+                font-size: 1.25rem;
+            }
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 890;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* Alert Messages */
@@ -583,6 +623,9 @@
 </head>
 <body>
 
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -640,8 +683,8 @@
         <!-- Top Header -->
         <header class="top-header">
             <div style="display: flex; align-items: center; gap: 1rem;">
-                <button class="toggle-btn" id="toggleSidebar">
-                    <i class="fa-solid fa-bars-staggered"></i>
+                <button class="toggle-btn" id="toggleSidebar" aria-label="Toggle Sidebar">
+                    <i class="fa-solid fa-bars"></i>
                 </button>
                 <h2 style="font-size: 1.25rem; font-weight: 600;">{% block header_title %}Dashboard{% endblock %}</h2>
             </div>
@@ -744,27 +787,73 @@
     </div>
 
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const mainWrapper = document.getElementById('mainWrapper');
-        const toggleBtn = document.getElementById('toggleSidebar');
+        // Sidebar toggle — robust mobile + desktop
+        (function() {
+            function init() {
+                var sidebar = document.getElementById('sidebar');
+                var mainWrapper = document.getElementById('mainWrapper');
+                var toggleBtn = document.getElementById('toggleSidebar');
+                var overlay = document.getElementById('mobileOverlay');
 
-        toggleBtn.addEventListener('click', () => {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('mobile-open');
-            } else {
-                sidebar.classList.toggle('collapsed');
-                mainWrapper.classList.toggle('expanded');
-            }
-        });
+                if (!sidebar || !toggleBtn) return;
 
-        // Close sidebar on mobile when clicking outside
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-                    sidebar.classList.remove('mobile-open');
+                function isMobile() {
+                    return window.matchMedia('(max-width: 768px)').matches;
                 }
+
+                function openSidebar() {
+                    sidebar.classList.add('mobile-open');
+                    if (overlay) overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+
+                function closeSidebar() {
+                    sidebar.classList.remove('mobile-open');
+                    if (overlay) overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+
+                var lastTouch = 0;
+                function onToggle(e) {
+                    // Debounce: ignore duplicate events within 300ms
+                    var now = Date.now();
+                    if (now - lastTouch < 300) return;
+                    lastTouch = now;
+
+                    if (isMobile()) {
+                        if (sidebar.classList.contains('mobile-open')) {
+                            closeSidebar();
+                        } else {
+                            openSidebar();
+                        }
+                    } else {
+                        sidebar.classList.toggle('collapsed');
+                        mainWrapper.classList.toggle('expanded');
+                    }
+                }
+
+                // Listen on both click and touchstart
+                toggleBtn.addEventListener('click', onToggle);
+                toggleBtn.addEventListener('touchstart', onToggle, { passive: true });
+
+                if (overlay) {
+                    overlay.addEventListener('click', closeSidebar);
+                    overlay.addEventListener('touchstart', closeSidebar, { passive: true });
+                }
+
+                document.querySelectorAll('.nav-link').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        if (isMobile()) closeSidebar();
+                    });
+                });
             }
-        });
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
 
         // Auto-hide messages
         document.querySelectorAll('.django-message').forEach(msg => {

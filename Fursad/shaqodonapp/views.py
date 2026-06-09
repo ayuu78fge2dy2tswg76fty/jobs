@@ -320,17 +320,14 @@ def edit_application(request, app_id):
     return redirect('shaqodonapp:shaqodon_applications')
 
 def delete_application(request, app_id):
-    """
-    Shaqodon (employee) permanently deletes their own application.
-    This removes the application from BOTH sides (company and employee).
-    """
+
     if 'shaqodon_id' not in request.session:
         return redirect('home')
     
     if request.method == 'POST':
         try:
             application = Application_DB.objects.get(id=app_id, a_shaqod_id=request.session['shaqodon_id'])
-            application.delete()  # Hard delete - removed for everyone
+            application.delete()  
             messages.success(request, "Application has been permanently deleted.")
         except Application_DB.DoesNotExist:
             messages.error(request, "Application not found or you don't have permission to delete it.")
