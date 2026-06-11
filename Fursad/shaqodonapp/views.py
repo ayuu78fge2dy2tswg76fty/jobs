@@ -96,6 +96,13 @@ def shaqodon_register(request):
         phone = request.POST.get('phone')
         gender = request.POST.get('gender', 'male')
         
+        address = request.POST.get('address')
+        education = request.POST.get('education')
+        skills = request.POST.get('skills')
+        experience = request.POST.get('experience')
+        cv = request.FILES.get('cv')
+        profile_img = request.FILES.get('profile_img')
+        
         if shaqod_DB.objects.filter(s_email=email).exists() or shaqod_DB.objects.filter(s_username=username).exists():
             messages.error(request, 'Email or Username already exists.')
         else:
@@ -106,6 +113,12 @@ def shaqodon_register(request):
                 s_password=password,
                 s_phone=phone,
                 s_geneder=gender,
+                s_address=address,
+                s_education=education,
+                s_skills=skills,
+                s_experience=experience,
+                s_cv=cv,
+                s_profile_img=profile_img,
                 s_status=True
             )
             messages.success(request, 'Account created successfully! You can now login.')
@@ -137,11 +150,22 @@ def shaqodon_profile(request):
         fullname = request.POST.get('fullname')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        education = request.POST.get('education')
+        skills = request.POST.get('skills')
+        experience = request.POST.get('experience')
+        cv = request.FILES.get('cv')
         image = request.FILES.get('profile_img')
         
         shaqodon.s_fullname = fullname
         shaqodon.s_email = email
         shaqodon.s_phone = phone
+        shaqodon.s_address = address
+        shaqodon.s_education = education
+        shaqodon.s_skills = skills
+        shaqodon.s_experience = experience
+        if cv:
+            shaqodon.s_cv = cv
         if image:
             shaqodon.s_profile_img = image
             
@@ -266,8 +290,12 @@ def shaqodon_job_detail(request, job_id):
         cover_letter = request.POST.get('cover_letter')
         location = request.POST.get('location')
         
+        # Fallback to profile CV if no new CV is uploaded
         if not cv:
-            messages.error(request, "Please upload your CV.")
+            cv = shaqodon.s_cv
+            
+        if not cv:
+            messages.error(request, "Please upload your CV or add one to your profile.")
             return redirect('shaqodonapp:shaqodon_job_detail', job_id=job_id)
             
         Application_DB.objects.create(
@@ -335,3 +363,28 @@ def delete_application(request, app_id):
             messages.error(request, f"Error deleting application: {e}")
     
     return redirect('shaqodonapp:shaqodon_applications')
+
+def shaqodon_delete_account(request):
+    if 'shaqodon_id' not in request.session:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        try:
+            shaqodon = shaqod_DB.objects.get(id=request.session['shaqodon_id'])
+            shaqodon.delete()
+            
+            # Clear session
+            if 'shaqodon_id' in request.session:
+                del request.session['shaqodon_id']
+            if 'shaqodon_username' in request.session:
+                del request.session['shaqodon_username']
+            if 'shaqodon_fullname' in request.session:
+                del request.session['shaqodon_fullname']
+            if 'shaqodon_img' in request.session:
+                del request.session['shaqodon_img']
+                
+            messages.success(request, "Your account has been deleted permanently.")
+        except Exception as e:
+            messages.error(request, f"Error deleting account: {e}")
+            
+    return redirect('home')

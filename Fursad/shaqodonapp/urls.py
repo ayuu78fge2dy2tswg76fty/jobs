@@ -16,4 +16,5 @@ urlpatterns = [
     path('jobs/<int:job_id>/', views.shaqodon_job_detail, name='shaqodon_job_detail'),
     path('edit-application/<int:app_id>/', views.edit_application, name='edit_application'),
     path('delete-application/<int:app_id>/', views.delete_application, name='delete_application'),
+    path('delete-account/', views.shaqodon_delete_account, name='shaqodon_delete_account'),
 ]

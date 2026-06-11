@@ -75,6 +75,60 @@
                     </div>
                     <p style="font-size: 1.15rem; font-weight: 600; color: white;">@{{ shaqodon.s_username }}</p>
                 </div>
+                
+                <div style="background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.1); color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Address</p>
+                    </div>
+                    <p style="font-size: 1.15rem; font-weight: 600; color: white;">{{ shaqodon.s_address|default:"Not specified" }}</p>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Education</p>
+                    </div>
+                    <p style="font-size: 1.15rem; font-weight: 600; color: white;">{{ shaqodon.s_education|default:"Not specified" }}</p>
+                </div>
+
+                <div style="grid-column: 1 / -1; background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Skills</p>
+                    </div>
+                    <p style="font-size: 1rem; font-weight: 400; color: white; line-height: 1.6;">{{ shaqodon.s_skills|default:"No skills listed yet." }}</p>
+                </div>
+
+                <div style="grid-column: 1 / -1; background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.1); color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Experience</p>
+                    </div>
+                    <p style="font-size: 1rem; font-weight: 400; color: white; line-height: 1.6;">{{ shaqodon.s_experience|default:"No experience listed yet." }}</p>
+                </div>
+
+                <div style="grid-column: 1 / -1; background: rgba(255,255,255,0.02); padding: 1.75rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Resume / CV</p>
+                    </div>
+                    {% if shaqodon.s_cv %}
+                        <a href="{{ shaqodon.s_cv.url }}" target="_blank" style="display: inline-block; padding: 10px 20px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; text-decoration: none; font-weight: 600;"><i class="fa-solid fa-download"></i> Download CV</a>
+                    {% else %}
+                        <p style="font-size: 1rem; color: var(--text-muted);">No CV uploaded.</p>
+                    {% endif %}
+                </div>
             </div>
 
             <!-- Profile Edit Form (Hidden Mode) -->
@@ -92,22 +146,70 @@
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Phone Number</label>
-                            <input type="text" name="phone" value="{{ shaqodon.s_phone }}" style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'">
+                            <input type="text" name="phone" value="{{ shaqodon.s_phone|default:'' }}" style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Address</label>
+                            <input type="text" name="address" value="{{ shaqodon.s_address|default:'' }}" style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Education</label>
+                            <select name="education" style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'">
+                                <option value="High School" {% if shaqodon.s_education == 'High School' %}selected{% endif %} style="background: var(--bg-dark); color: white;">High School</option>
+                                <option value="Bachelor" {% if shaqodon.s_education == 'Bachelor' %}selected{% endif %} style="background: var(--bg-dark); color: white;">Bachelor</option>
+                                <option value="Master" {% if shaqodon.s_education == 'Master' %}selected{% endif %} style="background: var(--bg-dark); color: white;">Master</option>
+                                <option value="PhD" {% if shaqodon.s_education == 'PhD' %}selected{% endif %} style="background: var(--bg-dark); color: white;">PhD</option>
+                                <option value="Other" {% if shaqodon.s_education == 'Other' %}selected{% endif %} style="background: var(--bg-dark); color: white;">Other</option>
+                                <option value="Experience" {% if shaqodon.s_education == 'Experience' %}selected{% endif %} style="background: var(--bg-dark); color: white;">Experience</option>
+                            </select>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Skills</label>
+                            <textarea name="skills" rows="3" style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s; resize: vertical;" onfocus="this.style.borderColor='var(--primary)'">{{ shaqodon.s_skills|default:'' }}</textarea>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Experience</label>
+                            <textarea name="experience" rows="3" style="width: 100%; padding: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; transition: 0.3s; resize: vertical;" onfocus="this.style.borderColor='var(--primary)'">{{ shaqodon.s_experience|default:'' }}</textarea>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Upload New CV (PDF/Doc)</label>
+                            <div style="position: relative; background: rgba(255,255,255,0.03); border: 2px dashed rgba(255,255,255,0.1); border-radius: 16px; padding: 25px; text-align: center; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+                                <input type="file" name="cv" id="cvInput" accept=".pdf,.doc,.docx" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="document.getElementById('cvFilename').innerText = this.files[0] ? this.files[0].name : 'Click here to upload a new CV';">
+                                <i class="fa-solid fa-file-pdf" style="font-size: 2rem; color: #ef4444; margin-bottom: 10px;"></i>
+                                <p id="cvFilename" style="font-size: 0.9rem; color: var(--text-muted);">
+                                    {% if shaqodon.s_cv %}Current: {{ shaqodon.s_cv.name|slice:"14:" }} (Click to change){% else %}Click here to upload a new CV{% endif %}
+                                </p>
+                            </div>
                         </div>
                         <div style="grid-column: span 2;">
                             <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Update Profile Picture</label>
                             <div style="position: relative; background: rgba(255,255,255,0.03); border: 2px dashed rgba(255,255,255,0.1); border-radius: 16px; padding: 25px; text-align: center; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
-                                <input type="file" name="profile_img" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
-                                <i class="fa-solid fa-camera-retro" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                                <p style="font-size: 0.9rem; color: var(--text-muted);">Click here to upload a new profile photo</p>
+                                <input type="file" name="profile_img" id="profileImgInput" accept="image/*" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="previewImage(this);">
+                                <div id="profileImgPreviewContainer" style="display: none; margin-bottom: 10px;">
+                                    <img id="profileImgPreview" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 3px solid var(--primary);">
+                                </div>
+                                <i id="profileImgIcon" class="fa-solid fa-camera-retro" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                                <p id="profileImgText" style="font-size: 0.9rem; color: var(--text-muted);">Click here to upload a new profile photo</p>
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
                         <button type="submit" style="flex: 2; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; border-radius: 18px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);">Update Profile</button>
                         <button type="button" onclick="toggleProfileEdit()" style="flex: 1; padding: 16px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; font-weight: 700; cursor: pointer;">Cancel</button>
                     </div>
                 </form>
+                
+                <!-- Delete Account Section -->
+                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <h3 style="color: #ef4444; margin-bottom: 1rem; font-size: 1.2rem;">Danger Zone</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Once you delete your account, there is no going back. Please be certain.</p>
+                    <form method="POST" action="{% url 'shaqodonapp:shaqodon_delete_account' %}" onsubmit="return confirm('Are you sure you want to delete your account permanently?');">
+                        {% csrf_token %}
+                        <button type="submit" style="padding: 12px 24px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.color='#ef4444'">
+                            <i class="fa-solid fa-trash-can"></i> Delete My Account
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -136,6 +238,19 @@
             view.style.display = 'grid';
             edit.style.display = 'none';
             btn.style.display = 'flex';
+        }
+    }
+
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profileImgPreview').src = e.target.result;
+                document.getElementById('profileImgPreviewContainer').style.display = 'block';
+                document.getElementById('profileImgIcon').style.display = 'none';
+                document.getElementById('profileImgText').innerText = input.files[0].name;
+            }
+            reader.readAsDataURL(input.files[0]);
         }
     }
 </script>

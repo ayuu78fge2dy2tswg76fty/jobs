@@ -23,21 +23,55 @@
                 <div style="flex: 1; min-width: 300px;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                         <h1 style="font-size: 3rem; font-weight: 800; color: white; letter-spacing: -1px; margin: 0;">{{ company.c_name }}</h1>
-                        <i class="fa-solid fa-circle-check" style="color: var(--primary); font-size: 1.5rem;" title="Verified Employer"></i>
+                        {% if company.c_verivaed %}
+                        <i class="fa-solid fa-circle-check" style="color: #3b82f6; font-size: 1.8rem;" title="Verified Employer"></i>
+                        {% else %}
+                        <span style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle-xmark"></i> Unverified
+                        </span>
+                        {% endif %}
                     </div>
                     <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; max-width: 700px; margin-bottom: 2rem;">
                         {{ company.c_description|default:"No description provided for this company." }}
                     </p>
-                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+                        {% if company.c_header_location %}
                         <div style="display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 600;">
-                            <i class="fa-solid fa-envelope" style="color: var(--primary);"></i> {{ company.c_email }}
+                            <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> {{ company.c_header_location }}
                         </div>
+                        {% endif %}
+                        
+                        {% if company.c_contect_address %}
                         <div style="display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 600;">
-                            <i class="fa-solid fa-phone" style="color: var(--primary);"></i> {{ company.c_phone|default:"N/A" }}
+                            <i class="fa-solid fa-map-pin" style="color: var(--primary);"></i> {{ company.c_contect_address }}
                         </div>
+                        {% endif %}
+
                         <div style="display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 600;">
                             <i class="fa-solid fa-calendar-days" style="color: var(--primary);"></i> Joined {{ company.c_joined|date:"M Y" }}
                         </div>
+                        
+                        <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.1); margin: 0 10px;"></div>
+                        
+                        <!-- Socials -->
+                        {% if company.c_wbsite %}
+                        <a href="{{ company.c_wbsite }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'" title="Website"><i class="fa-solid fa-globe" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_facebook_page %}
+                        <a href="{{ company.c_facebook_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#1877f2'" onmouseout="this.style.color='var(--text-muted)'" title="Facebook"><i class="fa-brands fa-facebook" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_twitter_page %}
+                        <a href="{{ company.c_twitter_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#1da1f2'" onmouseout="this.style.color='var(--text-muted)'" title="Twitter"><i class="fa-brands fa-twitter" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_linkdin_page %}
+                        <a href="{{ company.c_linkdin_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#0a66c2'" onmouseout="this.style.color='var(--text-muted)'" title="LinkedIn"><i class="fa-brands fa-linkedin" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_instegram_page %}
+                        <a href="{{ company.c_instegram_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#e1306c'" onmouseout="this.style.color='var(--text-muted)'" title="Instagram"><i class="fa-brands fa-instagram" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_youtube_page %}
+                        <a href="{{ company.c_youtube_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#ff0000'" onmouseout="this.style.color='var(--text-muted)'" title="YouTube"><i class="fa-brands fa-youtube" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -152,6 +152,26 @@ def company_profile(request):
                 company.c_email = request.POST.get('c_email')
                 company.c_phone = request.POST.get('c_phone')
                 company.c_description = request.POST.get('c_description')
+                company.c_header_location = request.POST.get('c_header_location', '')
+                
+                # Basic Info extended
+                company.c_contect_address = request.POST.get('c_contect_address', '')
+                company.c_wbsite = request.POST.get('c_wbsite', '')
+                
+                # Owner Info
+                company.c_owner_person_fullName = request.POST.get('c_owner_person_fullName', '')
+                company.c_owner_person = request.POST.get('c_owner_person', '')
+                company.c_owner_person_phone = request.POST.get('c_owner_person_phone', '')
+                company.c_owner_person_email = request.POST.get('c_owner_person_email', '')
+                
+                # Social Links
+                company.c_facebook_page = request.POST.get('c_facebook_page', '')
+                company.c_twitter_page = request.POST.get('c_twitter_page', '')
+                company.c_instegram_page = request.POST.get('c_instegram_page', '')
+                company.c_linkdin_page = request.POST.get('c_linkdin_page', '')
+                company.c_youtube_page = request.POST.get('c_youtube_page', '')
+                company.c_telegram_page = request.POST.get('c_telegram_page', '')
+                company.c_whatsapp_page = request.POST.get('c_whatsapp_page', '')
                 
                 if request.FILES.get('c_logo'):
                     company.c_logo = request.FILES.get('c_logo')
@@ -321,3 +341,28 @@ def company_analyze(request):
     }
     return render(request, 'companyapp/company_analyze.html', context)
 
+
+def company_delete_account(request):
+    company_id = request.session.get('company_id')
+    if not company_id:
+        return redirect('home')
+        
+    company = Company_DB.objects.filter(id=company_id).first()
+    
+    if not company or not company.c_active:
+        if 'company_id' in request.session:
+            del request.session['company_id']
+        return redirect('home')
+        
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        if password == company.c_password:
+            company.delete()
+            request.session.flush()
+            messages.success(request, 'Your company account has been successfully deleted.')
+            return redirect('home')
+        else:
+            messages.error(request, 'Incorrect password. Account deletion failed.')
+            return redirect('companyapp:company_profile')
+            
+    return redirect('companyapp:company_profile')

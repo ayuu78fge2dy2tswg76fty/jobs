@@ -12,7 +12,25 @@ class Company_DB(models.Model):
     c_joined = models.DateField(auto_now_add=True, help_text="Company Joined Date")
     c_logo = models.ImageField(upload_to='static/company_logos/', max_length=200, blank=True, null=True,help_text="Company Logo")
     c_active = models.BooleanField(default=False, help_text="Company Active")
-
+    c_company_lence = models.ImageField(upload_to='static/company_logos/', max_length=200, blank=True, null=True,help_text="Company_geverment_lencec")
+    c_verivaed = models.BooleanField(default=False, help_text="Company Verified")
+    c_header_location = models.CharField(max_length=100, blank=True, null=True,help_text="Company Header Location")
+    c_contect_address = models.CharField(max_length=255, blank=True, null=True,help_text="Company Contect Address")
+    c_owner_person = models.CharField(max_length=100, blank=True, null=True,help_text="Company Owner Person")
+    c_owner_person_phone = models.CharField(max_length=15, blank=True, null=True,help_text="Company Owner Person Phone")
+    c_owner_person_email = models.EmailField(blank=True, null=True,help_text="Company Owner Person Email")
+    c_owner_person_fullName = models.CharField(max_length=100, blank=True, null=True,help_text="Company Owner Person Full Name")
+    c_wbsite = models.URLField(blank=True, null=True,help_text="Company Website")
+    c_facebook_page = models.URLField(blank=True, null=True,help_text="Company Facebook Page")
+    c_twitter_page = models.URLField(blank=True, null=True,help_text="Company Twitter Page")
+    c_instegram_page = models.URLField(blank=True, null=True,help_text="Company Instegram Page")
+    c_linkdin_page = models.URLField(blank=True, null=True,help_text="Company Linkdin Page")
+    c_youtube_page = models.URLField(blank=True, null=True,help_text="Company Youtube Page")
+    c_telegram_page = models.URLField(blank=True, null=True,help_text="Company Telegram Page")
+    c_whatsapp_page = models.URLField(blank=True, null=True,help_text="Company Whatsapp Page")
+    
+    
+    
     def __str__(self):
 
         return f'{self.c_name}  {self.c_email}'

@@ -9,6 +9,8 @@ urlpatterns = [
     # Company Management
     path('companies/', views.admin_companies, name='companies'),
     path('companies/<int:company_id>/', views.admin_company_detail, name='company_detail'),
+    path('companies/<int:company_id>/verify/', views.admin_company_verify, name='company_verify'),
+    path('companies/<int:company_id>/unverify/', views.admin_company_unverify, name='company_unverify'),
     path('companies/<int:company_id>/activate/', views.admin_company_activate, name='company_activate'),
     path('companies/<int:company_id>/deactivate/', views.admin_company_deactivate, name='company_deactivate'),
     path('companies/<int:company_id>/delete/', views.admin_company_delete, name='company_delete'),

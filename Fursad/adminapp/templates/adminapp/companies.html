@@ -447,8 +447,8 @@
                 </a>
                 
                 {% if not company.c_active %}
-                    <button data-url="{% url 'adminapp:company_activate' company.id %}" data-action="verify" data-name="{{ company.c_name|escapejs }}" class="btn btn-verify action-btn-trigger">
-                        <i class="fa-solid fa-shield-check"></i> Verify
+                    <button data-url="{% url 'adminapp:company_activate' company.id %}" data-action="activate" data-name="{{ company.c_name|escapejs }}" class="btn btn-verify action-btn-trigger">
+                        <i class="fa-solid fa-shield-check"></i> Activate
                     </button>
                 {% else %}
                     <button data-url="{% url 'adminapp:company_deactivate' company.id %}" data-action="deactivate" data-name="{{ company.c_name|escapejs }}" class="btn btn-deactivate action-btn-trigger">
@@ -575,15 +575,15 @@
                 
                 btnConfirm.href = url;
                 
-                if (action === 'verify') {
+                if (action === 'activate') {
                     confirmIcon.style.background = 'rgba(16, 185, 129, 0.1)';
                     confirmIcon.style.color = 'var(--accent-emerald)';
                     confirmIcon.style.border = '1px solid rgba(16, 185, 129, 0.2)';
                     confirmIconI.className = 'fa-solid fa-shield-check';
-                    confirmTitle.textContent = 'Verify Company';
-                    confirmText.innerHTML = `Are you sure you want to verify and activate <strong>${name}</strong>?`;
+                    confirmTitle.textContent = 'Activate Company';
+                    confirmText.innerHTML = `Are you sure you want to activate <strong>${name}</strong>?`;
                     btnConfirm.className = 'btn btn-verify';
-                    btnConfirm.innerHTML = '<i class="fa-solid fa-check"></i> Verify';
+                    btnConfirm.innerHTML = '<i class="fa-solid fa-check"></i> Activate';
                 } else if (action === 'deactivate') {
                     confirmIcon.style.background = 'rgba(245, 158, 11, 0.1)';
                     confirmIcon.style.color = 'var(--accent-amber)';

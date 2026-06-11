@@ -8,498 +8,518 @@
     .profile-header {
         background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
         border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 2.5rem;
-        margin-bottom: 2rem;
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        position: relative;
+        border-radius: 20px;
         overflow: hidden;
+        margin-bottom: 2rem;
+        position: relative;
     }
-
-    .profile-header::before {
+    .profile-banner {
+        height: 140px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(16, 185, 129, 0.25));
+        position: relative;
+    }
+    .profile-banner::after {
         content: '';
         position: absolute;
-        top: 0; right: 0;
-        width: 300px;
-        height: 100%;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-        pointer-events: none;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
-
-    .profile-logo-container {
-        width: 120px;
-        height: 120px;
-        border-radius: 20px;
-        background: var(--bg-card);
-        border: 2px solid rgba(59, 130, 246, 0.3);
+    .profile-body { padding: 0 2.5rem 2.5rem 2.5rem; }
+    .profile-logo-wrapper {
+        margin-top: -60px;
+        margin-bottom: 1.5rem;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        flex-shrink: 0;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-
-    .profile-logo-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .profile-logo-container i {
-        font-size: 3.5rem;
-        color: var(--primary-color);
-    }
-
-    .profile-info {
-        flex: 1;
-    }
-
-    .profile-name {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-light);
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .verified-badge {
-        font-size: 1.25rem;
-        color: var(--accent-color);
-    }
-
-    .profile-meta {
-        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
         flex-wrap: wrap;
-        gap: 1.5rem;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .meta-item i {
-        color: var(--primary-color);
-    }
-
-    .btn-edit {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color);
-        color: var(--text-light);
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
-
-    .btn-edit:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: var(--primary-color);
-    }
-
-    .content-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
-    }
-
-    .card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-light);
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        padding-bottom: 1rem;
-    }
-
-    .card-title i {
-        color: var(--primary-color);
-    }
-
-    .about-text {
-        color: var(--text-muted);
-        line-height: 1.7;
-        font-size: 0.95rem;
-    }
-
-    .stats-container {
-        display: grid;
-        grid-template-columns: 1fr;
         gap: 1rem;
     }
-
-    .stat-box {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        transition: transform 0.2s;
+    .profile-logo-container {
+        width: 120px; height: 120px;
+        border-radius: 20px;
+        background: var(--bg-darker);
+        border: 4px solid var(--bg-card);
+        display: flex; justify-content: center; align-items: center;
+        overflow: hidden; flex-shrink: 0;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
-
-    .stat-box:hover {
-        transform: translateX(5px);
-        background: rgba(255, 255, 255, 0.04);
+    .profile-logo-container img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-logo-container i { 
+        font-size: 3.5rem; 
+        background: linear-gradient(135deg, #60a5fa, #2563eb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 4px 10px rgba(37, 99, 235, 0.4));
     }
-
-    .stat-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.5rem;
+    .profile-name {
+        font-size: 1.75rem; font-weight: 700; color: var(--text-light);
+        margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.75rem;
     }
-
-    .stat-info {
-        display: flex;
-        flex-direction: column;
+    .verified-badge { 
+        font-size: 1.1rem; 
+        background: linear-gradient(135deg, #34d399, #059669);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.4));
     }
-
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-light);
-    }
-
-    .stat-label {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-    }
-
-    /* Modal Styles */
-    .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 2000;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-        overflow-y: auto;
-        padding: 2rem 1rem;
-    }
-
-    .modal-overlay.active {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .modal-content {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 2.5rem;
-        width: 100%;
-        max-width: 600px;
-        position: relative;
-        margin: auto;
-        transform: translateY(20px);
-        transition: transform 0.3s ease;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-overlay.active .modal-content {
-        transform: translateY(0);
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 1.25rem;
-        right: 1.25rem;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 50%;
-        color: var(--text-muted);
-        cursor: pointer;
+    .profile-meta { display: flex; flex-wrap: wrap; gap: 1.25rem; color: var(--text-muted); font-size: 0.88rem; }
+    .meta-item { display: flex; align-items: center; gap: 0.5rem; }
+    .meta-item i { 
         font-size: 1.1rem;
-        transition: all 0.2s;
-        z-index: 10;
+        background: linear-gradient(135deg, #93c5fd, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
     }
-
-    .modal-close:hover {
-        background: var(--danger-color);
-        color: white;
-    }
-
-    .modal-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-light);
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-
-    .form-group {
-        margin-bottom: 1.2rem;
-        text-align: left;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        background: var(--bg-dark);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        color: var(--text-light);
-        font-size: 1rem;
-        transition: border-color 0.2s;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary-color);
-    }
-
-    .btn {
-        width: 100%;
-        padding: 0.875rem;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: transform 0.2s, opacity 0.2s;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-    }
-
-    .btn-primary {
+    .btn-edit {
         background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-        color: white;
+        border: none; color: white; padding: 0.75rem 1.5rem;
+        border-radius: 10px; font-weight: 600;
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        transition: all 0.2s; cursor: pointer; font-size: 0.95rem;
+    }
+    .btn-edit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+
+    /* Section Cards */
+    .section-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .section-title {
+        font-size: 1.05rem; font-weight: 700; color: var(--text-light);
+        margin-bottom: 1.25rem;
+        display: flex; align-items: center; gap: 10px;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .section-title i { 
+        display: flex; justify-content: center; align-items: center;
+        width: 34px; height: 34px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 10px;
+        color: #60a5fa;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.1);
+        transition: all 0.3s ease;
+    }
+    .section-card:hover .section-title i {
+        transform: translateY(-2px) rotate(5deg) scale(1.05);
+        box-shadow: 0 6px 15px rgba(59, 130, 246, 0.25);
+        color: #93c5fd;
+        border-color: rgba(59, 130, 246, 0.4);
     }
 
-    /* Modern Image Preview Style */
-    .image-preview {
-        width: 100%;
-        height: 140px;
-        border: 2px dashed var(--border-color);
-        border-radius: 12px;
-        margin-top: 0.5rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        background: var(--bg-dark);
-        position: relative;
-        transition: all 0.3s ease;
-        cursor: pointer;
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1rem;
     }
-    .image-preview:hover {
-        border-color: var(--primary-color);
-        background: rgba(59, 130, 246, 0.05);
+    .info-item { display: flex; flex-direction: column; gap: 4px; }
+    .info-label {
+        font-size: 0.73rem; color: var(--text-muted);
+        text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+        display: flex; align-items: center; gap: 5px;
     }
-    .image-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        display: none;
+    .info-value {
+        font-size: 0.92rem; color: var(--text-light); font-weight: 500;
+        word-break: break-all;
     }
-    .image-preview .placeholder {
-        color: var(--text-muted);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        transition: all 0.3s;
+    .info-value a { color: var(--primary-color); text-decoration: none; }
+    .info-value a:hover { text-decoration: underline; }
+
+    /* Social links row */
+    .social-row {
+        display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px;
     }
-    .image-preview:hover .placeholder {
+    .social-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 8px 14px; border-radius: 10px;
+        font-size: 0.82rem; font-weight: 600;
+        text-decoration: none; transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        backdrop-filter: blur(5px);
+    }
+    .social-btn i {
+        transition: transform 0.3s ease;
+    }
+    .social-btn:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    .social-btn:hover i {
+        transform: scale(1.15);
+    }
+    .social-btn.fb    { background: rgba(24,119,242,0.12); color: #4f96e8; }
+    .social-btn.tw    { background: rgba(29,161,242,0.12); color: #38bdf8; }
+    .social-btn.ig    { background: rgba(225,48,108,0.12); color: #f472b6; }
+    .social-btn.li    { background: rgba(10,102,194,0.12); color: #60a5fa; }
+    .social-btn.yt    { background: rgba(255,0,0,0.12);   color: #f87171; }
+    .social-btn.tg    { background: rgba(36,161,222,0.12); color: #67e8f9; }
+    .social-btn.wa    { background: rgba(37,211,102,0.12); color: #4ade80; }
+    .social-btn.web   { background: rgba(99,102,241,0.12); color: #a78bfa; }
+    .no-link { color: var(--text-muted); font-size: 0.85rem; font-style: italic; }
+
+    /* License Card */
+    .license-card {
+        background: var(--bg-card);
+        border: 1px solid rgba(245,158,11,0.3);
+        border-radius: 16px; padding: 1.75rem;
+        margin-bottom: 1.5rem; position: relative;
+    }
+    .license-title {
+        font-size: 1.05rem; font-weight: 700; color: #f59e0b;
+        display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;
+    }
+    .license-lock-btn {
+        position: absolute; top: 1.25rem; right: 1.25rem;
+        background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+        color: #f59e0b; padding: 6px 14px; border-radius: 8px;
+        font-size: 0.8rem; font-weight: 600; cursor: pointer;
+        display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+    }
+    .license-lock-btn:hover { background: rgba(245,158,11,0.2); }
+    .license-image-preview {
+        width: 100%; max-height: 200px; border-radius: 10px;
+        overflow: hidden; border: 1px solid var(--border-color);
+        display: flex; align-items: center; justify-content: center;
+        background: var(--bg-darker); padding: 1rem;
+    }
+    .license-image-preview img { max-width: 100%; max-height: 180px; object-fit: contain; border-radius: 8px; }
+
+    /* Modal */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+        display: flex; justify-content: center; align-items: flex-start;
+        z-index: 2000; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease; overflow-y: auto; padding: 2rem 1rem;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content {
+        background: var(--bg-card); border: 1px solid var(--border-color);
+        border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 700px;
+        position: relative; margin: auto;
+        transform: translateY(20px); transition: transform 0.3s ease;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
+    }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-close {
+        position: absolute; top: 1.25rem; right: 1.25rem;
+        width: 34px; height: 34px; display: flex; justify-content: center; align-items: center;
+        background: rgba(0,0,0,0.2); border-radius: 50%;
+        color: var(--text-muted); cursor: pointer; font-size: 1.1rem; transition: all 0.2s; z-index: 10;
+    }
+    .modal-close:hover { background: var(--danger-color); color: white; }
+    .modal-title { font-size: 1.4rem; font-weight: 700; color: var(--text-light); margin-bottom: 1.75rem; text-align: center; }
+    .form-section-title {
+        font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+        text-transform: uppercase; letter-spacing: 1px;
+        margin: 1.5rem 0 0.75rem 0; padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        display: flex; align-items: center; gap: 6px;
+    }
+    .form-section-title i {
         color: var(--primary-color);
-        transform: scale(1.05);
+        font-size: 1.1rem;
+        filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
     }
+    .form-group label i {
+        color: var(--primary-color);
+        margin-right: 6px;
+        opacity: 0.9;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.4rem; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+    .form-control {
+        width: 100%; padding: 0.7rem 1rem;
+        background: var(--bg-dark); border: 1px solid var(--border-color);
+        border-radius: 10px; color: var(--text-light); font-size: 0.95rem; transition: border-color 0.2s;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary-color); }
+    .btn-submit {
+        width: 100%; padding: 0.9rem; border: none; border-radius: 12px;
+        font-weight: 700; font-size: 1rem; cursor: pointer;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white; margin-top: 1.25rem;
+        display: flex; justify-content: center; align-items: center; gap: 8px;
+        transition: all 0.2s;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+    .image-preview {
+        width: 100%; height: 120px; border: 2px dashed var(--border-color);
+        border-radius: 10px; display: flex; justify-content: center; align-items: center;
+        overflow: hidden; background: var(--bg-dark); position: relative;
+        transition: all 0.3s; cursor: pointer;
+    }
+    .image-preview:hover { border-color: var(--primary-color); background: rgba(59,130,246,0.05); }
+    .image-preview img { width: 100%; height: 100%; object-fit: contain; display: none; }
+    .image-preview .placeholder { color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 0.4rem; font-size: 0.82rem; transition: all 0.3s; }
+    .image-preview:hover .placeholder { color: var(--primary-color); transform: scale(1.05); }
     .image-preview .change-overlay {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(15, 23, 42, 0.7);
-        color: white;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        font-size: 0.85rem;
-        font-weight: 600;
-        backdrop-filter: blur(4px);
-        transition: all 0.3s;
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15,23,42,0.7); color: white; display: none;
+        justify-content: center; align-items: center; font-size: 0.82rem; font-weight: 600; backdrop-filter: blur(4px);
     }
-    .image-preview.has-image:hover .change-overlay {
-        display: flex;
+    .image-preview.has-image:hover .change-overlay { display: flex; }
+
+    /* WhatsApp Modal */
+    .whatsapp-modal-content {
+        background: var(--bg-card); border: 1px solid rgba(37,211,102,0.3);
+        border-radius: 24px; padding: 3rem 2.5rem; width: 100%; max-width: 430px;
+        position: relative; margin: auto;
+        transform: translateY(20px) scale(0.95);
+        transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 25px 60px -12px rgba(0,0,0,0.7); text-align: center;
     }
+    .modal-overlay.active .whatsapp-modal-content { transform: translateY(0) scale(1); }
 
     @media (max-width: 768px) {
-        .profile-header {
-            flex-direction: column;
-            text-align: center;
-            padding: 1.5rem;
-            gap: 1.5rem;
-        }
-        .profile-name {
-            justify-content: center;
-        }
-        .profile-meta {
-            justify-content: center;
-        }
-        .content-grid {
-            grid-template-columns: 1fr;
-        }
-        .btn-edit {
-            width: 100%;
-            justify-content: center;
-        }
-        form > div[style*="grid-template-columns"] {
-            grid-template-columns: 1fr !important;
-        }
-        .modal-content {
-            padding: 1.5rem !important;
-        }
+        .profile-body { padding: 0 1.25rem 1.5rem 1.25rem; }
+        .profile-logo-wrapper { flex-direction: column; align-items: flex-start; }
+        .info-grid { grid-template-columns: 1fr 1fr; }
+        .modal-content { padding: 1.5rem; }
     }
 </style>
 
-<!-- Profile Header -->
+<!-- ========== Profile Header ========== -->
 <div class="profile-header">
-    <div class="profile-logo-container">
-        {% if company.c_logo %}
-            <img src="{{ company.c_logo.url }}" alt="{{ company.c_name }} Logo">
-        {% else %}
-            <i class="fa-solid fa-building"></i>
+    <div class="profile-banner"></div>
+    <div class="profile-body">
+        <div class="profile-logo-wrapper">
+            <div style="display: flex; align-items: flex-end; gap: 1.25rem;">
+                <div class="profile-logo-container">
+                    {% if company.c_logo %}
+                        <img src="{{ company.c_logo.url }}" alt="{{ company.c_name }} Logo">
+                    {% else %}
+                        <i class="fa-solid fa-building"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="profile-name">
+                        {{ company.c_name|default:"Unnamed Company" }}
+                        {% if company.c_active %}
+                            <i class="fa-solid fa-circle-check verified-badge" title="Verified Active Company"></i>
+                        {% endif %}
+                    </h1>
+                    <div class="profile-meta">
+                        <div class="meta-item"><i class="fa-solid fa-envelope"></i> {{ company.c_email }}</div>
+                        <div class="meta-item"><i class="fa-solid fa-phone"></i> {{ company.c_phone|default:"—" }}</div>
+                        {% if company.c_header_location %}
+                        <div class="meta-item"><i class="fa-solid fa-location-dot"></i> {{ company.c_header_location }}</div>
+                        {% endif %}
+                        <div class="meta-item"><i class="fa-solid fa-calendar-check"></i> Member since {{ company.c_joined|date:"M Y" }}</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-edit" onclick="openEditModal()">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Basic Info ========== -->
+<div class="section-card">
+    <div class="section-title"><i class="fa-solid fa-circle-info"></i> Basic Information</div>
+    <div class="info-grid">
+        <div class="info-item">
+            <span class="info-label">Company Name</span>
+            <span class="info-value">{{ company.c_name|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Username</span>
+            <span class="info-value">{{ company.c_username|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Email Address</span>
+            <span class="info-value">{{ company.c_email|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Phone Number</span>
+            <span class="info-value">{{ company.c_phone|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Location</span>
+            <span class="info-value">{{ company.c_header_location|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Contact Address</span>
+            <span class="info-value">{{ company.c_contect_address|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Website</span>
+            <span class="info-value">
+                {% if company.c_wbsite %}
+                    <a href="{{ company.c_wbsite }}" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> {{ company.c_wbsite }}</a>
+                {% else %}—{% endif %}
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Account Status</span>
+            <span class="info-value">
+                {% if company.c_active %}
+                    <span style="color:var(--accent-color); font-weight:700;">✓ Active</span>
+                {% else %}
+                    <span style="color:var(--warning-color);">⏳ Pending Review</span>
+                {% endif %}
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Verification</span>
+            <span class="info-value">
+                {% if company.c_verivaed %}
+                    <span style="color:var(--accent-color); font-weight:700;">✓ Verified</span>
+                {% else %}
+                    <span style="color:var(--text-muted);">Not Verified</span>
+                {% endif %}
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Member Since</span>
+            <span class="info-value">{{ company.c_joined|date:"F d, Y" }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Owner / Contact Person ========== -->
+<div class="section-card">
+    <div class="section-title"><i class="fa-solid fa-user-tie"></i> Owner / Contact Person</div>
+    <div class="info-grid">
+        <div class="info-item">
+            <span class="info-label">Full Name</span>
+            <span class="info-value">{{ company.c_owner_person_fullName|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Role / Title</span>
+            <span class="info-value">{{ company.c_owner_person|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Phone</span>
+            <span class="info-value">{{ company.c_owner_person_phone|default:"—" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ company.c_owner_person_email|default:"—" }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Description ========== -->
+<div class="section-card">
+    <div class="section-title"><i class="fa-solid fa-align-left"></i> Company Description</div>
+    {% if company.c_description %}
+        <p style="color:var(--text-muted); line-height:1.75; font-size:0.95rem;">{{ company.c_description|linebreaks }}</p>
+    {% else %}
+        <div style="text-align:center; padding:1.5rem 0; opacity:0.5;">
+            <i class="fa-solid fa-file-pen" style="font-size:2.5rem; display:block; margin-bottom:0.75rem; color:var(--text-muted);"></i>
+            <p style="color:var(--text-muted);">No description yet. Click 'Edit Profile' to add one.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- ========== Social Media ========== -->
+<div class="section-card">
+    <div class="section-title"><i class="fa-solid fa-share-nodes"></i> Social Media & Links</div>
+    <div class="social-row">
+        {% if company.c_facebook_page %}
+            <a href="{{ company.c_facebook_page }}" target="_blank" class="social-btn fb"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+        {% endif %}
+        {% if company.c_twitter_page %}
+            <a href="{{ company.c_twitter_page }}" target="_blank" class="social-btn tw"><i class="fa-brands fa-x-twitter"></i> Twitter/X</a>
+        {% endif %}
+        {% if company.c_instegram_page %}
+            <a href="{{ company.c_instegram_page }}" target="_blank" class="social-btn ig"><i class="fa-brands fa-instagram"></i> Instagram</a>
+        {% endif %}
+        {% if company.c_linkdin_page %}
+            <a href="{{ company.c_linkdin_page }}" target="_blank" class="social-btn li"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a>
+        {% endif %}
+        {% if company.c_youtube_page %}
+            <a href="{{ company.c_youtube_page }}" target="_blank" class="social-btn yt"><i class="fa-brands fa-youtube"></i> YouTube</a>
+        {% endif %}
+        {% if company.c_telegram_page %}
+            <a href="{{ company.c_telegram_page }}" target="_blank" class="social-btn tg"><i class="fa-brands fa-telegram"></i> Telegram</a>
+        {% endif %}
+        {% if company.c_whatsapp_page %}
+            <a href="{{ company.c_whatsapp_page }}" target="_blank" class="social-btn wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        {% endif %}
+        {% if company.c_wbsite %}
+            <a href="{{ company.c_wbsite }}" target="_blank" class="social-btn web"><i class="fa-solid fa-globe"></i> Website</a>
+        {% endif %}
+        {% if not company.c_facebook_page and not company.c_twitter_page and not company.c_instegram_page and not company.c_linkdin_page and not company.c_youtube_page and not company.c_telegram_page and not company.c_whatsapp_page and not company.c_wbsite %}
+            <p class="no-link">No social media links added yet.</p>
         {% endif %}
     </div>
-    
-    <div class="profile-info">
-        <h1 class="profile-name">
-            {{ company.c_name|default:"Unnamed Company" }}
-            {% if company.c_active %}
-                <i class="fa-solid fa-circle-check verified-badge" title="Verified Active Company"></i>
-            {% endif %}
-        </h1>
-        
-        <div class="profile-meta">
-            <div class="meta-item">
-                <i class="fa-solid fa-envelope"></i> {{ company.c_email }}
-            </div>
-            <div class="meta-item">
-                <i class="fa-solid fa-phone"></i> {{ company.c_phone|default:"Not provided" }}
-            </div>
-            <div class="meta-item">
-                <i class="fa-solid fa-calendar-check"></i> Member since {{ company.c_joined|date:"M Y" }}
-            </div>
-        </div>
-        
-        <button class="btn-edit" onclick="openEditProfileModal()">
-            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
-        </button>
-    </div>
 </div>
 
-<!-- Content Area -->
-<div class="content-grid">
-    <!-- About Section -->
-    <div class="card">
-        <h2 class="card-title"><i class="fa-solid fa-circle-info"></i> About Company</h2>
-        <div class="about-text">
-            {% if company.c_description %}
-                {{ company.c_description|linebreaks }}
-            {% else %}
-                <div style="text-align: center; padding: 2rem 0; opacity: 0.5;">
-                    <i class="fa-solid fa-file-pen" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                    <p>No description provided yet. Click 'Edit Profile' to add details about your company.</p>
-                </div>
-            {% endif %}
-        </div>
+<!-- ========== Government License (View Only) ========== -->
+<div class="license-card">
+    <div class="license-title">
+        <i class="fa-solid fa-file-shield"></i> Government License / Document
+        <span style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#f59e0b; padding:3px 10px; border-radius:20px; font-size:0.72rem; margin-left:8px;">
+            <i class="fa-solid fa-lock" style="font-size:0.65rem;"></i> Read Only
+        </span>
     </div>
-    
-    <!-- Stats Section -->
-    <div class="card">
-        <h2 class="card-title"><i class="fa-solid fa-chart-line"></i> Activity Overview</h2>
-        <div class="stats-container">
-            <div class="stat-box">
-                <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary-color);">
-                    <i class="fa-solid fa-briefcase"></i>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-value">{{ total_jobs_posted|default:"0" }}</span>
-                    <span class="stat-label">Total Jobs Posted</span>
-                </div>
-            </div>
-            
-            <div class="stat-box">
-                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-color);">
-                    <i class="fa-solid fa-user-check"></i>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-value">{% if company.c_active %}Active{% else %}Pending{% endif %}</span>
-                    <span class="stat-label">Account Status</span>
-                </div>
+    <button class="license-lock-btn" onclick="openWhatsAppModal()">
+        <i class="fa-solid fa-lock"></i> Request Change
+    </button>
+    {% if company.c_company_lence %}
+        <div class="license-image-preview">
+            <img src="{{ company.c_company_lence.url }}" alt="Government License">
+        </div>
+        <p style="color:var(--text-muted); font-size:0.8rem; margin-top:0.75rem; text-align:center;">
+            <i class="fa-solid fa-circle-info" style="margin-right:5px; color:#f59e0b;"></i>
+            To update this document, please contact us via WhatsApp.
+        </p>
+    {% else %}
+        <div class="license-image-preview">
+            <div style="text-align:center; color:var(--text-muted);">
+                <i class="fa-solid fa-file-slash" style="font-size:3rem; margin-bottom:0.5rem; display:block; opacity:0.4;"></i>
+                <p style="font-size:0.9rem;">No government license uploaded yet</p>
             </div>
         </div>
-    </div>
+        <p style="color:var(--text-muted); font-size:0.8rem; margin-top:0.75rem; text-align:center;">
+            <i class="fa-solid fa-circle-info" style="margin-right:5px; color:#f59e0b;"></i>
+            To upload this document, please contact us via WhatsApp.
+        </p>
+    {% endif %}
 </div>
 
-<!-- Edit Profile Modal -->
+<!-- ========== Danger Zone ========== -->
+<div class="license-card" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.02);">
+    <div class="license-title" style="color: var(--danger-color);">
+        <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+    </div>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">
+        Deleting your account will permanently erase all your data, jobs, and applications. This action cannot be reversed.
+    </p>
+    <button onclick="openDeleteModal()" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.background='var(--danger-color)'; this.style.color='white'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.color='var(--danger-color)'">
+        <i class="fa-solid fa-trash"></i> Delete My Account
+    </button>
+</div>
+
+<!-- ========== EDIT MODAL ========== -->
 <div class="modal-overlay" id="editProfileModal">
     <div class="modal-content">
         <i class="fa-solid fa-xmark modal-close" onclick="closeModal('editProfileModal')"></i>
-        <h2 class="modal-title">Edit Company Profile</h2>
-        
+        <h2 class="modal-title"><i class="fa-solid fa-pen-to-square" style="color:var(--primary-color); margin-right:8px;"></i> Edit Company Profile</h2>
+
         <form action="{% url 'companyapp:company_profile' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="action" value="update_profile">
-            
-            <div class="form-group">
-                <label><i class="fa-solid fa-building"></i> Company Name</label>
-                <input type="text" name="c_name" class="form-control" value="{{ company.c_name }}" required>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
+            <!-- Basic Info -->
+            <div class="form-section-title"><i class="fa-solid fa-circle-info"></i> Basic Information</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <div class="form-group" style="grid-column:span 2;">
+                    <label><i class="fa-solid fa-building"></i> Company Name</label>
+                    <input type="text" name="c_name" class="form-control" value="{{ company.c_name }}" required>
+                </div>
                 <div class="form-group">
                     <label><i class="fa-solid fa-envelope"></i> Email Address</label>
                     <input type="email" name="c_email" class="form-control" value="{{ company.c_email }}" required>
@@ -508,81 +528,242 @@
                     <label><i class="fa-solid fa-phone"></i> Phone Number</label>
                     <input type="text" name="c_phone" class="form-control" value="{{ company.c_phone|default:'' }}">
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label><i class="fa-solid fa-image"></i> Company Logo</label>
-                <input type="file" name="c_logo" id="profileLogo" accept="image/*" style="display: none;" onchange="previewProfileImage(this)">
-                <div class="image-preview {% if company.c_logo %}has-image{% endif %}" id="profilePreview" onclick="document.getElementById('profileLogo').click()">
-                    <div class="placeholder" {% if company.c_logo %}style="display: none;"{% endif %}>
-                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem;"></i>
-                        <span>Click to upload company logo</span>
-                    </div>
-                    <img src="{% if company.c_logo %}{{ company.c_logo.url }}{% endif %}" alt="Preview" {% if company.c_logo %}style="display: block;"{% endif %}>
-                    <div class="change-overlay">
-                        <i class="fa-solid fa-camera" style="margin-right: 8px;"></i> Change Logo
-                    </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-location-dot"></i> City / Location</label>
+                    <input type="text" name="c_header_location" class="form-control" value="{{ company.c_header_location|default:'' }}" placeholder="e.g. Mogadishu, Somalia">
                 </div>
-                <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">Leave empty to keep current logo.</span>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-map-pin"></i> Contact Address</label>
+                    <input type="text" name="c_contect_address" class="form-control" value="{{ company.c_contect_address|default:'' }}" placeholder="e.g. Hamar-Weyne District">
+                </div>
+                <div class="form-group" style="grid-column:span 2;">
+                    <label><i class="fa-solid fa-globe"></i> Website URL</label>
+                    <input type="url" name="c_wbsite" class="form-control" value="{{ company.c_wbsite|default:'' }}" placeholder="https://www.yourcompany.com">
+                </div>
             </div>
-            
+
+            <!-- Logo -->
+            <div class="form-section-title"><i class="fa-solid fa-image"></i> Company Logo</div>
             <div class="form-group">
-                <label><i class="fa-solid fa-align-left"></i> Company Description</label>
-                <textarea name="c_description" class="form-control" rows="5" required style="resize: none;">{{ company.c_description|default:'' }}</textarea>
+                <input type="file" name="c_logo" id="profileLogo" accept="image/*" style="display:none;" onchange="previewProfileImage(this)">
+                <div class="image-preview {% if company.c_logo %}has-image{% endif %}" id="profilePreview" onclick="document.getElementById('profileLogo').click()">
+                    <div class="placeholder" {% if company.c_logo %}style="display:none;"{% endif %}>
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.8rem;"></i>
+                        <span>Click to upload logo</span>
+                    </div>
+                    <img src="{% if company.c_logo %}{{ company.c_logo.url }}{% endif %}" alt="Preview" {% if company.c_logo %}style="display:block;"{% endif %}>
+                    <div class="change-overlay"><i class="fa-solid fa-camera" style="margin-right:8px;"></i> Change Logo</div>
+                </div>
+                <span style="font-size:0.78rem; color:var(--text-muted); display:block; margin-top:0.4rem;">Leave empty to keep current logo.</span>
             </div>
-            
-            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
-                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+
+            <!-- Description -->
+            <div class="form-section-title"><i class="fa-solid fa-align-left"></i> Company Description</div>
+            <div class="form-group">
+                <textarea name="c_description" class="form-control" rows="4" style="resize:vertical;">{{ company.c_description|default:'' }}</textarea>
+            </div>
+
+            <!-- Owner Info -->
+            <div class="form-section-title"><i class="fa-solid fa-user-tie"></i> Owner / Contact Person</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="c_owner_person_fullName" class="form-control" value="{{ company.c_owner_person_fullName|default:'' }}" placeholder="e.g. Ahmed Mohamed">
+                </div>
+                <div class="form-group">
+                    <label>Role / Title</label>
+                    <input type="text" name="c_owner_person" class="form-control" value="{{ company.c_owner_person|default:'' }}" placeholder="e.g. CEO">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" name="c_owner_person_phone" class="form-control" value="{{ company.c_owner_person_phone|default:'' }}" placeholder="+252...">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="c_owner_person_email" class="form-control" value="{{ company.c_owner_person_email|default:'' }}" placeholder="owner@company.com">
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="form-section-title"><i class="fa-solid fa-share-nodes"></i> Social Media Links</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <div class="form-group">
+                    <label><i class="fa-brands fa-facebook-f" style="color:#4f96e8;"></i> Facebook</label>
+                    <input type="url" name="c_facebook_page" class="form-control" value="{{ company.c_facebook_page|default:'' }}" placeholder="https://facebook.com/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-x-twitter" style="color:#38bdf8;"></i> Twitter / X</label>
+                    <input type="url" name="c_twitter_page" class="form-control" value="{{ company.c_twitter_page|default:'' }}" placeholder="https://x.com/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-instagram" style="color:#f472b6;"></i> Instagram</label>
+                    <input type="url" name="c_instegram_page" class="form-control" value="{{ company.c_instegram_page|default:'' }}" placeholder="https://instagram.com/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-linkedin-in" style="color:#60a5fa;"></i> LinkedIn</label>
+                    <input type="url" name="c_linkdin_page" class="form-control" value="{{ company.c_linkdin_page|default:'' }}" placeholder="https://linkedin.com/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-youtube" style="color:#f87171;"></i> YouTube</label>
+                    <input type="url" name="c_youtube_page" class="form-control" value="{{ company.c_youtube_page|default:'' }}" placeholder="https://youtube.com/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-telegram" style="color:#67e8f9;"></i> Telegram</label>
+                    <input type="url" name="c_telegram_page" class="form-control" value="{{ company.c_telegram_page|default:'' }}" placeholder="https://t.me/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-whatsapp" style="color:#4ade80;"></i> WhatsApp Link</label>
+                    <input type="url" name="c_whatsapp_page" class="form-control" value="{{ company.c_whatsapp_page|default:'' }}" placeholder="https://wa.me/...">
+                </div>
+            </div>
+
+            <!-- Locked notice -->
+            <div style="background:rgba(245,158,11,0.07); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:0.9rem 1.25rem; margin-top:0.5rem; display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-lock" style="color:#f59e0b; font-size:1.1rem; flex-shrink:0;"></i>
+                <p style="color:var(--text-muted); font-size:0.82rem; margin:0;">
+                    <strong style="color:#f59e0b;">Government License</strong> cannot be changed here.
+                    <a href="#" onclick="closeModal('editProfileModal'); openWhatsAppModal(); return false;" style="color:#25D366; font-weight:700; text-decoration:none; margin-left:4px;">
+                        <i class="fa-brands fa-whatsapp"></i> Contact WhatsApp to update it.
+                    </a>
+                </p>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-floppy-disk"></i> Save All Changes
             </button>
         </form>
     </div>
 </div>
 
-<!-- Toast Notifications logic from base/jobs is included here if needed, or Django messages are rendered globally -->
+<!-- ========== WhatsApp Modal ========== -->
+<div class="modal-overlay" id="whatsappModal">
+    <div class="whatsapp-modal-content">
+        <i class="fa-solid fa-xmark modal-close" onclick="closeModal('whatsappModal')"></i>
+        <div style="width:80px; height:80px; border-radius:50%; background:rgba(37,211,102,0.1); border:2px solid rgba(37,211,102,0.3); display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; font-size:2.5rem; color:#25D366;">
+            <i class="fa-brands fa-whatsapp"></i>
+        </div>
+        <h2 style="font-size:1.35rem; font-weight:800; color:var(--text-light); margin-bottom:0.75rem;">Change Government License</h2>
+        <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-bottom:2rem;">
+            Dukumeentiga govermentka si loo beddelo fadlan nagala xiriir WhatsApp hoos ku qoran.
+        </p>
+        <div style="background:rgba(37,211,102,0.08); border:1px solid rgba(37,211,102,0.25); border-radius:14px; padding:1.25rem 1.5rem; margin-bottom:1.75rem;">
+            <p style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:10px;">Support Contact</p>
+            <div style="display:flex; align-items:center; justify-content:center; gap:14px;">
+                <i class="fa-brands fa-whatsapp" style="font-size:2.2rem; color:#25D366;"></i>
+                <div style="text-align:left;">
+                    <p style="color:var(--text-muted); font-size:0.75rem; margin:0 0 3px 0;">Fursad Support Team</p>
+                    <p style="color:#25D366; font-size:1.15rem; font-weight:800; letter-spacing:1px; margin:0; cursor:pointer;" id="waNumber"
+                       style="filter:blur(4px);" onmouseover="document.getElementById('waNumber').style.filter='blur(0)'" onmouseout="document.getElementById('waNumber').style.filter='blur(4px)'">
+                        +252 907 525 744
+                    </p>
+                    <p style="color:var(--text-muted); font-size:0.72rem; margin:3px 0 0 0;">Hover to reveal number</p>
+                </div>
+            </div>
+        </div>
+        <a href="https://wa.me/252907525744?text=Hello%2C%20I%20need%20to%20update%20my%20government%20license%20document%20for%20my%20company%20on%20Fursad." target="_blank"
+           style="display:flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:1rem; background:#25D366; color:white; text-decoration:none; border-radius:14px; font-size:1rem; font-weight:800; box-shadow:0 10px 30px rgba(37,211,102,0.3); transition:all 0.3s;"
+           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 15px 40px rgba(37,211,102,0.4)'"
+           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(37,211,102,0.3)'">
+            <i class="fa-brands fa-whatsapp" style="font-size:1.4rem;"></i> Open WhatsApp Chat
+        </a>
+        <button onclick="closeModal('whatsappModal')" style="display:block; width:100%; margin-top:12px; padding:0.75rem; background:transparent; border:1px solid var(--border-color); color:var(--text-muted); border-radius:12px; cursor:pointer; font-weight:600; transition:0.2s;"
+            onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)'">
+            Cancel
+        </button>
+    </div>
+</div>
+
+<!-- ========== Delete Account Modal ========== -->
+<div class="modal-overlay" id="deleteAccountModal">
+    <div class="whatsapp-modal-content" style="background: var(--bg-card); border: 1px solid rgba(239, 68, 68, 0.3); padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 500px; text-align: center; position: relative;">
+        <i class="fa-solid fa-xmark modal-close" onclick="closeModal('deleteAccountModal')"></i>
+        <div style="width:70px; height:70px; border-radius:50%; background:rgba(239, 68, 68, 0.1); display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; font-size:2rem; color:var(--danger-color); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h2 style="font-size:1.35rem; font-weight:800; color:var(--text-light); margin-bottom:0.75rem;">Are you absolutely sure?</h2>
+        <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-bottom:1.5rem;">
+            This action cannot be undone. This will permanently delete your company profile, all jobs posted, and all applications received. Please type your password to confirm.
+        </p>
+        
+        <form action="{% url 'companyapp:company_delete_account' %}" method="POST" style="text-align: left;">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="delete_password" style="display: block; margin-bottom: 0.5rem; color: var(--text-light);"><i class="fa-solid fa-lock" style="color: var(--danger-color);"></i> Password</label>
+                <input type="password" name="password" id="delete_password" class="form-control" required placeholder="Enter your password to confirm..." style="border-color: rgba(239, 68, 68, 0.3);">
+            </div>
+            
+            <button type="submit" style="width:100%; padding:0.9rem; background:var(--danger-color); color:white; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:0.2s; box-shadow:0 8px 20px rgba(239, 68, 68, 0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                <i class="fa-solid fa-trash-can"></i> Yes, delete my account
+            </button>
+            <button type="button" onclick="closeModal('deleteAccountModal')" style="display:block; width:100%; margin-top:12px; padding:0.75rem; background:transparent; border:1px solid var(--border-color); color:var(--text-muted); border-radius:12px; cursor:pointer; font-weight:600; transition:0.2s;" onmouseover="this.style.borderColor='var(--text-light)'; this.style.color='var(--text-light)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-muted)'">
+                Cancel, keep my account
+            </button>
+        </form>
+    </div>
+</div>
+
 {% if messages %}
     {% for message in messages %}
-        <div class="django-toast" style="position: fixed; top: 20px; right: 20px; background: {% if message.tags == 'success' %}var(--accent-color){% else %}var(--danger-color){% endif %}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 1rem; z-index: 3000; transition: opacity 0.5s ease;">
-            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-xmark{% endif %}" style="font-size: 1.5rem;"></i>
+        <div class="django-toast" style="position:fixed; top:20px; right:20px; background:{% if message.tags == 'success' %}var(--accent-color){% else %}var(--danger-color){% endif %}; color:white; padding:1rem 1.5rem; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.3); display:flex; align-items:center; gap:1rem; z-index:3000; transition:opacity 0.5s ease; max-width:360px;">
+            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-xmark{% endif %}" style="font-size:1.4rem; flex-shrink:0;"></i>
             <div>
-                <strong style="display: block; font-size: 1rem;">{% if message.tags == 'success' %}Success{% else %}Error{% endif %}</strong>
-                <span style="font-size: 0.85rem; opacity: 0.9;">{{ message }}</span>
+                <strong style="display:block; font-size:0.95rem;">{% if message.tags == 'success' %}Success{% else %}Error{% endif %}</strong>
+                <span style="font-size:0.82rem; opacity:0.9;">{{ message }}</span>
             </div>
         </div>
     {% endfor %}
 {% endif %}
 
 <script>
-    function openEditProfileModal() {
+    function openEditModal() {
         document.getElementById('editProfileModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
-    
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.remove('active');
+    function openWhatsAppModal() {
+        document.getElementById('whatsappModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function openDeleteModal() {
+        document.getElementById('deleteAccountModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
         document.body.style.overflow = 'auto';
     }
-
     function previewProfileImage(input) {
-        const previewContainer = document.getElementById('profilePreview');
-        const img = previewContainer.querySelector('img');
-        const placeholder = previewContainer.querySelector('.placeholder');
-        
+        const container = document.getElementById('profilePreview');
+        const img = container.querySelector('img');
+        const placeholder = container.querySelector('.placeholder');
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = e => {
                 img.src = e.target.result;
                 img.style.display = 'block';
                 placeholder.style.display = 'none';
-                previewContainer.classList.add('has-image');
-            }
+                container.classList.add('has-image');
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }
-    
-    // Auto-hide toasts
+    // WhatsApp number blur effect
+    const waNum = document.getElementById('waNumber');
+    if (waNum) {
+        waNum.style.filter = 'blur(4px)';
+        waNum.style.transition = 'filter 0.3s';
+        waNum.addEventListener('mouseenter', () => waNum.style.filter = 'blur(0)');
+        waNum.addEventListener('mouseleave', () => waNum.style.filter = 'blur(4px)');
+    }
+    // Close modal on outside click
+    window.addEventListener('click', e => {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+    // Auto-hide Django toasts
     document.addEventListener('DOMContentLoaded', () => {
-        const toasts = document.querySelectorAll('.django-toast');
-        toasts.forEach(toast => {
+        document.querySelectorAll('.django-toast').forEach(toast => {
             setTimeout(() => {
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 500);
@@ -590,5 +771,4 @@
         });
     });
 </script>
-
 {% endblock content %}

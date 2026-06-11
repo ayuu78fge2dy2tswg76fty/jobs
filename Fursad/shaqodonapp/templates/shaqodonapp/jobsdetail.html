@@ -126,12 +126,33 @@
 
 
             <div style="margin-bottom: 2rem;">
-                <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Upload CV (PDF/DOCX)</label>
-                <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; position: relative;">
-                    <input type="file" name="cv" required accept=".pdf,.docx" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Click to upload or drag and drop</p>
-                </div>
+                {% if shaqodon.s_cv %}
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Your Profile CV</label>
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-file-pdf" style="color: var(--primary); font-size: 1.5rem;"></i>
+                            <div>
+                                <p style="color: white; font-weight: 600; margin: 0; font-size: 0.95rem;">Using profile CV</p>
+                                <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">{{ shaqodon.s_cv.name|slice:"14:" }}</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-circle-check" style="color: var(--primary); font-size: 1.2rem;"></i>
+                    </div>
+                    
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Or upload a different CV (Optional)</label>
+                    <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; position: relative; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <input type="file" name="cv" accept=".pdf,.doc,.docx" id="newCvInput" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;" onchange="document.getElementById('newCvText').innerText = this.files[0] ? this.files[0].name : 'Click to upload a new CV'">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 10px;"></i>
+                        <p id="newCvText" style="font-size: 0.9rem; color: var(--text-muted);">Click to upload a new CV</p>
+                    </div>
+                {% else %}
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Upload CV (Required)</label>
+                    <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; position: relative; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <input type="file" name="cv" required accept=".pdf,.doc,.docx" id="newCvInput" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;" onchange="document.getElementById('newCvText').innerText = this.files[0] ? this.files[0].name : 'Click to upload or drag and drop'">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                        <p id="newCvText" style="font-size: 0.9rem; color: var(--text-muted);">Click to upload or drag and drop</p>
+                    </div>
+                {% endif %}
             </div>
 
             <button type="submit" style="width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);" onmouseover="this.style.backgroundColor='var(--primary-dark)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">

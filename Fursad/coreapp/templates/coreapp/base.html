@@ -171,14 +171,47 @@
         .modal-content {
             background-color: var(--bg-dark);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
+            max-height: 90vh;
             border-radius: 16px;
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
             padding: 2.5rem;
             position: relative;
             animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow: hidden;
+            overflow-y: auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        
+        .input-with-icon textarea ~ i {
+            top: 1.2rem;
+            transform: none;
+        }
+        
+        .input-with-icon .form-control {
+            padding-left: 2.8rem;
         }
 
         .modal-close {
@@ -605,33 +638,101 @@
                         <div class="modal-footer">
                             <a href="#" onclick="switchAuthView('forgotEmailView'); return false;">Forgot Password?</a>
                             <br><br>
-                            Don't have an account? <a href="#" onclick="switchAuthView('registerView'); return false;">Register Company</a>
+                            Don't have an account? <a href="#" onclick="switchAuthView('companyTermsView'); return false;">Register Company</a>
                         </div>
                     </form>
+                </div>
+
+                <!-- Company Terms View before Register -->
+                <div id="companyTermsView" class="auth-view">
+                    <h2 class="modal-title">Terms & Conditions</h2>
+                    <div style="background: rgba(245, 158, 11, 0.1); border-left: 3px solid var(--warning-color); padding: 15px; margin-bottom: 20px; border-radius: 4px; color: var(--text-light); line-height: 1.6; font-size: 0.95rem;">
+                        <strong>Fadlan raac shuruudahan si aad isku diiwaan geliso:</strong><br><br>
+                        Soo diyaarso government document-ga iyo in ay is-leeyihiin xogta ku qoran document-ga iyo mida is diiwaan gelinta.sido kale wa in an so bandhigin shaqyin sharci daro ah dhaqan ahan iyo diin ahan 
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; background: var(--bg-card); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <input type="checkbox" id="termsCheckbox" onchange="document.getElementById('btnAcceptTerms').disabled = !this.checked;" style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary-color);">
+                        <label for="termsCheckbox" style="margin-bottom: 0; cursor: pointer; color: var(--text-light); font-weight: 500;">I understand</label>
+                    </div>
+                    <button id="btnAcceptTerms" class="btn btn-primary" disabled onclick="switchAuthView('registerView')">
+                        <i class="fa-solid fa-check"></i> OK
+                    </button>
+                    <div class="modal-footer">
+                        <a href="#" onclick="switchAuthView('loginView'); return false;">Back to Login</a>
+                    </div>
                 </div>
 
                 <!-- Register Form -->
                 <div id="registerView" class="auth-view">
                     <h2 class="modal-title">Register Company</h2>
-                    <form method="POST" action="{% url 'company_register' %}">
+                    <form method="POST" action="{% url 'company_register' %}" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label>Company Name</label>
-                            <input type="text" name="name" class="form-control" required placeholder="e.g. Hormuud Telecom">
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Company Name</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-building"></i>
+                                    <input type="text" name="name" class="form-control" required placeholder="e.g. Hormuud Telecom">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company Email</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <input type="email" name="email" class="form-control" required placeholder="contact@company.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company Phone</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input type="text" name="phone" class="form-control" placeholder="+252...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-user"></i>
+                                    <input type="text" name="username" class="form-control" required placeholder="company_username">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Company Location</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <input type="text" name="header_location" class="form-control" placeholder="e.g. Mogadishu, Somalia">
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Description</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-align-left"></i>
+                                    <textarea name="description" class="form-control" placeholder="Briefly describe the company..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company Logo</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-image" style="top: 25px"></i>
+                                    <input type="file" name="logo" class="form-control" accept="image/*" style="padding-top: 10px;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company License</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-file-contract" style="top: 25px"></i>
+                                    <input type="file" name="company_lence" class="form-control" accept="image/*" style="padding-top: 10px;">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Company Email</label>
-                            <input type="email" name="email" class="form-control" required placeholder="contact@company.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Username</label>
-                            <input type="text" name="username" class="form-control" required placeholder="company_username">
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
-                        </div>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
                             <i class="fa-solid fa-user-plus"></i> Create Account
                         </button>
                         <div class="modal-footer">
@@ -670,29 +771,76 @@
                 <!-- Register Form -->
                 <div id="shaqodonRegisterView" class="auth-view">
                     <h2 class="modal-title">Jobseeker Register</h2>
-                    <form method="POST" action="{% url 'shaqodonapp:shaqodon_register' %}">
+                    <form method="POST" action="{% url 'shaqodonapp:shaqodon_register' %}" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" name="fullname" class="form-control" required placeholder="e.g. Ahmed Ali">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" name="fullname" class="form-control" required placeholder="e.g. Ahmed Ali">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" class="form-control" required placeholder="ahmed@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" name="username" class="form-control" required placeholder="ahmed_dev">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" class="form-control" placeholder="+252 61...">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select name="gender" class="form-control" required>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Address</label>
+                                <input type="text" name="address" class="form-control" placeholder="e.g. Mogadishu, Somalia">
+                            </div>
+                            <div class="form-group">
+                                <label>Education</label>
+                                <select name="education" class="form-control" required>
+                                    <option value="">Select Education Level</option>
+                                    <option value="High School">High School</option>
+                                    <option value="Bachelor">Bachelor</option>
+                                    <option value="Master">Master</option>
+                                    <option value="PhD">PhD</option>
+                                    <option value="Other">Other</option>
+                                    <option value="Experience">Experience</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Profile Image</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-image" style="top: 25px"></i>
+                                    <input type="file" name="profile_img" class="form-control" accept="image/*" style="padding-top: 10px;">
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Skills</label>
+                                <textarea name="skills" class="form-control" placeholder="e.g. Python, Django, HTML, CSS" rows="2"></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Experience</label>
+                                <textarea name="experience" class="form-control" placeholder="Describe your work experience..." rows="2"></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>CV / Resume (PDF or Doc)</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-file-pdf" style="top: 25px"></i>
+                                    <input type="file" name="cv" class="form-control" accept=".pdf,.doc,.docx" required style="padding-top: 10px;">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" name="email" class="form-control" required placeholder="ahmed@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Username</label>
-                            <input type="text" name="username" class="form-control" required placeholder="ahmed_dev">
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Number</label>
-                            <input type="text" name="phone" class="form-control" placeholder="+252 61...">
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="background: var(--accent-color);">
+                        <button type="submit" class="btn btn-primary" style="background: var(--accent-color); margin-top: 1rem;">
                             <i class="fa-solid fa-user-plus"></i> Create Account
                         </button>
                         <div class="modal-footer">
@@ -828,6 +976,41 @@
         </div>
     </footer>
 
+    <!-- Modern Registration Success Popup -->
+    <div class="modal-overlay" id="modernRegPopup">
+        <div class="modal-content" style="max-width: 500px; text-align: center; padding: 3rem 2rem;">
+            <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                <i class="fa-solid fa-check-to-slot" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+            </div>
+            <h2 style="margin-bottom: 1rem; color: var(--text-light);">Registration Submitted!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
+                Thank you for registering your company, <strong id="regPopupName" style="color: var(--text-light);"></strong>. Your account is currently under review.
+            </p>
+            
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; text-align: left; margin-bottom: 2rem;">
+                <h4 style="color: var(--text-light); margin-bottom: 1rem; font-size: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Registration Details</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.95rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Email:</span>
+                        <strong id="regPopupEmail" style="color: var(--text-light);"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Phone:</span>
+                        <strong id="regPopupPhone" style="color: var(--text-light);"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Status:</span>
+                        <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color); padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Pending Approval</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="closeModal('modernRegPopup')" class="btn btn-primary" style="background: var(--accent-color);">
+                Got it, Thanks!
+            </button>
+        </div>
+    </div>
+
     <!-- Django Messages Handling -->
     {% if messages %}
     <div id="djangoMessages" style="display: none;">
@@ -845,6 +1028,24 @@
                 const msg = messageContainer.children[0];
                 const tags = msg.getAttribute('data-tags');
                 const text = msg.innerText;
+                
+                // Modern Registration Success Popup Check
+                if (text.startsWith('REG_SUCCESS|')) {
+                    try {
+                        const dataStr = text.substring('REG_SUCCESS|'.length);
+                        const data = JSON.parse(dataStr);
+                        
+                        document.getElementById('regPopupName').innerText = data.name;
+                        document.getElementById('regPopupEmail').innerText = data.email;
+                        document.getElementById('regPopupPhone').innerText = data.phone || 'N/A';
+                        
+                        document.getElementById('modernRegPopup').classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                        return; // Skip normal popup
+                    } catch (e) {
+                        console.error('Error parsing registration success message', e);
+                    }
+                }
                 
                 const popup = document.getElementById('confPopup');
                 const popupIcon = popup.querySelector('i');

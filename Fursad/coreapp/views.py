@@ -94,6 +94,11 @@ def company_register(request):
         email = request.POST.get('email')
         username = request.POST.get('username')
         password = request.POST.get('password')
+        description = request.POST.get('description')
+        phone = request.POST.get('phone')
+        header_location = request.POST.get('header_location')
+        logo = request.FILES.get('logo')
+        company_lence = request.FILES.get('company_lence')
         
         if Company_DB.objects.filter(c_email=email).exists() or Company_DB.objects.filter(c_username=username).exists():
             messages.error(request, 'Email or Username already exists')
@@ -103,9 +108,20 @@ def company_register(request):
                 c_email=email,
                 c_username=username,
                 c_password=password,
+                c_description=description,
+                c_phone=phone,
+                c_header_location=header_location,
+                c_logo=logo,
+                c_company_lence=company_lence,
                 c_active=False
             )
-            messages.success(request, 'Wait until admin activate you')
+            import json
+            success_data = {
+                'name': name,
+                'email': email,
+                'phone': phone
+            }
+            messages.success(request, f"REG_SUCCESS|{json.dumps(success_data)}")
             
         return redirect(request.META.get('HTTP_REFERER', 'home'))
     else:

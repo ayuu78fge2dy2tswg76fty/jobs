@@ -74,6 +74,24 @@ def admin_companies(request):
     }
     return render(request, 'adminapp/companies.html', context)
 
+def admin_company_verify(request, company_id):
+    if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
+        return redirect('home')
+    company = get_object_or_404(Company_DB, id=company_id)
+    company.c_verivaed = True
+    company.save()
+    messages.success(request, f"Company {company.c_name} has been verified.")
+    return redirect(request.META.get('HTTP_REFERER', 'adminapp:companies'))
+
+def admin_company_unverify(request, company_id):
+    if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
+        return redirect('home')
+    company = get_object_or_404(Company_DB, id=company_id)
+    company.c_verivaed = False
+    company.save()
+    messages.warning(request, f"Company {company.c_name} verification removed.")
+    return redirect(request.META.get('HTTP_REFERER', 'adminapp:companies'))
+
 def admin_company_activate(request, company_id):
     if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
         return redirect('home')
@@ -81,7 +99,7 @@ def admin_company_activate(request, company_id):
     company.c_active = True
     company.save()
     messages.success(request, f"Company {company.c_name} has been activated successfully.")
-    return redirect('adminapp:companies')
+    return redirect(request.META.get('HTTP_REFERER', 'adminapp:companies'))
 
 def admin_company_deactivate(request, company_id):
     if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
@@ -90,7 +108,7 @@ def admin_company_deactivate(request, company_id):
     company.c_active = False
     company.save()
     messages.warning(request, f"Company {company.c_name} has been deactivated.")
-    return redirect('adminapp:companies')
+    return redirect(request.META.get('HTTP_REFERER', 'adminapp:companies'))
 
 def admin_company_delete(request, company_id):
     if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):

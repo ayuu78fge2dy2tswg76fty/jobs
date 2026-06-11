@@ -57,53 +57,49 @@
     </div>
 
     <!-- Premium Applications Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem; margin-top: 2rem;">
         {% for app in applications %}
         <div class="app-card-premium" style="
             background: rgba(30, 41, 59, 0.4);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 28px;
-            padding: 1.75rem;
+            padding: 3rem 1.75rem 1.75rem 1.75rem;
             transition: all 0.4s ease;
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow: visible;
+            margin-top: 1.5rem;
         " onmouseover="this.style.transform='translateY(-8px)'; this.style.borderColor='var(--primary)'; this.style.backgroundColor='rgba(30, 41, 59, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.backgroundColor='rgba(30, 41, 59, 0.4)'">
             
-            <div style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
-                    <!-- Dual Logos Premier Style -->
-                    <div style="display: flex; position: relative; width: 80px; height: 50px; align-items: center;">
-                        <!-- Company Logo -->
-                        <div style="width: 48px; height: 48px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 1; transform: rotate(-5deg);">
-                            {% if app.a_job.j_company.c_logo %}
-                                <img src="{{ app.a_job.j_company.c_logo.url }}" alt="Company" style="width: 100%; height: 100%; object-fit: cover;">
-                            {% else %}
-                                <i class="fa-solid fa-building" style="font-size: 1.2rem; color: rgba(255,255,255,0.2);"></i>
-                            {% endif %}
-                        </div>
-                        <!-- Job Logo -->
-                        <div style="width: 48px; height: 48px; border-radius: 16px; border: 2px solid var(--primary); background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 12px 25px rgba(16, 185, 129, 0.2); margin-left: -18px; z-index: 2; transform: rotate(5deg);">
-                            {% if app.a_job.j_logo %}
-                                <img src="{{ app.a_job.j_logo.url }}" alt="Job" style="width: 100%; height: 100%; object-fit: cover;">
-                            {% else %}
-                                <i class="fa-solid fa-briefcase" style="font-size: 1.2rem; color: var(--primary);"></i>
-                            {% endif %}
-                        </div>
+            <!-- Overlapping Logo Section -->
+            <div style="position: absolute; top: -35px; left: 30px; width: 70px; height: 70px; border-radius: 50%; border: 4px solid var(--bg-body); box-shadow: 0 10px 20px rgba(0,0,0,0.3); overflow: hidden; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 10; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                {% if app.a_job.j_company.c_logo %}
+                    <img src="{{ app.a_job.j_company.c_logo.url }}" alt="Company" style="width: 100%; height: 100%; object-fit: cover;">
+                {% elif app.a_job.j_logo %}
+                    <img src="{{ app.a_job.j_logo.url }}" alt="Job" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-briefcase" style="font-size: 1.8rem; color: white;"></i>
                     </div>
-                    
-                    <span style="padding: 8px 16px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.05);
-                        {% if app.a_status == 'accepted' %} background: rgba(16, 185, 129, 0.1); color: var(--primary);
-                        {% elif app.a_status == 'rejected' %} background: rgba(239, 68, 68, 0.1); color: #ef4444;
-                        {% elif app.a_status == 'reviewed' %} background: rgba(99, 102, 241, 0.1); color: var(--secondary);
-                        {% else %} background: rgba(245, 158, 11, 0.1); color: #f59e0b; {% endif %}">
-                        {{ app.get_a_status_display }}
-                    </span>
-                </div>
+                {% endif %}
+            </div>
 
-                <h3 style="font-size: 1.4rem; font-weight: 800; color: white; margin-bottom: 6px; letter-spacing: -0.5px;">{{ app.a_job.j_title }}</h3>
+            <!-- Status Tag Top Right -->
+            <div style="position: absolute; top: 1.5rem; right: 1.75rem; z-index: 2;">
+                <span style="padding: 8px 16px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.05);
+                    {% if app.a_status == 'accepted' %} background: rgba(16, 185, 129, 0.1); color: var(--primary);
+                    {% elif app.a_status == 'rejected' %} background: rgba(239, 68, 68, 0.1); color: #ef4444;
+                    {% elif app.a_status == 'reviewed' %} background: rgba(99, 102, 241, 0.1); color: var(--secondary);
+                    {% else %} background: rgba(245, 158, 11, 0.1); color: #f59e0b; {% endif %}">
+                    {{ app.get_a_status_display }}
+                </span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; margin-top: 0.5rem; position: relative; z-index: 2;">
+                <h3 style="font-size: 1.4rem; font-weight: 800; color: white; margin-bottom: 6px; letter-spacing: -0.5px; padding-right: 80px;">{{ app.a_job.j_title }}</h3>
                 <p style="color: var(--primary-light); font-size: 0.95rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 6px;">
                     {{ app.a_job.j_company.c_name }} <i class="fa-solid fa-circle-check" style="font-size: 0.8rem;"></i>
                 </p>
