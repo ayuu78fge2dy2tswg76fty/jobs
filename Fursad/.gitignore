@@ -1,34 +1,43 @@
-# # Python
-# __pycache__/
-# *.py[cod]
-# *.pyo
-# *.pyd
-# *.so
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
 
-# # Virtual environments
-# env/
-# venv/
-# .venv/
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
 
-# # Django
-# db.sqlite3
-# *.log
-# local_settings.py
-# media/
+# Django
+db.sqlite3
+db.sqlite3-journal
+*.log
+local_settings.py
 
-# # Environment variables and secrets
-# .env
-# .env.*
+# Media files (User uploads)
+media/
 
-# # Test / coverage / tooling
-# .coverage
-# htmlcov/
-# .pytest_cache/
-# .mypy_cache/
-# .ruff_cache/
+# Static files collected during deployment
+staticfiles/
 
-# # IDE / OS
-# .DS_Store
-# Thumbs.db
-# .vscode/
-# .idea/
+# Environment variables and secrets
+.env
+.env.*
+.env.local
+.env.production
+
+# Test / coverage / tooling
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
