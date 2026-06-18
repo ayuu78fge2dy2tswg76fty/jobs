@@ -1,26 +1,14 @@
 asgiref==3.11.1
 Django==6.0.4
-
-# Database Driver
-psycopg2-binary==2.9.9
-
-# Environment Variables
-python-dotenv==1.2.1
-
-# Image Processing
-Pillow==11.3.0
-
-# Rich text editor
-django-ckeditor-5==2.4.0
-
-# Authentication and APIs
-PyJWT==2.10.1
-requests==2.32.5
-django-cors-headers==5.1.0
-
-# Production Server
-gunicorn==21.2.0
-
-# Utilities
+load-dotenv==0.1.0
+mssql-django==1.7.2
+pillow==12.2.0
+psycopg==3.3.4
+psycopg2-binary==2.9.12
+PyMySQL==1.2.0
+pyodbc==5.3.0
+python-dotenv==1.2.2
+pytz==2026.2
 sqlparse==0.5.5
+typing_extensions==4.15.0
 tzdata==2026.1
