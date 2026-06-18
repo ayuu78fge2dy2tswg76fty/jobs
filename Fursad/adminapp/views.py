@@ -3,7 +3,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q
-
+from django.core.mail import EmailMultiAlternatives
+from email.mime.image import MIMEImage
+import os
+from django.conf import settings
 def admin_login(request):
     if request.method == 'POST':
         identifier = request.POST.get('identifier')
@@ -40,20 +43,39 @@ def admin_dashboard(request):
         return redirect('home')
         
     total_companies = Company_DB.objects.count()
+    active_companies = Company_DB.objects.filter(c_active=True).count()
     total_jobseekers = shaqod_DB.objects.count()
+    active_jobseekers = shaqod_DB.objects.filter(s_status=True).count()
     open_jobs = jops_DB.objects.filter(j_active=True).count()
+    total_jobs = jops_DB.objects.count()
+    
+    from applications.models import Application_DB
+    total_applications = Application_DB.objects.count()
+    
     pending_companies = Company_DB.objects.filter(c_active=False)
     pending_verifications = pending_companies.count()
     
     # Get up to 5 recently registered companies needing verification
     recent_verifications = pending_companies.order_by('-c_joined')[:5]
+    
+    # Get up to 5 recently posted jobs
+    recent_jobs = jops_DB.objects.all().order_by('-j_posted')[:5]
+    
+    # Get up to 5 recent applications
+    recent_applications = Application_DB.objects.all().order_by('-a_applied_date')[:5]
 
     context = {
         'total_companies': total_companies,
+        'active_companies': active_companies,
         'total_jobseekers': total_jobseekers,
+        'active_jobseekers': active_jobseekers,
         'open_jobs': open_jobs,
+        'total_jobs': total_jobs,
+        'total_applications': total_applications,
         'pending_verifications': pending_verifications,
         'recent_verifications': recent_verifications,
+        'recent_jobs': recent_jobs,
+        'recent_applications': recent_applications,
     }
     
     return render(request, 'adminapp/dashboard.html', context)
@@ -96,9 +118,59 @@ def admin_company_activate(request, company_id):
     if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
         return redirect('home')
     company = get_object_or_404(Company_DB, id=company_id)
+    
+    was_active = company.c_active
     company.c_active = True
     company.save()
-    messages.success(request, f"Company {company.c_name} has been activated successfully.")
+    
+    if not was_active:
+        subject = "Account Activated - Fursad"
+        
+        login_url = request.build_absolute_uri('/')
+        
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;">
+                <img src="cid:fursad_logo" alt="Fursad Logo" style="width: 150px; margin-bottom: 20px;">
+                <h2 style="color: #333;">Ku soo dhowoow Fursad, {company.c_name}!</h2>
+                <p style="color: #555; font-size: 16px; line-height: 1.6;">
+                    Waxaan kugu wargelineynaa in codsigii furashada company-gaaga la aqbalay. 
+                    Hadda waxaad si guul leh u gali kartaa system-ka Fursad adiga oo isticmaalaya email-kaaga iyo password-kaagii.
+                </p>
+                <div style="margin-top: 30px;">
+                    <a href="{login_url}" style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; display: inline-block;">
+                        Login Hadda
+                    </a>
+                </div>
+                <p style="margin-top: 30px; color: #888; font-size: 12px;">
+                    © 2026 Fursad. All rights reserved.
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        text_content = f"Ku soo dhowoow Fursad, {company.c_name}!\n\nWaxaan kugu wargelineynaa in codsigii furashada company-gaaga la aqbalay. Hadda waad gali kartaa system-ka."
+        
+        msg = EmailMultiAlternatives(subject, text_content, None, [company.c_email])
+        msg.attach_alternative(html_content, "text/html")
+        
+        logo_path = os.path.join(settings.BASE_DIR, 'static', 'logo.png')
+        if os.path.exists(logo_path):
+            with open(logo_path, 'rb') as img:
+                logo_img = MIMEImage(img.read())
+                logo_img.add_header('Content-ID', '<fursad_logo>')
+                msg.attach(logo_img)
+                
+        try:
+            msg.send(fail_silently=False)
+            messages.success(request, f"Company {company.c_name} has been activated successfully and notified via email.")
+        except Exception as e:
+            messages.warning(request, f"Company {company.c_name} has been activated, but failed to send email: {e}")
+    else:
+        messages.success(request, f"Company {company.c_name} is already active.")
+        
     return redirect(request.META.get('HTTP_REFERER', 'adminapp:companies'))
 
 def admin_company_deactivate(request, company_id):
@@ -118,6 +190,21 @@ def admin_company_delete(request, company_id):
     company.delete()
     messages.success(request, f"Company {company_name} has been deleted.")
     return redirect('adminapp:companies')
+
+def admin_company_update_doc(request, company_id):
+    if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
+        return redirect('home')
+        
+    if request.method == 'POST':
+        company = get_object_or_404(Company_DB, id=company_id)
+        if 'c_company_lence' in request.FILES:
+            company.c_company_lence = request.FILES['c_company_lence']
+            company.save()
+            messages.success(request, f"License document for {company.c_name} has been updated.")
+        else:
+            messages.error(request, "No document provided.")
+            
+    return redirect('adminapp:company_detail', company_id=company_id)
 
 from applications.models import Application_DB
 

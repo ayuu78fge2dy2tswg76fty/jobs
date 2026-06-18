@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +10,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-     <link rel="icon" type="image/png" href="{% static 'logo.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'logo.png' %}">
     <style>
         :root {
-            --primary-color: #3b82f6; /* Blue */
+            --primary-color: #3b82f6;
+            /* Blue */
             --primary-hover: #2563eb;
-            --bg-dark: #0f172a; /* Deep Slate */
-            --bg-darker: #020617; /* Very Deep Slate */
+            --bg-dark: #0f172a;
+            /* Deep Slate */
+            --bg-darker: #020617;
+            /* Very Deep Slate */
             --bg-card: #1e293b;
             --text-light: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
-            --accent-color: #10b981; /* Emerald */
-            --danger-color: #ef4444; /* Red */
-            --warning-color: #f59e0b; /* Amber */
+            --accent-color: #10b981;
+            /* Emerald */
+            --danger-color: #ef4444;
+            /* Red */
+            --warning-color: #f59e0b;
+            /* Amber */
             --sidebar-width: 260px;
             --sidebar-collapsed-width: 80px;
             --header-height: 70px;
@@ -155,7 +162,8 @@
             margin: 0;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover,
+        .nav-link.active {
             background-color: rgba(59, 130, 246, 0.1);
             color: var(--primary-color);
         }
@@ -221,7 +229,7 @@
             position: relative;
             z-index: 9999;
             touch-action: manipulation;
-            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
             pointer-events: all;
         }
 
@@ -346,13 +354,16 @@
             width: 8px;
             height: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: var(--bg-darker);
         }
+
         ::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-muted);
         }
@@ -362,31 +373,39 @@
             .sidebar {
                 transform: translateX(-100%);
                 width: var(--sidebar-width);
-                box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+                box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
                 z-index: 920;
             }
+
             .sidebar.mobile-open {
                 transform: translateX(0);
             }
+
             .main-wrapper {
                 margin-left: 0 !important;
             }
+
             .main-wrapper.expanded {
                 margin-left: 0 !important;
             }
+
             .profile-info {
                 display: none;
             }
+
             .top-header {
                 padding: 0 1rem;
                 z-index: 960;
             }
+
             .content-area {
                 padding: 1rem;
             }
+
             .header-actions {
                 gap: 0.8rem;
             }
+
             .brand {
                 font-size: 1.25rem;
             }
@@ -415,6 +434,7 @@
         .messages {
             margin-bottom: 1.5rem;
         }
+
         .alert {
             padding: 1rem 1.5rem;
             border-radius: 12px;
@@ -424,29 +444,42 @@
             align-items: center;
             animation: slideIn 0.3s ease-out;
         }
+
         .alert-success {
             background-color: rgba(16, 185, 129, 0.1);
             color: var(--accent-color);
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
-        .alert-error, .alert-danger {
+
+        .alert-error,
+        .alert-danger {
             background-color: rgba(239, 68, 68, 0.1);
             color: var(--danger-color);
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
+
         .alert-warning {
             background-color: rgba(245, 158, 11, 0.1);
             color: var(--warning-color);
             border: 1px solid rgba(245, 158, 11, 0.2);
         }
+
         .alert-info {
             background-color: rgba(59, 130, 246, 0.1);
             color: var(--primary-color);
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
+
         @keyframes slideIn {
-            from { transform: translateY(-10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         /* Notification Dropdown */
@@ -576,9 +609,20 @@
             font-size: 1rem;
         }
 
-        .icon-blue { background: rgba(59, 130, 246, 0.15); color: var(--primary-color); }
-        .icon-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-color); }
-        .icon-yellow { background: rgba(245, 158, 11, 0.15); color: var(--warning-color); }
+        .icon-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary-color);
+        }
+
+        .icon-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-color);
+        }
+
+        .icon-yellow {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning-color);
+        }
 
         .notification-content {
             flex: 1;
@@ -621,6 +665,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Mobile Overlay -->
@@ -636,39 +681,44 @@
 
         <nav class="nav-menu">
             <div class="nav-item">
-                <a href="{% url 'companyapp:company_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'company_dashboard' %}active{% endif %}">
+                <a href="{% url 'companyapp:company_dashboard' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'company_dashboard' %}active{% endif %}">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Dashboard</span>
                 </a>
             </div>
 
             <div class="nav-item">
-                <a href="{% url 'companyapp:company_jobs' %}" class="nav-link {% if request.resolver_match.url_name == 'company_jobs' %}active{% endif %}">
+                <a href="{% url 'companyapp:company_jobs' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'company_jobs' %}active{% endif %}">
                     <i class="fa-solid fa-briefcase"></i>
                     <span>Manage Jobs</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="{% url 'companyapp:company_applications' %}" class="nav-link {% if request.resolver_match.url_name == 'company_applications' %}active{% endif %}">
+                <a href="{% url 'companyapp:company_applications' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'company_applications' %}active{% endif %}">
                     <i class="fa-solid fa-users"></i>
                     <span>Applications</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="{% url 'companyapp:company_profile' %}" class="nav-link {% if request.resolver_match.url_name == 'company_profile' %}active{% endif %}">
+                <a href="{% url 'companyapp:company_profile' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'company_profile' %}active{% endif %}">
                     <i class="fa-solid fa-building"></i>
                     <span>Company Profile</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="{% url 'companyapp:company_analyze' %}" class="nav-link {% if request.resolver_match.url_name == 'company_analyze' %}active{% endif %}">
+                <a href="{% url 'companyapp:company_analyze' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'company_analyze' %}active{% endif %}">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Analytics</span>
                 </a>
             </div>
-            
+
             <div style="flex: 1;"></div>
-            
+
             <div class="nav-item">
                 <a href="{% url 'companyapp:company_logout' %}" class="nav-link" style="color: var(--danger-color);">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -695,15 +745,19 @@
                         <i class="fa-regular fa-bell"></i>
                         <span class="badge">3</span>
                     </a>
-                    
+
                     <div class="notification-dropdown" id="notificationDropdown">
                         <div class="notification-header">
                             <h3>Notifications</h3>
-                            <span onclick="clearAllNotifications()" style="font-size: 0.75rem; color: var(--primary-color); cursor: pointer; font-weight: 600;">Clear all</span>
+                            <span onclick="clearAllNotifications()"
+                                style="font-size: 0.75rem; color: var(--primary-color); cursor: pointer; font-weight: 600;">Clear
+                                all</span>
                         </div>
                         <div class="notification-list" id="notificationList">
-                            <div class="notification-item" onclick="window.location.href='{% url 'companyapp:company_applications' %}'">
-                                <button class="btn-remove-notif" onclick="removeNotification(event, this)" title="Dismiss">
+                            <div class="notification-item"
+                                onclick="window.location.href='{% url 'companyapp:company_applications' %}'">
+                                <button class="btn-remove-notif" onclick="removeNotification(event, this)"
+                                    title="Dismiss">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                                 <div class="notification-icon-box icon-blue">
@@ -711,12 +765,15 @@
                                 </div>
                                 <div class="notification-content">
                                     <span class="notification-title">New Application Received</span>
-                                    <span class="notification-desc">Ahmed Ali applied for Senior Developer position.</span>
+                                    <span class="notification-desc">Ahmed Ali applied for Senior Developer
+                                        position.</span>
                                     <span class="notification-time">2 mins ago</span>
                                 </div>
                             </div>
-                            <div class="notification-item" onclick="window.location.href='{% url 'companyapp:company_jobs' %}'">
-                                <button class="btn-remove-notif" onclick="removeNotification(event, this)" title="Dismiss">
+                            <div class="notification-item"
+                                onclick="window.location.href='{% url 'companyapp:company_jobs' %}'">
+                                <button class="btn-remove-notif" onclick="removeNotification(event, this)"
+                                    title="Dismiss">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                                 <div class="notification-icon-box icon-yellow">
@@ -724,12 +781,15 @@
                                 </div>
                                 <div class="notification-content">
                                     <span class="notification-title">Job Expiring Soon</span>
-                                    <span class="notification-desc">Your job post "UI Designer" will expire in 2 days.</span>
+                                    <span class="notification-desc">Your job post "UI Designer" will expire in 2
+                                        days.</span>
                                     <span class="notification-time">5 hours ago</span>
                                 </div>
                             </div>
-                            <div class="notification-item" onclick="window.location.href='{% url 'companyapp:company_profile' %}'">
-                                <button class="btn-remove-notif" onclick="removeNotification(event, this)" title="Dismiss">
+                            <div class="notification-item"
+                                onclick="window.location.href='{% url 'companyapp:company_profile' %}'">
+                                <button class="btn-remove-notif" onclick="removeNotification(event, this)"
+                                    title="Dismiss">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                                 <div class="notification-icon-box icon-green">
@@ -737,7 +797,8 @@
                                 </div>
                                 <div class="notification-content">
                                     <span class="notification-title">Account Verified</span>
-                                    <span class="notification-desc">Your company documents have been successfully verified.</span>
+                                    <span class="notification-desc">Your company documents have been successfully
+                                        verified.</span>
                                     <span class="notification-time">Yesterday</span>
                                 </div>
                             </div>
@@ -751,13 +812,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="company-profile">
                     <div class="profile-img">
                         {% if request.session.company_logo %}
-                            <img src="{{ request.session.company_logo }}" alt="Logo">
+                        <img src="{{ request.session.company_logo }}" alt="Logo">
                         {% else %}
-                            <i class="fa-solid fa-building"></i>
+                        <i class="fa-solid fa-building"></i>
                         {% endif %}
                     </div>
                     <div class="profile-info">
@@ -771,16 +832,18 @@
         <!-- Dynamic Content Area -->
         <main class="content-area">
             {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} django-message" style="transition: all 0.5s ease; opacity: 1;">
-                            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' or message.tags == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}" style="margin-right: 10px;"></i>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} django-message"
+                    style="transition: all 0.5s ease; opacity: 1;">
+                    <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' or message.tags == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"
+                        style="margin-right: 10px;"></i>
+                    {{ message }}
                 </div>
+                {% endfor %}
+            </div>
             {% endif %}
-            
+
             {% block content %}
             {% endblock content %}
         </main>
@@ -788,7 +851,7 @@
 
     <script>
         // Sidebar toggle — robust mobile + desktop
-        (function() {
+        (function () {
             function init() {
                 var sidebar = document.getElementById('sidebar');
                 var mainWrapper = document.getElementById('mainWrapper');
@@ -841,8 +904,8 @@
                     overlay.addEventListener('touchstart', closeSidebar, { passive: true });
                 }
 
-                document.querySelectorAll('.nav-link').forEach(function(link) {
-                    link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(function (link) {
+                    link.addEventListener('click', function () {
                         if (isMobile()) closeSidebar();
                     });
                 });
@@ -885,7 +948,7 @@
             event.stopPropagation(); // Prevent triggering the item click
             const item = btn.closest('.notification-item');
             item.classList.add('removing');
-            
+
             setTimeout(() => {
                 item.remove();
                 updateNotificationBadge();
@@ -940,4 +1003,5 @@
         }
     </script>
 </body>
+
 </html>

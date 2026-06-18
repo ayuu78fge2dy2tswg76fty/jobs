@@ -1,31 +1,34 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Admin Dashboard - Fursad Premium{% endblock %}</title>
-    
+
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="{% static 'logo.png' %}">
-    
+
     <style>
         :root {
             /* Colors */
             --bg-base: #030712;
             --bg-surface: #111827;
             --bg-card: #1f2937;
-            
+
             --border-color: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(255, 255, 255, 0.15);
-            
+
             --text-primary: #f9fafb;
             --text-secondary: #9ca3af;
             --text-muted: #6b7280;
-            
+
             /* Accents */
             --accent-blue: #3b82f6;
             --accent-blue-glow: rgba(59, 130, 246, 0.2);
@@ -54,7 +57,13 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, h5, h6, .brand-logo {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .brand-logo {
             font-family: 'Outfit', sans-serif;
         }
 
@@ -145,7 +154,7 @@
             background: rgba(239, 68, 68, 0.05);
             border: 1px solid rgba(239, 68, 68, 0.1);
         }
-        
+
         .logout-btn:hover {
             background: rgba(239, 68, 68, 0.1);
             color: #fca5a5;
@@ -225,7 +234,7 @@
             align-items: center;
             gap: 4px;
         }
-        
+
         .admin-info small::before {
             content: '';
             display: inline-block;
@@ -240,6 +249,7 @@
         .django-messages {
             margin-bottom: 2rem;
         }
+
         .alert {
             padding: 1rem 1.5rem;
             border-radius: 12px;
@@ -249,25 +259,28 @@
             gap: 12px;
             font-weight: 500;
         }
+
         .alert-success {
             background: rgba(16, 185, 129, 0.1);
             color: var(--accent-emerald);
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
+
         .alert-warning {
             background: rgba(245, 158, 11, 0.1);
             color: var(--accent-amber);
             border: 1px solid rgba(245, 158, 11, 0.2);
         }
+
         .alert-error {
             background: rgba(239, 68, 68, 0.1);
             color: var(--accent-danger);
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
-
     </style>
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
 
     <!-- Sidebar -->
@@ -275,42 +288,50 @@
         <a href="{% url 'adminapp:dashboard' %}" class="brand-logo">
             <i class="fa-solid fa-briefcase"></i> Fursad
         </a>
-        
+
         <ul class="nav-menu">
             <li>
-                <a href="{% url 'adminapp:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <a href="{% url 'adminapp:dashboard' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                     <i class="fa-solid fa-chart-pie"></i> Dashboard
                 </a>
             </li>
             <li>
-                <a href="{% url 'adminapp:companies' %}" class="nav-link {% if request.resolver_match.url_name == 'companies' %}active{% endif %}">
+                <a href="{% url 'adminapp:companies' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'companies' %}active{% endif %}">
                     <i class="fa-solid fa-building"></i> Companies
                 </a>
             </li>
             <li>
-                <a href="{% url 'adminapp:jobseekers' %}" class="nav-link {% if request.resolver_match.url_name == 'jobseekers' %}active{% endif %}">
+                <a href="{% url 'adminapp:jobseekers' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'jobseekers' %}active{% endif %}">
                     <i class="fa-solid fa-users"></i> Jobseekers
                 </a>
             </li>
             <li>
-                <a href="{% url 'adminapp:jobs' %}" class="nav-link {% if request.resolver_match.url_name == 'jobs' %}active{% endif %}">
+                <a href="{% url 'adminapp:jobs' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'jobs' %}active{% endif %}">
                     <i class="fa-solid fa-briefcase"></i> Jobs List
                 </a>
             </li>
             <li>
-                <a href="{% url 'adminapp:analyze' %}" class="nav-link {% if request.resolver_match.url_name == 'analyze' %}active{% endif %}">
+                <a href="{% url 'adminapp:analyze' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'analyze' %}active{% endif %}">
                     <i class="fa-solid fa-chart-line"></i> Analytics
                 </a>
             </li>
             <li style="margin-top: 2rem;">
-                <h4 style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding-left: 1.2rem; margin-bottom: 0.5rem;">Settings</h4>
+                <h4
+                    style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding-left: 1.2rem; margin-bottom: 0.5rem;">
+                    Settings</h4>
             </li>
             <li>
-                <a href="{% url 'adminapp:profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <a href="{% url 'adminapp:profile' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                     <i class="fa-solid fa-user-shield"></i> My Profile
                 </a>
             </li>
-            
+
             <li>
                 <a href="{% url 'home' %}" class="nav-link logout-btn">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>Logout
@@ -321,13 +342,13 @@
 
     <!-- Main Content -->
     <main class="main-wrapper">
-        
+
         <header class="top-header">
             <div class="header-title">
                 <h1>{% block header_title %}Overview Dashboard{% endblock %}</h1>
                 <p>{% block header_subtitle %}Welcome back, here's what's happening on Fursad today.{% endblock %}</p>
             </div>
-            
+
             <div class="admin-profile">
                 <div class="admin-avatar">
                     <i class="fa-solid fa-user-shield"></i>
@@ -342,8 +363,10 @@
         {% if messages %}
         <div class="django-messages">
             {% for message in messages %}
-            <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}success{% endif %} django-message" style="transition: all 0.5s ease; opacity: 1;">
-                <i class="fa-solid {% if message.tags == 'error' %}fa-circle-xmark{% elif message.tags == 'warning' %}fa-triangle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+            <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}success{% endif %} django-message"
+                style="transition: all 0.5s ease; opacity: 1;">
+                <i
+                    class="fa-solid {% if message.tags == 'error' %}fa-circle-xmark{% elif message.tags == 'warning' %}fa-triangle-exclamation{% else %}fa-circle-check{% endif %}"></i>
                 {{ message }}
             </div>
             {% endfor %}
@@ -351,7 +374,7 @@
         {% endif %}
 
         {% block content %}{% endblock %}
-        
+
     </main>
 
     <script>
@@ -365,4 +388,5 @@
     </script>
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

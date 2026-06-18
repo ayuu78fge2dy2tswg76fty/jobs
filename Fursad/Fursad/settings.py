@@ -85,14 +85,23 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
 
+    # 'default': {
+    #     'ENGINE': 'mssql',
+    #     'NAME': 'Fursad_A_DB_',
+    #     'HOST': 'DESKTOP-UN31UCL\\MSSQLSER1',
+    #     'OPTIONS': {
+    #         'driver': 'ODBC Driver 17 for SQL Server',
+    #         'trusted_connection': 'yes',
+    #     },
+    # }
+
     'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'Fursad_A_DB_',
-        'HOST': 'DESKTOP-UN31UCL\\MSSQLSER1',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'trusted_connection': 'yes',
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.ivzmdrefnnrgiynezeti',
+        'PASSWORD': 'CZcQjkU7hYi3i29N',
+        'HOST': 'aws-0-eu-west-1.pooler.supabase.com',
+        'PORT': '5432',
     }
 }
 
@@ -138,3 +147,11 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'cadeayuub310@gmail.com'
+EMAIL_HOST_PASSWORD = 'hbdglwndsfefyacx'
+DEFAULT_FROM_EMAIL = 'Fursad App <cadeayuub310@gmail.com>'

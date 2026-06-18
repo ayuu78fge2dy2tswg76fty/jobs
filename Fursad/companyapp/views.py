@@ -271,7 +271,6 @@ def company_logout(request):
     # Alternatively use request.session.flush() to clear everything including session cookie
     # request.session.flush() 
     
-    messages.success(request, "Aad ayaad u mahadsantahay! Si guul leh ayaad uga baxday.")
     return redirect('home')
 
 

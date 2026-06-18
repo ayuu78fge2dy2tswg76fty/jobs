@@ -136,7 +136,6 @@ def shaqodon_logout(request):
     if 'shaqodon_img' in request.session:
         del request.session['shaqodon_img']
         
-    messages.success(request, "You have been logged out.")
     return redirect('home')
 
 def shaqodon_profile(request):

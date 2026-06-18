@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password
 
 # Create your models here.
 
@@ -33,3 +34,8 @@ class shaqod_DB(models.Model):
     class Meta:
         verbose_name = 'Shaqodon'
         verbose_name_plural = 'Shaqodonayal'
+
+    # def save(self,*args,**kwargs):
+    #         if self.s_password:
+    #             self.s_password = make_password(self.s_password)
+    #         super().save(*args,**kwargs)

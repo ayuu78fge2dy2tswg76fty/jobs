@@ -12,4 +12,7 @@ urlpatterns = [
     path('privacy-policy/', views.privacy, name='privacy'),
     path('terms-of-service/', views.terms, name='terms'),
     path('other-services/', views.services, name='services'),
+    # Forgot Password API endpoints
+    path('api/forgot-password/', views.forgot_password_request, name='forgot_password_request'),
+    path('api/reset-password/', views.forgot_password_reset, name='forgot_password_reset'),
 ]

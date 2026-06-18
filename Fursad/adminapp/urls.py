@@ -14,6 +14,7 @@ urlpatterns = [
     path('companies/<int:company_id>/activate/', views.admin_company_activate, name='company_activate'),
     path('companies/<int:company_id>/deactivate/', views.admin_company_deactivate, name='company_deactivate'),
     path('companies/<int:company_id>/delete/', views.admin_company_delete, name='company_delete'),
+    path('companies/<int:company_id>/update_doc/', views.admin_company_update_doc, name='company_update_doc'),
 
     # Jobseeker Management
     path('jobseekers/', views.admin_jobseekers, name='jobseekers'),
