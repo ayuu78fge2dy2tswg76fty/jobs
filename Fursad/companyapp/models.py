@@ -36,11 +36,10 @@ class Company_DB(models.Model):
         return f'{self.c_name}  {self.c_email}'
     
 
-
-    # def save(self,*args,**kwargs):
-    #     if self.c_password:
-    #         self.c_password = make_password(self.c_password)
-    #     super().save(*args,**kwargs)
+    def save(self, *args, **kwargs):
+        if self.c_password and not self.c_password.startswith('pbkdf2_'):
+            self.c_password = make_password(self.c_password)
+        super().save(*args, **kwargs)
 
  
         

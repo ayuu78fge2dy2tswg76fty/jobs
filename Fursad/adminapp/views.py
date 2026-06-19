@@ -130,17 +130,20 @@ def admin_company_activate(request, company_id):
         
         html_content = f"""
         <html>
+        <head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        </head>
         <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
             <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;">
-                <img src="cid:fursad_logo" alt="Fursad Logo" style="width: 150px; margin-bottom: 20px;">
+                <i class="fa-solid fa-briefcase" style="font-size: 4rem; color: #3b82f6; margin-bottom: 20px;"></i>
                 <h2 style="color: #333;">Ku soo dhowoow Fursad, {company.c_name}!</h2>
                 <p style="color: #555; font-size: 16px; line-height: 1.6;">
                     Waxaan kugu wargelineynaa in codsigii furashada company-gaaga la aqbalay. 
-                    Hadda waxaad si guul leh u gali kartaa system-ka Fursad adiga oo isticmaalaya email-kaaga iyo password-kaagii.
+                    Hadda waxaad  gali kartaa akonkaga Fursad adiga oo isticmaalaya email-kaaga iyo password-kaagii.
                 </p>
                 <div style="margin-top: 30px;">
                     <a href="{login_url}" style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; display: inline-block;">
-                        Login Hadda
+                        Login now
                     </a>
                 </div>
                 <p style="margin-top: 30px; color: #888; font-size: 12px;">
@@ -156,13 +159,7 @@ def admin_company_activate(request, company_id):
         msg = EmailMultiAlternatives(subject, text_content, None, [company.c_email])
         msg.attach_alternative(html_content, "text/html")
         
-        logo_path = os.path.join(settings.BASE_DIR, 'static', 'logo.png')
-        if os.path.exists(logo_path):
-            with open(logo_path, 'rb') as img:
-                logo_img = MIMEImage(img.read())
-                logo_img.add_header('Content-ID', '<fursad_logo>')
-                msg.attach(logo_img)
-                
+        
         try:
             msg.send(fail_silently=False)
             messages.success(request, f"Company {company.c_name} has been activated successfully and notified via email.")

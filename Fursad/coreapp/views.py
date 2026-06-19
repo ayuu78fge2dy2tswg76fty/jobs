@@ -175,6 +175,7 @@ def forgot_password_request(request):
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Fursad - Password Reset</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body style="margin:0;padding:0;background:#0f172a;font-family:'Segoe UI',Arial,sans-serif;">
       <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;min-height:100vh;padding:40px 0;">
@@ -185,7 +186,7 @@ def forgot_password_request(request):
               <tr>
                 <td style="background:linear-gradient(90deg,#3b82f6,#10b981);padding:32px;text-align:center;">
                   <div style="font-size:2rem;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">
-                    &#128188; Fursad
+                    <i class="fa-solid fa-briefcase"></i> Fursad
                   </div>
                   <div style="color:rgba(255,255,255,0.85);margin-top:6px;font-size:0.95rem;letter-spacing:1px;text-transform:uppercase;">
                     Password Reset Request
@@ -221,7 +222,7 @@ def forgot_password_request(request):
               <tr>
                 <td style="padding:24px 40px 32px 40px;border-top:1px solid #1e293b;">
                   <p style="color:#475569;font-size:0.8rem;margin:0;text-align:center;">
-                    &copy; 2026 Fursad &mdash; Premier Job Portal &bull; Somalia
+                    &copy; 2026 Fursad &mdash;Somali Job Portal &bull; Somalia
                   </p>
                 </td>
               </tr>
