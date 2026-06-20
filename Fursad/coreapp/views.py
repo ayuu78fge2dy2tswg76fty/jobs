@@ -22,12 +22,15 @@ def about(request):
     return render(request, 'coreapp/about.html')
 
 
+from applications.models import Application_DB
+
 def companies(request):
     query = request.GET.get('q', '')
-    companies = Company_DB.objects.filter(c_active=True)
+    companies_list = Company_DB.objects.filter(c_verivaed=True)
     if query:
-        companies = companies.filter(Q(c_name__icontains=query) | Q(c_description__icontains=query))
-    return render(request, 'coreapp/companies.html', {'companies': companies, 'query': query})
+        companies_list = companies_list.filter(Q(c_name__icontains=query) | Q(c_description__icontains=query))
+        
+    return render(request, 'coreapp/companies.html', {'companies': companies_list, 'query': query})
 
 
 def jobs(request):
@@ -107,6 +110,10 @@ def company_register(request):
         header_location = request.POST.get('header_location')
         logo = request.FILES.get('logo')
         company_lence = request.FILES.get('company_lence')
+        owner_name = request.POST.get('owner_name')
+        owner_email = request.POST.get('owner_email')
+        owner_phone = request.POST.get('owner_phone')
+        owner_document = request.FILES.get('owner_document')
         
         if Company_DB.objects.filter(c_email=email).exists() or Company_DB.objects.filter(c_username=username).exists():
             messages.error(request, 'Email or Username already exists')
@@ -121,6 +128,10 @@ def company_register(request):
                 c_header_location=header_location,
                 c_logo=logo,
                 c_company_lence=company_lence,
+                c_owner_person_fullName=owner_name,
+                c_owner_person_email=owner_email,
+                c_owner_person_phone=owner_phone,
+                c_owner_person_docoment=owner_document,
                 c_active=False
             )
             import json

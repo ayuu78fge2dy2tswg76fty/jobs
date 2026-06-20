@@ -203,6 +203,21 @@ def admin_company_update_doc(request, company_id):
             
     return redirect('adminapp:company_detail', company_id=company_id)
 
+def admin_company_update_owner_doc(request, company_id):
+    if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
+        return redirect('home')
+        
+    if request.method == 'POST':
+        company = get_object_or_404(Company_DB, id=company_id)
+        if 'c_owner_person_docoment' in request.FILES:
+            company.c_owner_person_docoment = request.FILES['c_owner_person_docoment']
+            company.save()
+            messages.success(request, f"Owner document for {company.c_name} has been updated.")
+        else:
+            messages.error(request, "No owner document provided.")
+            
+    return redirect('adminapp:company_detail', company_id=company_id)
+
 from applications.models import Application_DB
 
 def admin_company_detail(request, company_id):

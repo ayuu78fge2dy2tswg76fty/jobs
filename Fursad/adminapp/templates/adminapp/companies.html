@@ -400,6 +400,11 @@
                     {% endif %}
                 </div>
                 <div>
+                    {% if not company.c_owner_person_fullName or not company.c_owner_person_email or not company.c_owner_person_phone or not company.c_owner_person_docoment %}
+                        <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); margin-right: 5px;" title="Missing Owner Info">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </span>
+                    {% endif %}
                     {% if company.c_active %}
                         <span class="status-badge status-active"><i class="fa-solid fa-circle-check"></i> Active</span>
                     {% else %}

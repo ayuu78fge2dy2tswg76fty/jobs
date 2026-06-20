@@ -822,7 +822,14 @@
                         {% endif %}
                     </div>
                     <div class="profile-info">
-                        <span class="profile-name">{{ request.session.company_name|default:"Company Name" }}</span>
+                        <span class="profile-name" style="display: flex; align-items: center; gap: 6px;">
+                            {{ request.session.company_name|default:"Company Name" }}
+                            {% if company %}
+                                {% if not company.c_owner_person_fullName or not company.c_owner_person_email or not company.c_owner_person_phone or not company.c_owner_person_docoment %}
+                                    <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; font-size: 0.9rem; cursor: help;" title="Your company owner person unauthorized to authorize, fill the missing owner info"></i>
+                                {% endif %}
+                            {% endif %}
+                        </span>
                         <span class="profile-role">Company</span>
                     </div>
                 </div>

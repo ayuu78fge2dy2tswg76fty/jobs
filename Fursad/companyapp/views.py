@@ -38,6 +38,7 @@ def company_dashboard(request):
         'shortlisted': shortlisted,
         'recent_jobs': company_jobs[:5],
         'recent_applications': all_applications[:5],
+        'company': company,
     }
     return render(request, 'companyapp/dashboard.html', context)
 
@@ -118,11 +119,14 @@ def company_jobs(request):
 
     company_jobs_list = jops_DB.objects.filter(j_company_id=company_id).order_by('-j_posted')
     
+    company = Company_DB.objects.filter(id=company_id).first()
+    
     context = {
         'jobs': company_jobs_list,
         'total_jobs': company_jobs_list.count(),
         'active_jobs': company_jobs_list.filter(j_active=True).count(),
         'closed_jobs': company_jobs_list.filter(j_active=False).count(),
+        'company': company,
     }
     return render(request, 'companyapp/jobs.html', context)
 
@@ -176,6 +180,18 @@ def company_profile(request):
                 if request.FILES.get('c_logo'):
                     company.c_logo = request.FILES.get('c_logo')
                     
+                # Handle password change
+                new_password = request.POST.get('new_password', '').strip()
+                confirm_password = request.POST.get('confirm_password', '').strip()
+                if new_password:
+                    if new_password == confirm_password:
+                        from django.contrib.auth.hashers import make_password
+                        company.c_password = make_password(new_password)
+                    else:
+                        messages.error(request, "New passwords do not match. Profile saved, but password was NOT changed.")
+                        company.save()
+                        return redirect('companyapp:company_profile')
+                        
                 company.save()
                 
                 # Update session variables
@@ -254,6 +270,7 @@ def company_applications(request):
         'reviewed': applications_list.filter(a_status='reviewed').count(),
         'accepted': applications_list.filter(a_status='accepted').count(),
         'rejected': applications_list.filter(a_status='rejected').count(),
+        'company': company,
     }
     return render(request, 'companyapp/applications.html', context)
 

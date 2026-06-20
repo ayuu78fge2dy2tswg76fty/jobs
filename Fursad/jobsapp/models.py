@@ -16,7 +16,7 @@ class jops_DB(models.Model):
     j_company = models.ForeignKey(Company_DB, on_delete=models.CASCADE, help_text="Company")
     j_location = models.CharField(max_length=100, blank=True, null=True,help_text="Job Location")
     j_salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,help_text="Job Salary")
-    j_posted = models.DateField(auto_now_add=True, help_text="Job Posted Date")
+    j_posted = models.DateTimeField(auto_now_add=True, help_text="Job Posted Date")
     j_active = models.BooleanField(default=False, help_text="Job Active")
     j_logo = models.ImageField(upload_to='static/job_logos/', max_length=200, blank=True, null=True,help_text="Job Logo")
     j_jobtype = models.CharField(max_length=20, choices=jobtype, blank=True, null=True, help_text="Job Type")

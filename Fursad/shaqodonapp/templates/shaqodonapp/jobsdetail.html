@@ -61,6 +61,12 @@
                         <i class="fa-solid fa-coins"></i> {% if job.j_salary %}${{ job.j_salary }}{% else %}Negotiable{% endif %}
                     </p>
                 </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px;">Deadline</p>
+                    <p style="font-size: 1.1rem; font-weight: 600; color: #ef4444; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-hourglass-end"></i> {{ job.j_EXP|date:"M d, Y" }}
+                    </p>
+                </div>
             </div>
 
             <!-- Detailed Description -->

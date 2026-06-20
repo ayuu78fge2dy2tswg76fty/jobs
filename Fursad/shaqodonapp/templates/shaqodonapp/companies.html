@@ -17,18 +17,20 @@
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 32px;
-            padding: 2rem;
+            padding: 2.5rem;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
             position: relative;
             overflow: hidden;
-        " onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--primary)'; this.style.background='rgba(30, 41, 59, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.background='rgba(30, 41, 59, 0.4)'">
+            display: flex;
+            flex-direction: column;
+        " onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--primary)'; this.style.background='rgba(30, 41, 59, 0.6)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.background='rgba(30, 41, 59, 0.4)'; this.style.boxShadow='none'">
             
             <!-- Glow Background -->
             <div style="position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: var(--primary); filter: blur(60px); opacity: 0.1;"></div>
 
             <!-- Logo -->
-            <div style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--bg-card); background: #fff; margin: 0 auto 1.5rem auto; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative; z-index: 2;">
+            <div style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.05); background: white; margin: 0 auto 1.5rem auto; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; z-index: 2;">
                 {% if company.c_logo %}
                     <img src="{{ company.c_logo.url }}" alt="{{ company.c_name }}" style="width: 100%; height: 100%; object-fit: cover;">
                 {% else %}
@@ -39,34 +41,45 @@
             </div>
 
             <!-- Content -->
-            <h2 style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 {{ company.c_name }}
                 {% if company.c_verivaed %}
-                <i class="fa-solid fa-circle-check" style="color: #3b82f6; font-size: 1.2rem;" title="Verified Employer"></i>
+                    <i class="fa-solid fa-circle-check" style="color: #1877f2; font-size: 1.25rem;" title="Verified Employer"></i>
+                {% endif %}
+                {% if not company.c_owner_person_fullName or not company.c_owner_person_email or not company.c_owner_person_phone or not company.c_owner_person_docoment %}
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; font-size: 1.1rem; cursor: help;" title="Unauthorized Company"></i>
                 {% endif %}
             </h2>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 1.25rem; height: 20px;">
+
+            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 1.5rem; min-height: 32px;">
                 {% if company.c_verivaed %}
-                <span style="font-size: 0.85rem; color: #3b82f6; font-weight: 700;">Verified Employer</span>
-                {% else %}
-                <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Unverified Employer</span>
-                <i class="fa-solid fa-circle-xmark" style="color: var(--text-muted); font-size: 0.85rem;"></i>
+                <div style="background: rgba(24, 119, 242, 0.1); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(24, 119, 242, 0.2);">
+                    <i class="fa-solid fa-circle-check" style="color: #1877f2; font-size: 0.85rem;"></i>
+                    <span style="font-size: 0.75rem; color: #1877f2; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Official Partner</span>
+                </div>
                 {% endif %}
             </div>
 
-            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 4.8rem;">
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3.1rem; flex-grow: 1;">
                 {{ company.c_description|default:"Leading company committed to innovation and excellence in their industry, providing great opportunities for talented professionals." }}
             </p>
 
-            <div style="display: flex; gap: 10px; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05);">
-                <div style="flex: 1; text-align: left;">
-                    <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Active Jobs</p>
-                    <p style="font-size: 1.2rem; font-weight: 800; color: white;">Explore Now</p>
+            <!-- Company Stats Row (Premium Design) -->
+            <div style="display: flex; justify-content: center; align-items: center; background: rgba(0, 0, 0, 0.2); padding: 14px 15px; border-radius: 16px; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.03); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1); gap: 20px;">
+                <div style="text-align: center; flex: 1; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;"><i class="fa-solid fa-briefcase" style="color: var(--primary); opacity: 0.8;"></i> Jobs</div>
+                    <div style="color: white; font-weight: 800; font-size: 1.2rem; font-family: 'Inter', sans-serif;">{{ company.total_jobs }}</div>
                 </div>
-                <a href="{% url 'shaqodonapp:shaqodon_company_detail' company.id %}" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='var(--primary)'; this.style.borderColor='var(--primary)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.1)'">
-                    <i class="fa-solid fa-arrow-right-long"></i>
-                </a>
+                <div style="width: 1px; height: 35px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent);"></div>
+                <div style="text-align: center; flex: 1; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;"><i class="fa-solid fa-user-check" style="color: #10b981; opacity: 0.8;"></i> Hired</div>
+                    <div style="color: #10b981; font-weight: 800; font-size: 1.2rem; font-family: 'Inter', sans-serif;">{{ company.total_hired }}</div>
+                </div>
             </div>
+
+            <a href="{% url 'shaqodonapp:shaqodon_company_detail' company.id %}" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, var(--primary), #059669); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 12px; color: white; text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: 0.3s; width: 100%; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);" onmouseover="this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.2)'; this.style.transform='translateY(0)'">
+                View Company <i class="fa-solid fa-arrow-right-long"></i>
+            </a>
         </div>
         {% empty %}
         <div style="grid-column: 1 / -1; text-align: center; padding: 6rem 2rem; background: rgba(30, 41, 59, 0.2); border: 2px dashed rgba(255,255,255,0.05); border-radius: 32px;">

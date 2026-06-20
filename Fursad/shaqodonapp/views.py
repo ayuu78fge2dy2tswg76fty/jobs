@@ -167,6 +167,20 @@ def shaqodon_profile(request):
             shaqodon.s_cv = cv
         if image:
             shaqodon.s_profile_img = image
+
+        # Handle password change
+        new_password = request.POST.get('new_password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+        if new_password:
+            if new_password == confirm_password:
+                shaqodon.s_password = new_password
+            else:
+                messages.error(request, "New passwords do not match. Profile saved, but password was NOT changed.")
+                shaqodon.save()
+                request.session['shaqodon_fullname'] = shaqodon.s_fullname
+                if shaqodon.s_profile_img:
+                    request.session['shaqodon_img'] = shaqodon.s_profile_img.url
+                return redirect('shaqodonapp:shaqodon_profile')
             
         shaqodon.save()
         
