@@ -10,3 +10,5 @@ class ApplicationAdmin(admin.ModelAdmin):
     search_fields = ('a_job', 'a_shaqod')
 
 admin.site.register(Application_DB, ApplicationAdmin)
+admin.site.site_header = "Furad Admin"
+
