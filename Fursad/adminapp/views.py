@@ -86,7 +86,6 @@ def admin_companies(request):
     if not (request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff)):
         return redirect('home')
         
-    # Order by c_active ASC (False first, meaning pending verifications are at the top), then by joined date DESC
     companies = Company_DB.objects.all().order_by('c_active', '-c_joined')
     pending_verifications = Company_DB.objects.filter(c_active=False).count()
     

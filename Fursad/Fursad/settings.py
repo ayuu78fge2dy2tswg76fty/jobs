@@ -32,7 +32,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 # CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if os.environ.get('CSRF_TRUSTED_ORIGINS') else []
-ALLOWED_HOSTS =['*']
+ALLOWED_HOSTS = ['192.168.0.108','localhost','127.0.0.1','*','.devtunnels.ms']
 # AUTH_USER_MODEL = 'adminapp.CustomUser'
 
 

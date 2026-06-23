@@ -628,7 +628,7 @@
                         <label><i class="fa-solid fa-lock"></i> New Password</label>
                         <div style="position: relative;">
                             <input type="password" name="new_password" id="newPasswordInput" class="form-control" placeholder="Enter new password..." style="padding-right: 2.8rem;">
-                            <button type="button" onclick="togglePassword('newPasswordInput','toggleNewPwdIcon')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem; padding:4px;">
+                            <button type="button" onclick="togglePassword('newPasswordInput','toggleNewPwdIcon')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; opacity:0.8; cursor:pointer; font-size:1rem; padding:4px; z-index:10;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
                                 <i id="toggleNewPwdIcon" class="fa-solid fa-eye"></i>
                             </button>
                         </div>
@@ -637,7 +637,7 @@
                         <label><i class="fa-solid fa-lock-open"></i> Confirm New Password</label>
                         <div style="position: relative;">
                             <input type="password" name="confirm_password" id="confirmPasswordInput" class="form-control" placeholder="Confirm new password..." style="padding-right: 2.8rem;">
-                            <button type="button" onclick="togglePassword('confirmPasswordInput','toggleConfirmPwdIcon')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem; padding:4px;">
+                            <button type="button" onclick="togglePassword('confirmPasswordInput','toggleConfirmPwdIcon')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; opacity:0.8; cursor:pointer; font-size:1rem; padding:4px; z-index:10;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
                                 <i id="toggleConfirmPwdIcon" class="fa-solid fa-eye"></i>
                             </button>
                         </div>
@@ -718,7 +718,12 @@
             {% csrf_token %}
             <div class="form-group" style="margin-bottom: 1.5rem;">
                 <label for="delete_password" style="display: block; margin-bottom: 0.5rem; color: var(--text-light);"><i class="fa-solid fa-lock" style="color: var(--danger-color);"></i> Password</label>
-                <input type="password" name="password" id="delete_password" class="form-control" required placeholder="Enter your password to confirm..." style="border-color: rgba(239, 68, 68, 0.3);">
+                <div style="position: relative;">
+                    <input type="password" name="password" id="delete_password" class="form-control" required placeholder="Enter your password to confirm..." style="border-color: rgba(239, 68, 68, 0.3); padding-right: 2.8rem;">
+                    <button type="button" onclick="const pwd = document.getElementById('delete_password'); if(pwd.type === 'password'){ pwd.type = 'text'; this.children[0].classList.replace('fa-eye', 'fa-eye-slash'); } else { pwd.type = 'password'; this.children[0].classList.replace('fa-eye-slash', 'fa-eye'); }" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; opacity:0.8; cursor:pointer; font-size:1rem; padding:4px; z-index:10;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
             </div>
             
             <button type="submit" style="width:100%; padding:0.9rem; background:var(--danger-color); color:white; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:0.2s; box-shadow:0 8px 20px rgba(239, 68, 68, 0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">

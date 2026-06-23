@@ -207,7 +207,7 @@
                                         <label style="display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">New Password</label>
                                         <div style="position: relative;">
                                             <input type="password" name="new_password" id="shaqNewPwdInput" placeholder="Enter new password..." style="width: 100%; padding: 14px 48px 14px 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; outline: none; transition: 0.3s; box-sizing: border-box;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; shaqCheckPwdMatch();" oninput="shaqCheckPwdMatch();">
-                                            <button type="button" onclick="shaqTogglePwd('shaqNewPwdInput','shaqNewPwdIcon')" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem; padding:4px;">
+                                            <button type="button" onclick="shaqTogglePwd('shaqNewPwdInput','shaqNewPwdIcon')" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; opacity:0.8; cursor:pointer; font-size:1rem; padding:4px; z-index:10;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
                                                 <i id="shaqNewPwdIcon" class="fa-solid fa-eye"></i>
                                             </button>
                                         </div>
@@ -216,7 +216,7 @@
                                         <label style="display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Confirm New Password</label>
                                         <div style="position: relative;">
                                             <input type="password" name="confirm_password" id="shaqConfirmPwdInput" placeholder="Confirm new password..." style="width: 100%; padding: 14px 48px 14px 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; outline: none; transition: 0.3s; box-sizing: border-box;" onfocus="this.style.borderColor='var(--secondary)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" oninput="shaqCheckPwdMatch();">
-                                            <button type="button" onclick="shaqTogglePwd('shaqConfirmPwdInput','shaqConfirmPwdIcon')" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem; padding:4px;">
+                                            <button type="button" onclick="shaqTogglePwd('shaqConfirmPwdInput','shaqConfirmPwdIcon')" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; opacity:0.8; cursor:pointer; font-size:1rem; padding:4px; z-index:10;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
                                                 <i id="shaqConfirmPwdIcon" class="fa-solid fa-eye"></i>
                                             </button>
                                         </div>

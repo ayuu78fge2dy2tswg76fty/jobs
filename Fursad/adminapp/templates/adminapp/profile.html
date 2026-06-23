@@ -340,7 +340,12 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" required placeholder="Create strong password">
+                    <div style="position: relative;">
+                        <input type="password" id="addAdminPwd" name="password" class="form-control" required placeholder="Create strong password" style="padding-right: 40px;">
+                        <button type="button" onclick="const pwd = document.getElementById('addAdminPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.children[0].classList.replace('fa-eye', 'fa-eye-slash'); } else { pwd.type = 'password'; this.children[0].classList.replace('fa-eye-slash', 'fa-eye'); }" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; opacity:0.8; cursor:pointer; font-size:1rem; padding:4px; z-index:10;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                     <label class="checkbox-wrapper">
@@ -375,7 +380,12 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">New Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current password">
+                    <div style="position: relative;">
+                        <input type="password" id="editAdminPwd" name="password" class="form-control" placeholder="Leave blank to keep current password" style="padding-right: 40px;">
+                        <button type="button" onclick="const pwd = document.getElementById('editAdminPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.children[0].classList.replace('fa-eye', 'fa-eye-slash'); } else { pwd.type = 'password'; this.children[0].classList.replace('fa-eye-slash', 'fa-eye'); }" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; opacity:0.8; cursor:pointer; font-size:1rem; padding:4px; z-index:10;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                     <label class="checkbox-wrapper">

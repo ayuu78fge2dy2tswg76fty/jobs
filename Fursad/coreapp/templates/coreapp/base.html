@@ -772,7 +772,11 @@
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                            <div class="input-with-icon" style="position: relative;">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="companyLoginPwd" name="password" class="form-control" required placeholder="••••••••" style="padding-right: 40px;">
+                                <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('companyLoginPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary">
                             <i class="fa-solid fa-right-to-bracket"></i> Login
@@ -859,7 +863,7 @@
                                     <i class="fa-solid fa-lock"></i>
                                     <input type="password" id="regCompanyPassword" name="password" class="form-control" required
                                         placeholder="••••••••" style="padding-right: 40px;">
-                                    <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);" onclick="const pwd = document.getElementById('regCompanyPassword'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                                    <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('regCompanyPassword'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
                                 </div>
                             </div>
                             
@@ -959,7 +963,11 @@
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                            <div class="input-with-icon" style="position: relative;">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="shaqodonLoginPwd" name="password" class="form-control" required placeholder="••••••••" style="padding-right: 40px;">
+                                <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('shaqodonLoginPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary" style="background: var(--accent-color);">
                             <i class="fa-solid fa-right-to-bracket"></i> Login
@@ -1004,8 +1012,12 @@
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
-                                <input type="password" name="password" class="form-control" required
-                                    placeholder="••••••••">
+                                <div class="input-with-icon" style="position: relative;">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input type="password" id="shaqodonRegPwd" name="password" class="form-control" required
+                                        placeholder="••••••••" style="padding-right: 40px;">
+                                    <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('shaqodonRegPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label>Gender</label>
@@ -1089,7 +1101,11 @@
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                            <div class="input-with-icon" style="position: relative;">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="adminLoginPwd" name="password" class="form-control" required placeholder="••••••••" style="padding-right: 40px;">
+                                <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('adminLoginPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary" style="background: var(--danger-color);">
                             <i class="fa-solid fa-lock"></i> Admin Login
@@ -1167,18 +1183,20 @@
                     </div>
                     <div class="form-group">
                         <label>New Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position: relative;">
                             <i class="fa-solid fa-lock"></i>
                             <input type="password" id="newPasswordInput" class="form-control" required
-                                placeholder="Min. 6 characters" minlength="6">
+                                placeholder="Min. 6 characters" minlength="6" style="padding-right: 40px;">
+                            <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('newPasswordInput'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Confirm New Password</label>
-                        <div class="input-with-icon">
+                        <div class="input-with-icon" style="position: relative;">
                             <i class="fa-solid fa-lock"></i>
                             <input type="password" id="confirmPasswordInput" class="form-control" required
-                                placeholder="Repeat your password">
+                                placeholder="Repeat your password" style="padding-right: 40px;">
+                            <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('confirmPasswordInput'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
                         </div>
                     </div>
                     <div id="forgotCodeMsg"
