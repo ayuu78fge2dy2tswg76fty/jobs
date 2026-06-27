@@ -1,0 +1,219 @@
+{% extends 'companyapp/base.html' %}
+
+{% block title %}Company Analytics - Fursad{% endblock %}
+{% block header_title %}Analytics & Performance{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    @media (max-width: 768px) {
+        .chart-row {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+        .insight-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        .stats-top-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+
+<div class="animate-fade">
+    <!-- Quick Stats -->
+    <div class="stats-top-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 1.5rem; display: flex; flex-direction: column; gap: 8px;">
+            <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Total Positions</span>
+            <span style="color: white; font-size: 2rem; font-weight: 800;">{{ total_jobs }}</span>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 1.5rem; display: flex; flex-direction: column; gap: 8px;">
+            <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Total Applicants</span>
+            <span style="color: var(--primary-color); font-size: 2rem; font-weight: 800;">{{ total_apps }}</span>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 1.5rem; display: flex; flex-direction: column; gap: 8px;">
+            <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Engagement Score</span>
+            <span style="color: var(--accent-color); font-size: 2rem; font-weight: 800;">{{ engagement_score }}</span>
+        </div>
+    </div>
+
+    <!-- Charts Row 1: Jobs and Status -->
+    <div class="chart-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <!-- Applications per Job -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h3 style="color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-chart-bar" style="color: var(--primary-color);"></i> Applications per Job
+            </h3>
+            <div style="height: 350px; position: relative;">
+                <canvas id="jobsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Status Distribution -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h3 style="color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-chart-pie" style="color: var(--warning-color);"></i> Status Distribution
+            </h3>
+            <div style="height: 300px; position: relative;">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2: Gender and Location -->
+    <div class="chart-row" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 3rem;">
+        <!-- Gender Breakdown -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h3 style="color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-venus-mars" style="color: var(--accent-color);"></i> Gender Breakdown
+            </h3>
+            <div style="height: 300px; position: relative;">
+                <canvas id="genderChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Applicant Locations -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h3 style="color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-earth-africa" style="color: #6366f1;"></i> Top Applicant Locations
+            </h3>
+            <div style="height: 350px; position: relative;">
+                <canvas id="locationChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Insights -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2.5rem;">
+        <h3 style="color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem;">Strategic Insights</h3>
+        <div class="insight-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div style="padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: 16px;">
+                <h4 style="color: var(--primary-color); margin-bottom: 10px;">Top Performing Job</h4>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">
+                    {% if job_labels %}
+                        The most attractive position is currently <strong>"{{ job_labels.0 }}"</strong>.
+                    {% else %}
+                        No job data available yet.
+                    {% endif %}
+                </p>
+            </div>
+            <div style="padding: 1.5rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 16px;">
+                <h4 style="color: var(--accent-color); margin-bottom: 10px;">Talent Funnel</h4>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">
+                    Your hiring funnel shows active movement. Keeping application statuses updated improves employer rating.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuration for Charts
+    const jobLabels = {{ job_labels|safe }};
+    const jobData = {{ job_data|safe }};
+    const statusLabels = {{ status_labels|safe }};
+    const statusData = {{ status_data|safe }};
+    const genderLabels = {{ gender_labels|safe }};
+    const genderData = {{ gender_data|safe }};
+    const locationLabels = {{ location_labels|safe }};
+    const locationData = {{ location_data|safe }};
+
+    // Jobs Chart
+    new Chart(document.getElementById('jobsChart'), {
+        type: 'bar',
+        data: {
+            labels: jobLabels,
+            datasets: [{
+                label: 'Applications',
+                data: jobData,
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: '#3b82f6',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: '#3b82f6'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Status Chart
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: ['#3b82f6', '#10b981', '#fbbf24', '#ef4444', '#a855f7'],
+                borderWidth: 0,
+                hoverOffset: 20
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { display: true, position: 'bottom', labels: { color: '#94a3b8', padding: 15, font: { size: 10 } } }
+            }
+        }
+    });
+
+    // Gender Chart
+    new Chart(document.getElementById('genderChart'), {
+        type: 'doughnut',
+        data: {
+            labels: genderLabels,
+            datasets: [{
+                data: genderData,
+                backgroundColor: ['#0ea5e9', '#ec4899', '#94a3b8'],
+                borderWidth: 0,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: { display: true, position: 'bottom', labels: { color: '#94a3b8', padding: 15 } }
+            }
+        }
+    });
+
+    // Location Chart
+    new Chart(document.getElementById('locationChart'), {
+        type: 'bar',
+        data: {
+            labels: locationLabels,
+            datasets: [{
+                label: 'Applicants',
+                data: locationData,
+                backgroundColor: 'rgba(99, 102, 241, 0.6)',
+                borderColor: '#6366f1',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
+{% endblock %}

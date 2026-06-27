@@ -1,0 +1,1640 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fursad {% endblock %}</title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{% static 'logo.png' %}">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            /* Blue */
+            --primary-hover: #2563eb;
+            --bg-dark: #0f172a;
+            /* Deep Slate */
+            --bg-darker: #020617;
+            /* Very Deep Slate */
+            --bg-card: #1e293b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-color: #10b981;
+            /* Emerald */
+            --danger-color: #ef4444;
+            /* Red */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 10px 18px;
+            border-radius: 14px;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links a.active {
+            color: white;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links a i {
+            font-size: 1.1rem;
+        }
+
+        /* Avatar Container */
+        .avatar-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+            border: 2px solid var(--border-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .avatar:hover {
+            border-color: var(--text-light);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--bg-dark);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            padding: 2.5rem;
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .input-with-icon textarea~i {
+            top: 1.2rem;
+            transform: none;
+        }
+
+        .input-with-icon .form-control {
+            padding-left: 2.8rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Auth Views Container */
+        .auth-view {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .auth-view.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .modal-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Alert/Confirmation Message */
+        .confirmation-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            transform: translateX(150%);
+            background-color: var(--bg-card);
+            border-left: 4px solid var(--accent-color);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .confirmation-popup.show {
+            transform: translateX(0);
+        }
+
+        .confirmation-popup i {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+        }
+
+        /* Premier Footer */
+        .premier-footer {
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 4rem 5% 1.5rem;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premier-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-brand i {
+            color: var(--primary-color);
+        }
+
+        .footer-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .footer-col h3 {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s, padding-left 0.3s;
+            display: inline-block;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+
+        .contact-info li {
+            color: var(--text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info li i {
+            color: var(--primary-color);
+            margin-top: 4px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Global Styles */
+        @media (max-width: 992px) {
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: rgba(15, 23, 42, 0.98);
+                backdrop-filter: blur(12px);
+                padding: 1.5rem 5%;
+                gap: 1rem;
+                border-bottom: 1px solid var(--border-color);
+                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+                transition: clip-path 0.4s ease-in-out;
+            }
+
+            .nav-links.active {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+
+            .nav-links a {
+                padding: 12px 20px;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .mobile-toggle {
+                display: block !important;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+                margin: 10px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            /* Global typography adjustments for mobile */
+            h1 {
+                font-size: 2.2rem !important;
+                line-height: 1.2 !important;
+            }
+
+            h2 {
+                font-size: 1.8rem !important;
+            }
+
+            /* Common form adjustments for mobile */
+            form[id$="SearchForm"],
+            #searchForm {
+                flex-direction: column !important;
+            }
+
+            form[id$="SearchForm"]>div,
+            form[id$="SearchForm"]>button,
+            #searchForm>div,
+            #searchForm>button {
+                width: 100% !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            /* Home page specific mobile fixes */
+            .search-container {
+                flex-direction: column !important;
+                gap: 1rem !important;
+                padding: 1rem !important;
+                border-radius: 16px !important;
+            }
+
+            .search-input-group {
+                border-right: none !important;
+                border-bottom: 1px solid var(--border-color) !important;
+                padding: 1rem 0 !important;
+                width: 100% !important;
+            }
+
+            .search-btn {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .stats-container {
+                flex-direction: column !important;
+                gap: 2rem !important;
+                margin-top: 2rem !important;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* OTP Digit Boxes */
+        .otp-digit:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(8px);
+            }
+
+            60% {
+                transform: translateX(-6px);
+            }
+
+            80% {
+                transform: translateX(6px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <a href="{% url 'home' %}" class="navbar-brand">
+            <i class="fa-solid fa-briefcase"></i> Fursad
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}"
+                    class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><i
+                        class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="{% url 'about' %}"
+                    class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"><i
+                        class="fa-solid fa-circle-info"></i> About</a></li>
+            <li><a href="{% url 'contact' %}"
+                    class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"><i
+                        class="fa-solid fa-address-book"></i> Contacts</a></li>
+            <li><a href="{% url 'jobs' %}"
+                    class="{% if request.resolver_match.url_name == 'jobs' %}active{% endif %}"><i
+                        class="fa-solid fa-magnifying-glass-chart"></i> Jobs</a></li>
+            <li><a href="{% url 'companies' %}"
+                    class="{% if request.resolver_match.url_name == 'companies' %}active{% endif %}"><i
+                        class="fa-solid fa-building"></i> Companies</a></li>
+            <li><a href="{% url 'services' %}"
+                    class="{% if request.resolver_match.url_name == 'services' %}active{% endif %}"><i
+                        class="fa-solid fa-layer-group"></i> Other Services</a></li>
+        </ul>
+
+        <!-- Nav Actions & Mobile Toggle -->
+        <div class="nav-actions" style="display: flex; align-items: center; gap: 15px;">
+            <!-- Avatar directly opens the auth modal -->
+            <div class="avatar-container" onclick="openAuthModal('loginView');">
+                <div class="avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="mobile-toggle" onclick="toggleMobileMenu()"
+                style="display: none; cursor: pointer; font-size: 1.5rem; color: var(--text-light);">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Confirmation Popup for Registration -->
+    <div class="confirmation-popup" id="confPopup">
+        <i class="fa-solid fa-circle-check"></i>
+        <div>
+            <strong>Success!</strong>
+            <p>Thank you, wait until admin activate you.</p>
+        </div>
+    </div>
+
+    <!-- Unified Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content auth-container">
+            <i class="fa-solid fa-xmark modal-close" onclick="closeModal('authModal')"></i>
+
+            <!-- Modal Header with Tabs -->
+            <div class="auth-tabs"
+                style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <button onclick="switchUserType('company')" id="tab-company" class="auth-tab active"
+                    style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-weight: 600; transition: 0.3s; border-radius: 8px;">
+                    <i class="fa-solid fa-building"></i> Company
+                </button>
+                <button onclick="switchUserType('shaqodon')" id="tab-shaqodon" class="auth-tab"
+                    style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-weight: 600; transition: 0.3s; border-radius: 8px;">
+                    <i class="fa-solid fa-user-graduate"></i> Jobseeker
+                </button>
+
+            </div>
+
+            <!-- COMPANY VIEWS -->
+            <div id="companySection">
+                <!-- Login Form (Default) -->
+                <div id="loginView" class="auth-view active">
+                    <h2 class="modal-title">Company Login</h2>
+                    <div
+                        style="background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary-color); padding: 10px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-circle-info text-primary"></i> Only <strong>Active Companies</strong> can
+                        login.
+                    </div>
+                    <form method="POST" action="{% url 'company_login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Email or Username</label>
+                            <input type="text" name="identifier" class="form-control" required
+                                placeholder="Enter email or username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-with-icon" style="position: relative;">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="companyLoginPwd" name="password" class="form-control" required placeholder="••••••••" style="padding-right: 40px;">
+                                <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('companyLoginPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login
+                        </button>
+                        <div class="modal-footer">
+                            <a href="#"
+                                onclick="setForgotUserType('company'); switchAuthView('forgotEmailView'); return false;">Forgot
+                                Password?</a>
+                            <br><br>
+                            Don't have an account? <a href="#"
+                                onclick="switchAuthView('companyTermsView'); return false;">Register Company</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Company Terms View before Register -->
+                <div id="companyTermsView" class="auth-view">
+                    <h2 class="modal-title">Terms & Conditions</h2>
+                    <div
+                        style="background: rgba(245, 158, 11, 0.1); border-left: 3px solid var(--warning-color); padding: 15px; margin-bottom: 20px; border-radius: 4px; color: var(--text-light); line-height: 1.6; font-size: 0.95rem;">
+                        <strong>Fadlan raac shuruudahan si aad isku diiwaan geliso:</strong><br><br>
+                        Soo diyaarso government document-ga iyo in ay is-leeyihiin xogta ku qoran document-ga iyo mida
+                        is diiwaan gelinta.sido kale wa in an so bandhigin shaqyin sharci daro ah dhaqan ahan iyo diin
+                        ahan
+                    </div>
+                    <div class="form-group"
+                        style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; background: var(--bg-card); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <input type="checkbox" id="termsCheckbox"
+                            onchange="document.getElementById('btnAcceptTerms').disabled = !this.checked;"
+                            style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary-color);">
+                        <label for="termsCheckbox"
+                            style="margin-bottom: 0; cursor: pointer; color: var(--text-light); font-weight: 500;">I
+                            understand</label>
+                    </div>
+                    <button id="btnAcceptTerms" class="btn btn-primary" disabled
+                        onclick="switchAuthView('registerView')">
+                        <i class="fa-solid fa-check"></i> OK
+                    </button>
+                    <div class="modal-footer">
+                        <a href="#" onclick="switchAuthView('loginView'); return false;">Back to Login</a>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerView" class="auth-view">
+                    <h2 class="modal-title">Register Company</h2>
+                    <form method="POST" action="{% url 'company_register' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Company Name</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-building"></i>
+                                    <input type="text" name="name" class="form-control" required
+                                        placeholder="e.g. Hormuud Telecom">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company Email</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <input type="email" name="email" class="form-control" required
+                                        placeholder="contact@company.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company Phone</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input type="text" name="phone" class="form-control" placeholder="+252...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-user"></i>
+                                    <input type="text" name="username" class="form-control" required
+                                        placeholder="company_username">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="input-with-icon" style="position: relative;">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input type="password" id="regCompanyPassword" name="password" class="form-control" required
+                                        placeholder="••••••••" style="padding-right: 40px;">
+                                    <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('regCompanyPassword'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group full-width" style="margin-top: 1rem; margin-bottom: 0.5rem;">
+                                <h4 style="color: var(--text-light); font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;"><i class="fa-solid fa-user-tie" style="color: var(--primary-color); margin-right: 8px;"></i>Owner Information</h4>
+                            </div>
+                            <div class="form-group">
+                                <label>Owner Full Name</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                    <input type="text" name="owner_name" class="form-control" required
+                                        placeholder="e.g. Ali Ahmed">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Owner Email</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <input type="email" name="owner_email" class="form-control" required
+                                        placeholder="owner@example.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Owner Phone</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input type="text" name="owner_phone" class="form-control" required placeholder="+252...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Owner Document (ID/Passport)</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-id-card" style="top: 25px"></i>
+                                    <input type="file" name="owner_document" class="form-control" accept=".pdf,image/*" required
+                                        style="padding-top: 10px;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group full-width" style="margin-top: 1rem; margin-bottom: 0.5rem;">
+                                <h4 style="color: var(--text-light); font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;"><i class="fa-solid fa-building" style="color: var(--primary-color); margin-right: 8px;"></i>Company Details</h4>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Company Location</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <input type="text" name="header_location" class="form-control"
+                                        placeholder="e.g. Mogadishu, Somalia">
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Description</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-align-left"></i>
+                                    <textarea name="description" class="form-control"
+                                        placeholder="Briefly describe the company..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company Logo</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-image" style="top: 25px"></i>
+                                    <input type="file" name="logo" class="form-control" accept="image/*"
+                                        style="padding-top: 10px;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Company License</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-file-contract" style="top: 25px"></i>
+                                    <input type="file" name="company_lence" class="form-control" accept="image/*"
+                                        style="padding-top: 10px;">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fa-solid fa-user-plus"></i> Create Account
+                        </button>
+                        <div class="modal-footer">
+                            Already have an account? <a href="#"
+                                onclick="switchAuthView('loginView'); return false;">Login here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SHAQODON (JOBSEEKER) VIEWS -->
+            <div id="shaqodonSection" style="display: none;">
+                <!-- Login Form -->
+                <div id="shaqodonLoginView" class="auth-view active">
+                    <h2 class="modal-title">Jobseeker Login</h2>
+                    <form method="POST" action="{% url 'shaqodonapp:shaqodon_login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Email or Username</label>
+                            <input type="text" name="identifier" class="form-control" required
+                                placeholder="Enter email or username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-with-icon" style="position: relative;">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="shaqodonLoginPwd" name="password" class="form-control" required placeholder="••••••••" style="padding-right: 40px;">
+                                <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('shaqodonLoginPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background: var(--accent-color);">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login
+                        </button>
+                        <div class="modal-footer">
+                            <a href="#"
+                                onclick="setForgotUserType('shaqodon'); switchAuthView('forgotEmailView'); return false;">Forgot
+                                Password?</a>
+                            <br><br>
+                            Don't have an account? <a href="#"
+                                onclick="switchAuthView('shaqodonRegisterView'); return false;">Register as
+                                Jobseeker</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="shaqodonRegisterView" class="auth-view">
+                    <h2 class="modal-title">Jobseeker Register</h2>
+                    <form method="POST" action="{% url 'shaqodonapp:shaqodon_register' %}"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" name="fullname" class="form-control" required
+                                    placeholder="e.g. Ahmed Ali">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" class="form-control" required
+                                    placeholder="ahmed@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" name="username" class="form-control" required
+                                    placeholder="ahmed_dev">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" class="form-control" placeholder="+252 61...">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="input-with-icon" style="position: relative;">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input type="password" id="shaqodonRegPwd" name="password" class="form-control" required
+                                        placeholder="••••••••" style="padding-right: 40px;">
+                                    <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('shaqodonRegPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select name="gender" class="form-control" required>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Address</label>
+                                <input type="text" name="address" class="form-control"
+                                    placeholder="e.g. Mogadishu, Somalia">
+                            </div>
+                            <div class="form-group">
+                                <label>Education</label>
+                                <select name="education" class="form-control" required>
+                                    <option value="">Select Education Level</option>
+                                    <option value="High School">High School</option>
+                                    <option value="Bachelor">Bachelor</option>
+                                    <option value="Master">Master</option>
+                                    <option value="PhD">PhD</option>
+                                    <option value="Other">Other</option>
+                                    <option value="Experience">Experience</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Profile Image</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-image" style="top: 25px"></i>
+                                    <input type="file" name="profile_img" class="form-control" accept="image/*"
+                                        style="padding-top: 10px;">
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Skills</label>
+                                <textarea name="skills" class="form-control"
+                                    placeholder="e.g. Python, Django, HTML, CSS" rows="2"></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Experience</label>
+                                <textarea name="experience" class="form-control"
+                                    placeholder="Describe your work experience..." rows="2"></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>CV / Resume (PDF or Doc)</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-file-pdf" style="top: 25px"></i>
+                                    <input type="file" name="cv" class="form-control" accept=".pdf,.doc,.docx" required
+                                        style="padding-top: 10px;">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"
+                            style="background: var(--accent-color); margin-top: 1rem;">
+                            <i class="fa-solid fa-user-plus"></i> Create Account
+                        </button>
+                        <div class="modal-footer">
+                            Already have an account? <a href="#"
+                                onclick="switchAuthView('shaqodonLoginView'); return false;">Login here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+
+            <!-- COMMON VIEWS (Forgot Password) -->
+            <!-- Hidden state for forgot password user type -->
+            <input type="hidden" id="forgotUserType" value="company">
+            <input type="hidden" id="forgotEmail" value="">
+
+            <!-- Forgot Password - Step 1: Email -->
+            <div id="forgotEmailView" class="auth-view">
+                <h2 class="modal-title"><i class="fa-solid fa-lock-open" style="color:var(--primary-color)"></i> Reset
+                    Password</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">Enter
+                    your registered email address. We'll send you a 6-digit verification code.</p>
+                <form id="forgotEmailForm" onsubmit="handleForgotEmailSubmit(event)">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="forgotEmailInput" class="form-control" required
+                                placeholder="your@email.com">
+                        </div>
+                    </div>
+                    <div id="forgotEmailMsg"
+                        style="display:none; padding:10px 14px; border-radius:8px; font-size:0.88rem; margin-bottom:1rem;">
+                    </div>
+                    <button type="submit" id="forgotEmailBtn" class="btn btn-primary" style="width:100%;">
+                        <i class="fa-solid fa-paper-plane"></i> Send Code
+                    </button>
+                    <div class="modal-footer">
+                        Remembered? <a href="#" onclick="switchAuthView('loginView'); return false;">Back to Login</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Forgot Password - Step 2: 6-Digit Code & New Password -->
+            <div id="forgotCodeView" class="auth-view">
+                <h2 class="modal-title"><i class="fa-solid fa-shield-halved" style="color:var(--primary-color)"></i>
+                    Verify & Reset</h2>
+                <p id="forgotCodeDesc"
+                    style="color: var(--text-muted); text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    Enter the 6-digit code sent to your email and choose a new password.</p>
+                <!-- OTP Digit Boxes -->
+                <form id="forgotCodeForm" onsubmit="handleForgotCodeSubmit(event)">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label style="text-align:center; display:block; margin-bottom:12px;">6-Digit Verification
+                            Code</label>
+                        <div id="otpBoxes" style="display:flex; gap:10px; justify-content:center; margin-bottom:8px;">
+                            <input type="text" maxlength="1" class="otp-digit"
+                                style="width:48px;height:60px;text-align:center;font-size:1.6rem;font-weight:700;border:2px solid var(--border-color);border-radius:10px;background:var(--bg-card);color:var(--text-light);outline:none;transition:border-color 0.2s;"
+                                oninput="otpInput(this,0)" onkeydown="otpKeydown(event,0)">
+                            <input type="text" maxlength="1" class="otp-digit"
+                                style="width:48px;height:60px;text-align:center;font-size:1.6rem;font-weight:700;border:2px solid var(--border-color);border-radius:10px;background:var(--bg-card);color:var(--text-light);outline:none;transition:border-color 0.2s;"
+                                oninput="otpInput(this,1)" onkeydown="otpKeydown(event,1)">
+                            <input type="text" maxlength="1" class="otp-digit"
+                                style="width:48px;height:60px;text-align:center;font-size:1.6rem;font-weight:700;border:2px solid var(--border-color);border-radius:10px;background:var(--bg-card);color:var(--text-light);outline:none;transition:border-color 0.2s;"
+                                oninput="otpInput(this,2)" onkeydown="otpKeydown(event,2)">
+                            <input type="text" maxlength="1" class="otp-digit"
+                                style="width:48px;height:60px;text-align:center;font-size:1.6rem;font-weight:700;border:2px solid var(--border-color);border-radius:10px;background:var(--bg-card);color:var(--text-light);outline:none;transition:border-color 0.2s;"
+                                oninput="otpInput(this,3)" onkeydown="otpKeydown(event,3)">
+                            <input type="text" maxlength="1" class="otp-digit"
+                                style="width:48px;height:60px;text-align:center;font-size:1.6rem;font-weight:700;border:2px solid var(--border-color);border-radius:10px;background:var(--bg-card);color:var(--text-light);outline:none;transition:border-color 0.2s;"
+                                oninput="otpInput(this,4)" onkeydown="otpKeydown(event,4)">
+                            <input type="text" maxlength="1" class="otp-digit"
+                                style="width:48px;height:60px;text-align:center;font-size:1.6rem;font-weight:700;border:2px solid var(--border-color);border-radius:10px;background:var(--bg-card);color:var(--text-light);outline:none;transition:border-color 0.2s;"
+                                oninput="otpInput(this,5)" onkeydown="otpKeydown(event,5)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <div class="input-with-icon" style="position: relative;">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="newPasswordInput" class="form-control" required
+                                placeholder="Min. 6 characters" minlength="6" style="padding-right: 40px;">
+                            <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('newPasswordInput'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <div class="input-with-icon" style="position: relative;">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="confirmPasswordInput" class="form-control" required
+                                placeholder="Repeat your password" style="padding-right: 40px;">
+                            <i class="fa-solid fa-eye" style="position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); cursor: pointer; color: #fff; z-index: 10; opacity: 0.8; pointer-events: auto;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="const pwd = document.getElementById('confirmPasswordInput'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                        </div>
+                    </div>
+                    <div id="forgotCodeMsg"
+                        style="display:none; padding:10px 14px; border-radius:8px; font-size:0.88rem; margin-bottom:1rem;">
+                    </div>
+                    <button type="submit" id="forgotCodeBtn" class="btn btn-primary" style="width:100%;">
+                        <i class="fa-solid fa-key"></i> Reset Password
+                    </button>
+                    <div class="modal-footer" style="display:flex; justify-content:space-between;">
+                        <a href="#" onclick="switchAuthView('forgotEmailView'); return false;">&#8592; Change Email</a>
+                        <a href="#" id="resendCodeLink" onclick="resendOTP(); return false;">Resend Code</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main Content Block -->
+    <main>
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <!-- Premier Footer -->
+    <footer class="premier-footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <a href="{% url 'home' %}" class="footer-brand">
+                    <i class="fa-solid fa-briefcase"></i> Fursad
+                </a>
+                <p class="footer-desc">The premier job portal connecting top companies with the best talent in Somalia.
+                    Discover your dream job today.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>For Candidates</h3>
+                <ul>
+                    <li><a href="#">Browse Jobs</a></li>
+                    <li><a href="#">Candidate Dashboard</a></li>
+                    <li><a href="#">Job Alerts</a></li>
+                    <li><a href="#">Bookmarks</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>For Employers</h3>
+                <ul>
+                    <li><a href="#">Post a Job</a></li>
+                    <li><a href="#">Browse Candidates</a></li>
+                    <li><a href="#">Employer Dashboard</a></li>
+                    <li><a href="#">Pricing Plans</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Info</h3>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> sinay, Galkacyo</li>
+                    <li><i class="fa-solid fa-phone"></i> +252 907525744</li>
+                    <li><i class="fa-solid fa-envelope"></i> info@fursad.so</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Fursad. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="{% url 'privacy' %}">Privacy Policy</a>
+                <a href="{% url 'terms' %}">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modern Registration Success Popup -->
+    <div class="modal-overlay" id="modernRegPopup">
+        <div class="modal-content" style="max-width: 500px; text-align: center; padding: 3rem 2rem;">
+            <div
+                style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                <i class="fa-solid fa-check-to-slot" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+            </div>
+            <h2 style="margin-bottom: 1rem; color: var(--text-light);">Registration Submitted!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
+                Thank you for registering your company, <strong id="regPopupName"
+                    style="color: var(--text-light);"></strong>. Your account is currently under review.
+            </p>
+
+            <div
+                style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; text-align: left; margin-bottom: 2rem;">
+                <h4
+                    style="color: var(--text-light); margin-bottom: 1rem; font-size: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                    Registration Details</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.95rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Email:</span>
+                        <strong id="regPopupEmail" style="color: var(--text-light);"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Phone:</span>
+                        <strong id="regPopupPhone" style="color: var(--text-light);"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Status:</span>
+                        <span
+                            style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color); padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Pending
+                            Approval</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeModal('modernRegPopup')" class="btn btn-primary"
+                style="background: var(--accent-color);">
+                Got it, Thanks!
+            </button>
+        </div>
+    </div>
+
+    <!-- Django Messages Handling -->
+    {% if messages %}
+    <div id="djangoMessages" style="display: none;">
+        {% for message in messages %}
+        <div data-tags="{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <script>
+        // Check Django messages and show popup
+        document.addEventListener('DOMContentLoaded', function () {
+            const messageContainer = document.getElementById('djangoMessages');
+            if (messageContainer && messageContainer.children.length > 0) {
+                const msg = messageContainer.children[0];
+                const tags = msg.getAttribute('data-tags');
+                const text = msg.innerText;
+
+                // Modern Registration Success Popup Check
+                if (text.startsWith('REG_SUCCESS|')) {
+                    try {
+                        const dataStr = text.substring('REG_SUCCESS|'.length);
+                        const data = JSON.parse(dataStr);
+
+                        document.getElementById('regPopupName').innerText = data.name;
+                        document.getElementById('regPopupEmail').innerText = data.email;
+                        document.getElementById('regPopupPhone').innerText = data.phone || 'N/A';
+
+                        document.getElementById('modernRegPopup').classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                        return; // Skip normal popup
+                    } catch (e) {
+                        console.error('Error parsing registration success message', e);
+                    }
+                }
+
+                const popup = document.getElementById('confPopup');
+                const popupIcon = popup.querySelector('i');
+                const popupStrong = popup.querySelector('strong');
+                const popupP = popup.querySelector('p');
+
+                popupP.innerText = text;
+
+                if (tags.includes('error')) {
+                    popup.style.borderLeftColor = 'var(--danger-color)';
+                    popupIcon.className = 'fa-solid fa-circle-xmark';
+                    popupIcon.style.color = 'var(--danger-color)';
+                    popupStrong.innerText = 'Error!';
+                } else if (tags.includes('warning')) {
+                    popup.style.borderLeftColor = 'var(--warning-color)';
+                    popupIcon.className = 'fa-solid fa-triangle-exclamation';
+                    popupIcon.style.color = 'var(--warning-color)';
+                    popupStrong.innerText = 'Notice!';
+                } else {
+                    popup.style.borderLeftColor = 'var(--accent-color)';
+                    popupIcon.className = 'fa-solid fa-circle-check';
+                    popupIcon.style.color = 'var(--accent-color)';
+                    popupStrong.innerText = 'Success!';
+                }
+
+                popup.classList.add('show');
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                }, 5000);
+            }
+        });
+        // Modal & Auth Views Functions
+        function switchUserType(type) {
+            const companySection = document.getElementById('companySection');
+            const shaqodonSection = document.getElementById('shaqodonSection');
+            const tabCompany = document.getElementById('tab-company');
+            const tabShaqodon = document.getElementById('tab-shaqodon');
+
+            // Reset all tabs
+            [tabCompany, tabShaqodon].forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.background = 'transparent';
+                tab.style.color = 'var(--text-muted)';
+            });
+
+            // Hide all sections
+            [companySection, shaqodonSection].forEach(section => {
+                section.style.display = 'none';
+            });
+
+            if (type === 'company') {
+                companySection.style.display = 'block';
+                tabCompany.classList.add('active');
+                tabCompany.style.background = 'rgba(59, 130, 246, 0.1)';
+                tabCompany.style.color = 'var(--primary-color)';
+                switchAuthView('loginView');
+            } else if (type === 'shaqodon') {
+                shaqodonSection.style.display = 'block';
+                tabShaqodon.classList.add('active');
+                tabShaqodon.style.background = 'rgba(16, 185, 129, 0.1)';
+                tabShaqodon.style.color = 'var(--accent-color)';
+                switchAuthView('shaqodonLoginView');
+            }
+        }
+        function openAuthModal(viewId) {
+            document.getElementById('authModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (viewId) switchAuthView(viewId);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchAuthView(viewId) {
+            // Hide all views
+            document.querySelectorAll('.auth-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            // Show requested view
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        // ─── FORGOT PASSWORD LOGIC ───────────────────────────────────────────
+
+        // Track which user type is using forgot password
+        function setForgotUserType(type) {
+            document.getElementById('forgotUserType').value = type;
+        }
+
+        // Helper: get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Show message in forgot forms
+        function showForgotMsg(elId, msg, type) {
+            const el = document.getElementById(elId);
+            el.style.display = 'block';
+            if (type === 'error') {
+                el.style.background = 'rgba(239,68,68,0.12)';
+                el.style.color = '#fca5a5';
+                el.style.border = '1px solid rgba(239,68,68,0.3)';
+                el.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ' + msg;
+            } else if (type === 'success') {
+                el.style.background = 'rgba(16,185,129,0.12)';
+                el.style.color = '#6ee7b7';
+                el.style.border = '1px solid rgba(16,185,129,0.3)';
+                el.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + msg;
+            } else {
+                el.style.background = 'rgba(59,130,246,0.12)';
+                el.style.color = '#93c5fd';
+                el.style.border = '1px solid rgba(59,130,246,0.3)';
+                el.innerHTML = '<i class="fa-solid fa-circle-info"></i> ' + msg;
+            }
+        }
+
+        function hideForgotMsg(elId) {
+            const el = document.getElementById(elId);
+            if (el) el.style.display = 'none';
+        }
+
+        // Step 1: Send OTP
+        async function handleForgotEmailSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmailInput').value.trim();
+            const userType = document.getElementById('forgotUserType').value;
+            const btn = document.getElementById('forgotEmailBtn');
+            hideForgotMsg('forgotEmailMsg');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+
+            try {
+                const resp = await fetch('/api/forgot-password/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ email: email, user_type: userType })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    document.getElementById('forgotEmail').value = email;
+                    document.getElementById('forgotCodeDesc').innerText =
+                        'A 6-digit code was sent to ' + email + '. Enter it below to reset your password.';
+                    // Clear OTP boxes
+                    document.querySelectorAll('.otp-digit').forEach(d => d.value = '');
+                    document.getElementById('newPasswordInput').value = '';
+                    document.getElementById('confirmPasswordInput').value = '';
+                    hideForgotMsg('forgotCodeMsg');
+                    switchAuthView('forgotCodeView');
+                    setTimeout(() => { document.querySelectorAll('.otp-digit')[0].focus(); }, 200);
+                } else {
+                    showForgotMsg('forgotEmailMsg', data.message, 'error');
+                }
+            } catch (err) {
+                showForgotMsg('forgotEmailMsg', 'Network error. Please try again.', 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Code';
+        }
+
+        // Step 2: Verify OTP & Reset Password
+        async function handleForgotCodeSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+            const userType = document.getElementById('forgotUserType').value;
+            const otp = Array.from(document.querySelectorAll('.otp-digit')).map(d => d.value).join('');
+            const newPass = document.getElementById('newPasswordInput').value;
+            const confirmPass = document.getElementById('confirmPasswordInput').value;
+            const btn = document.getElementById('forgotCodeBtn');
+            hideForgotMsg('forgotCodeMsg');
+
+            if (otp.length !== 6) {
+                showForgotMsg('forgotCodeMsg', 'Please enter the complete 6-digit code.', 'error');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                showForgotMsg('forgotCodeMsg', 'Passwords do not match.', 'error');
+                return;
+            }
+            if (newPass.length < 6) {
+                showForgotMsg('forgotCodeMsg', 'Password must be at least 6 characters.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+
+            try {
+                const resp = await fetch('/api/reset-password/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ email: email, otp: otp, new_password: newPass, user_type: userType })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    showForgotMsg('forgotCodeMsg', data.message, 'success');
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Password Reset!';
+                    setTimeout(() => {
+                        closeModal('authModal');
+                        switchAuthView('loginView');
+                        // Show global popup
+                        const popup = document.getElementById('confPopup');
+                        popup.querySelector('strong').innerText = 'Success!';
+                        popup.querySelector('p').innerText = 'Password updated. You can now log in.';
+                        popup.style.borderLeftColor = 'var(--accent-color)';
+                        popup.querySelector('i').className = 'fa-solid fa-circle-check';
+                        popup.querySelector('i').style.color = 'var(--accent-color)';
+                        popup.classList.add('show');
+                        setTimeout(() => popup.classList.remove('show'), 5000);
+                    }, 1500);
+                } else {
+                    showForgotMsg('forgotCodeMsg', data.message, 'error');
+                    // Shake OTP boxes on wrong code
+                    document.getElementById('otpBoxes').style.animation = 'none';
+                    setTimeout(() => {
+                        document.getElementById('otpBoxes').style.animation = 'shake 0.5s ease';
+                    }, 10);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-key"></i> Reset Password';
+                }
+            } catch (err) {
+                showForgotMsg('forgotCodeMsg', 'Network error. Please try again.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-key"></i> Reset Password';
+            }
+        }
+
+        // Resend OTP
+        async function resendOTP() {
+            const email = document.getElementById('forgotEmail').value;
+            const userType = document.getElementById('forgotUserType').value;
+            if (!email) { switchAuthView('forgotEmailView'); return; }
+            const link = document.getElementById('resendCodeLink');
+            link.style.pointerEvents = 'none';
+            link.style.opacity = '0.5';
+            showForgotMsg('forgotCodeMsg', 'Resending code...', 'info');
+            try {
+                const resp = await fetch('/api/forgot-password/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                    body: JSON.stringify({ email: email, user_type: userType })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    showForgotMsg('forgotCodeMsg', 'New code sent to ' + email, 'success');
+                    document.querySelectorAll('.otp-digit').forEach(d => d.value = '');
+                    setTimeout(() => { document.querySelectorAll('.otp-digit')[0].focus(); }, 200);
+                } else {
+                    showForgotMsg('forgotCodeMsg', data.message, 'error');
+                }
+            } catch {
+                showForgotMsg('forgotCodeMsg', 'Network error.', 'error');
+            }
+            setTimeout(() => { link.style.pointerEvents = ''; link.style.opacity = ''; }, 30000);
+        }
+
+        // OTP Box Navigation
+        function otpInput(el, idx) {
+            el.value = el.value.replace(/[^0-9]/g, '');
+            el.style.borderColor = el.value ? 'var(--primary-color)' : 'var(--border-color)';
+            if (el.value && idx < 5) {
+                document.querySelectorAll('.otp-digit')[idx + 1].focus();
+            }
+        }
+        function otpKeydown(e, idx) {
+            if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                document.querySelectorAll('.otp-digit')[idx - 1].focus();
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+
+        // Mobile Menu Toggle Function
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const icon = document.querySelector('.mobile-toggle i');
+            navLinks.classList.toggle('active');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Close modal on clicking overlay
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

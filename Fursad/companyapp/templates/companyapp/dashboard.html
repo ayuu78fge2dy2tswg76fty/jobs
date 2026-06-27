@@ -1,0 +1,387 @@
+{% extends 'companyapp/base.html' %}
+
+{% block title %}Dashboard Overview - Fursad{% endblock %}
+{% block header_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<style>
+    /* Dashboard Specific Styles */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: transform 0.3s, border-color 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-color: var(--primary-color);
+        border-radius: 4px 0 0 4px;
+    }
+
+    .stat-card.success::before { background-color: var(--accent-color); }
+    .stat-card.warning::before { background-color: var(--warning-color); }
+    .stat-card.danger::before { background-color: var(--danger-color); }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-color);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.8rem;
+    }
+
+    .stat-card.success .stat-icon { background: rgba(16, 185, 129, 0.1); color: var(--accent-color); }
+    .stat-card.warning .stat-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+    .stat-card.danger .stat-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
+
+    .stat-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-light);
+        line-height: 1.2;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    /* Tables & Lists */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .section-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        color: var(--primary-color);
+    }
+
+    .view-all {
+        font-size: 0.85rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .view-all:hover {
+        text-decoration: underline;
+    }
+
+    /* Table Styles */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .premier-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .premier-table th, .premier-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .premier-table th {
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background-color: rgba(0,0,0,0.2);
+    }
+
+    .premier-table tbody tr {
+        transition: background-color 0.2s;
+    }
+
+    .premier-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .job-title {
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    .badge-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-active { background: rgba(16, 185, 129, 0.1); color: var(--accent-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-closed { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); border: 1px solid rgba(245, 158, 11, 0.2); }
+
+    /* Application List */
+    .app-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .app-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        background: rgba(0,0,0,0.15);
+        transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .app-item:hover {
+        transform: translateX(5px);
+        border-color: var(--primary-color);
+    }
+
+    .app-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .app-info {
+        flex: 1;
+    }
+
+    .app-name {
+        font-weight: 600;
+        color: var(--text-light);
+        margin-bottom: 0.25rem;
+    }
+
+    .app-job {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .app-action {
+        color: var(--primary-color);
+        background: rgba(59, 130, 246, 0.1);
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .app-action:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    @media (max-width: 1200px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-briefcase"></i>
+        </div>
+        <div class="stat-details">
+            <!-- Dynamic data from Database -->
+            <span class="stat-value">{{ total_jobs|default:"0" }}</span>
+            <span class="stat-label">Total Posted Jobs</span>
+        </div>
+    </div>
+
+    <div class="stat-card success">
+        <div class="stat-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="stat-details">
+            <span class="stat-value">{{ active_jobs|default:"0" }}</span>
+            <span class="stat-label">Active Jobs</span>
+        </div>
+    </div>
+
+    <div class="stat-card warning">
+        <div class="stat-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="stat-details">
+            <span class="stat-value">{{ total_applications|default:"0" }}</span>
+            <span class="stat-label">Total Applications</span>
+        </div>
+    </div>
+
+    <div class="stat-card danger">
+        <div class="stat-icon">
+            <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="stat-details">
+            <span class="stat-value">{{ shortlisted|default:"0" }}</span>
+            <span class="stat-label">Shortlisted Candidates</span>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Recent Posted Jobs -->
+    <div class="section-card">
+        <div class="section-header">
+            <h3 class="section-title"><i class="fa-solid fa-list-check"></i> Recent Posted Jobs</h3>
+            <a href="#" class="view-all">View All Jobs</a>
+        </div>
+        <div class="table-responsive">
+            <table class="premier-table">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Posted Date</th>
+                        <th>Applications</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Check if there are recent jobs in context -->
+                    {% if recent_jobs %}
+                        {% for job in recent_jobs %}
+                        <tr>
+                            <td class="job-title">{{ job.j_title }}</td>
+                            <td style="color: var(--text-muted); font-size: 0.9rem;">{{ job.j_posted|date:"M d, Y" }}</td>
+                            <td><strong>{{ job.app_count|default:"0" }}</strong></td>
+                            <td>
+                                {% if job.j_active %}
+                                    <span class="badge-status status-active">Active</span>
+                                {% else %}
+                                    <span class="badge-status status-closed">Closed</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'companyapp:company_jobs' %}" style="color: var(--text-muted); margin-right: 10px;"><i class="fa-regular fa-eye"></i></a>
+                                <a href="{% url 'companyapp:company_jobs' %}" style="color: var(--primary-color);"><i class="fa-solid fa-pen-to-square"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Placeholder/Empty State if no jobs exist -->
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-folder-open" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>No jobs posted yet.</p>
+                                <a href="{% url 'companyapp:company_jobs' %}" class="btn btn-primary" style="display: inline-block; width: auto; padding: 0.5rem 1rem; margin-top: 1rem; font-size: 0.9rem;">Post Your First Job</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="section-card">
+        <div class="section-header">
+            <h3 class="section-title"><i class="fa-solid fa-user-clock"></i> Recent Applications</h3>
+            <a href="{% url 'companyapp:company_applications' %}" class="view-all">View All</a>
+        </div>
+        
+        <div class="app-list">
+            {% if recent_applications %}
+                {% for app in recent_applications %}
+                <div class="app-item">
+                    <div class="app-avatar">
+                        {{ app.a_shaqod.s_fullname|make_list|first|upper }}
+                    </div>
+                    <div class="app-info">
+                        <div class="app-name">{{ app.a_shaqod.s_fullname }}</div>
+                        <div class="app-job">Applied for: <strong>{{ app.a_job.j_title }}</strong></div>
+                    </div>
+                    <a href="{% url 'companyapp:company_applications' %}" class="app-action" title="View Details">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Empty State -->
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    <i class="fa-regular fa-face-frown" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>No recent applications.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,328 @@
+{% extends 'adminapp/base.html' %}
+
+{% block title %}Platform Analytics - Fursad Premium{% endblock %}
+{% block header_title %}Platform Analytics{% endblock %}
+{% block header_subtitle %}Deep dive into user growth, job distribution, and application success rates.{% endblock %}
+
+{% block extra_css %}
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    /* Stats Bar */
+    .analytics-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: var(--bg-surface);
+        padding: 1.5rem;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5);
+        border-color: rgba(255,255,255,0.1);
+    }
+
+    .stat-card::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    }
+    .stat-card.blue::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+    .stat-card.emerald::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .stat-card.amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .stat-card.violet::before { background: linear-gradient(90deg, #8b5cf6, #d946ef); }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .stat-card.blue .stat-icon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .stat-card.emerald .stat-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .stat-card.amber .stat-icon { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .stat-card.violet .stat-icon { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+    .stat-title {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-container {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 2rem;
+        position: relative;
+    }
+
+    .chart-container.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 1px dashed rgba(255,255,255,0.05);
+        padding-bottom: 1rem;
+    }
+
+    .chart-title {
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .chart-canvas-wrapper {
+        position: relative;
+        height: 300px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .chart-canvas-wrapper.bar-wrapper {
+        height: 400px;
+    }
+
+    @media (max-width: 1024px) {
+        .charts-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Quick Stats -->
+<div class="analytics-stats">
+    <div class="stat-card violet">
+        <div class="stat-header">
+            <span class="stat-title">Jobseekers</span>
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+        </div>
+        <div class="stat-value">{{ total_jobseekers }}</div>
+    </div>
+    
+    <div class="stat-card blue">
+        <div class="stat-header">
+            <span class="stat-title">Companies</span>
+            <div class="stat-icon"><i class="fa-solid fa-building"></i></div>
+        </div>
+        <div class="stat-value">{{ total_companies }}</div>
+    </div>
+    
+    <div class="stat-card amber">
+        <div class="stat-header">
+            <span class="stat-title">Jobs Posted</span>
+            <div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
+        </div>
+        <div class="stat-value">{{ total_jobs }}</div>
+    </div>
+    
+    <div class="stat-card emerald">
+        <div class="stat-header">
+            <span class="stat-title">Applications</span>
+            <div class="stat-icon"><i class="fa-solid fa-file-lines"></i></div>
+        </div>
+        <div class="stat-value">{{ total_applications }}</div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="charts-grid">
+    
+    <!-- Application Status Doughnut -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <h3 class="chart-title"><i class="fa-solid fa-chart-pie" style="color: #10b981;"></i> Application Success Rate</h3>
+        </div>
+        <div class="chart-canvas-wrapper">
+            <canvas id="appStatusChart"></canvas>
+        </div>
+    </div>
+
+    <!-- User Distribution Pie -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <h3 class="chart-title"><i class="fa-solid fa-users-viewfinder" style="color: #3b82f6;"></i> Platform User Base</h3>
+        </div>
+        <div class="chart-canvas-wrapper">
+            <canvas id="userDistChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Jobs by Type Bar Chart -->
+    <div class="chart-container full-width">
+        <div class="chart-header">
+            <h3 class="chart-title"><i class="fa-solid fa-chart-column" style="color: #8b5cf6;"></i> Jobs by Employment Type</h3>
+        </div>
+        <div class="chart-canvas-wrapper bar-wrapper">
+            <canvas id="jobTypesChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set global default for Chart.js to match dark theme
+    Chart.defaults.color = '#9ca3af';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(15, 23, 42, 0.9)';
+    Chart.defaults.plugins.tooltip.titleColor = '#fff';
+    Chart.defaults.plugins.tooltip.padding = 12;
+    Chart.defaults.plugins.tooltip.cornerRadius = 8;
+    Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,0.1)';
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 1. Application Status Chart (Doughnut)
+        const appStatusCtx = document.getElementById('appStatusChart').getContext('2d');
+        const appData = JSON.parse('{{ app_status_data|safe }}'); // [Pending, Accepted, Rejected]
+        
+        new Chart(appStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Accepted', 'Rejected'],
+                datasets: [{
+                    data: appData,
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',   // Blue
+                        'rgba(16, 185, 129, 0.8)',   // Green
+                        'rgba(239, 68, 68, 0.8)'     // Red
+                    ],
+                    borderColor: '#1e293b', // Matches dark background
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
+                }
+            }
+        });
+
+        // 2. User Distribution Chart (Pie)
+        const userDistCtx = document.getElementById('userDistChart').getContext('2d');
+        const userData = JSON.parse('{{ user_distribution_data|safe }}'); // [Companies, Jobseekers]
+        
+        new Chart(userDistCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Companies', 'Jobseekers'],
+                datasets: [{
+                    data: userData,
+                    backgroundColor: [
+                        'rgba(245, 158, 11, 0.8)',   // Amber
+                        'rgba(139, 92, 246, 0.8)'    // Violet
+                    ],
+                    borderColor: '#1e293b',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
+                }
+            }
+        });
+
+        // 3. Jobs by Type Chart (Bar)
+        const jobTypesCtx = document.getElementById('jobTypesChart').getContext('2d');
+        const jTypeLabels = JSON.parse('{{ jtype_labels|safe }}');
+        const jTypeCounts = JSON.parse('{{ jtype_counts|safe }}');
+
+        // Create Gradient for Bars
+        const barGradient = jobTypesCtx.createLinearGradient(0, 0, 0, 400);
+        barGradient.addColorStop(0, 'rgba(139, 92, 246, 0.8)'); // Violet
+        barGradient.addColorStop(1, 'rgba(59, 130, 246, 0.8)'); // Blue
+
+        new Chart(jobTypesCtx, {
+            type: 'bar',
+            data: {
+                labels: jTypeLabels,
+                datasets: [{
+                    label: 'Number of Jobs',
+                    data: jTypeCounts,
+                    backgroundColor: barGradient,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+                        ticks: { stepSize: 1 }
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false }
+                    }
+                }
+            }
+        });
+
+    });
+</script>
+{% endblock %}

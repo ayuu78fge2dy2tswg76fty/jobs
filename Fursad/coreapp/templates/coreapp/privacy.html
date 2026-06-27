@@ -1,0 +1,44 @@
+{% extends 'coreapp/base.html' %}
+
+{% block title %}Privacy Policy | Fursad{% endblock %}
+
+{% block content %}
+<div class="animate-fade" style="padding: 4rem 5%; max-width: 1000px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 1rem;">Privacy Policy</h1>
+        <p style="color: var(--text-muted);">Last Updated: April 25, 2026</p>
+    </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .content-card { padding: 2rem !important; border-radius: 20px !important; }
+        }
+    </style>
+
+    <div class="content-card" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; padding: 4rem; color: var(--text-muted); line-height: 1.8;">
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> 1. Introduction</h2>
+        <p style="margin-bottom: 2rem;">Welcome to Fursad. We value your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard your information when you use our job portal.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-database" style="color: var(--accent-color);"></i> 2. Information We Collect</h2>
+        <p style="margin-bottom: 1rem;">We collect information that you provide directly to us when you:</p>
+        <ul style="margin-bottom: 2rem; padding-left: 20px;">
+            <li>Register as a Jobseeker or Company.</li>
+            <li>Upload your CV or profile details.</li>
+            <li>Post job openings or apply for jobs.</li>
+            <li>Communicate with us via our contact forms.</li>
+        </ul>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-gears" style="color: #fbbf24;"></i> 3. How We Use Your Data</h2>
+        <p style="margin-bottom: 2rem;">Your data is used to provide our core services, including connecting candidates with employers, improving our platform, and ensuring a safe recruitment environment.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-shield-lock" style="color: #ef4444;"></i> 4. Data Security</h2>
+        <p style="margin-bottom: 2rem;">We implement industry-standard security measures to protect your data. However, no method of transmission over the internet is 100% secure. and every one can delete their account at any time.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-share-nodes" style="color: var(--secondary);"></i> 5. Third-Party Sharing</h2>
+        <p style="margin-bottom: 2rem;">We do not sell your personal data. We only share information with employers (when you apply) or as required by law.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-envelope" style="color: #38bdf8;"></i> 6. Contact Us</h2>
+        <p>If you have any questions about this policy, please contact us at <a href="mailto:privacy@fursad.so" style="color: var(--primary);">privacy@fursad.so</a>.</p>
+    </div>
+</div>
+{% endblock %}

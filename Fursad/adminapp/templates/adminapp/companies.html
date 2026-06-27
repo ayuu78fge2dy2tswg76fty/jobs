@@ -1,0 +1,630 @@
+{% extends 'adminapp/base.html' %}
+
+{% block title %}Manage Companies - Fursad {% endblock %}
+{% block header_title %}<i class="fa-solid fa-building-user"></i> Manage Companies{% endblock %}
+{% block header_subtitle %}<i class="fa-solid fa-clipboard-check"></i> Review, verify, and manage all registered companies on Fursad.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Search and Filter Bar */
+    .filter-bar {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 300px;
+        position: relative;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        padding: 1rem 1rem 1rem 3rem;
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .filter-options {
+        display: flex;
+        gap: 1rem;
+    }
+
+    /* Modern Select Tag */
+    .modern-select {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 0.9rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.2em;
+        padding-right: 3rem;
+        min-width: 200px;
+    }
+    .modern-select:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+    .modern-select option {
+        background: var(--bg-surface);
+        color: var(--text-primary);
+        padding: 10px;
+    }
+
+    /* Companies Grid */
+    .companies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Company Card */
+    .company-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .company-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--border-hover);
+        box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5);
+    }
+
+    .company-card.pending {
+        border-top: 3px solid var(--accent-amber);
+    }
+
+    .company-card.active-card {
+        border-top: 3px solid var(--accent-emerald);
+    }
+
+    /* Card Header */
+    .card-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+
+    .company-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        color: var(--accent-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .company-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pending {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent-amber);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        animation: pulse-amber 2s infinite;
+    }
+
+    .status-active {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    @keyframes pulse-amber {
+        0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+
+    /* Card Info */
+    .company-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.3rem;
+    }
+
+    .company-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-list {
+        list-style: none;
+        margin-bottom: 2rem;
+        flex: 1;
+    }
+
+    .info-list li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.8rem;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 8px 12px;
+        border-radius: 8px;
+    }
+
+    .info-list i {
+        color: var(--accent-blue);
+        width: 16px;
+        text-align: center;
+    }
+
+    /* Card Actions */
+    .card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: none;
+    }
+
+    .btn-verify {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        grid-column: span 2;
+    }
+    
+    .btn-verify:hover {
+        background: var(--accent-emerald);
+        color: white;
+    }
+
+    .btn-deactivate {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent-amber);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .btn-deactivate:hover {
+        background: var(--accent-amber);
+        color: white;
+    }
+
+    .btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--accent-danger);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-delete:hover {
+        background: var(--accent-danger);
+        color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 5rem 2rem;
+        background: var(--bg-surface);
+        border-radius: 16px;
+        border: 1px dashed var(--border-color);
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--border-hover);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Custom Modern Modal */
+    .confirm-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    .confirm-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    .confirm-modal {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        width: 100%;
+        max-width: 420px;
+        padding: 2.5rem;
+        transform: translateY(30px) scale(0.95);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+    }
+    .confirm-modal-overlay.active .confirm-modal {
+        transform: translateY(0) scale(1);
+    }
+    .confirm-icon {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+    }
+    .confirm-title {
+        font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.8rem;
+        font-family: 'Outfit', sans-serif;
+    }
+    .confirm-text {
+        color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6;
+    }
+    .confirm-text strong {
+        color: var(--text-primary);
+    }
+    .confirm-actions {
+        display: flex; gap: 1rem;
+    }
+    .confirm-actions .btn {
+        flex: 1;
+        padding: 12px;
+    }
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Search and Filter Bar -->
+<div class="filter-bar">
+    <div class="search-box">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search companies by name, email, or username...">
+    </div>
+    <div class="filter-options" style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-filter" style="color: var(--text-muted);"></i>
+        <select id="statusFilter" class="modern-select" style="min-width: 250px;">
+            <option value="all">All Companies</option>
+            <option value="pending">Pending Verifications ({{ pending_verifications }})</option>
+            <option value="active">Active Companies</option>
+        </select>
+    </div>
+</div>
+
+<!-- Companies Grid -->
+<div class="companies-grid" id="companiesGrid">
+    {% if companies %}
+        {% for company in companies %}
+        <div class="company-card {% if company.c_active %}active-card{% else %}pending{% endif %}" data-status="{% if company.c_active %}active{% else %}pending{% endif %}">
+            
+            <div class="card-header-top">
+                <div class="company-logo">
+                    {% if company.c_logo %}
+                        <img src="{{ company.c_logo.url }}" alt="{{ company.c_name }}">
+                    {% else %}
+                        {{ company.c_name|make_list|first|upper }}
+                    {% endif %}
+                </div>
+                <div>
+                    {% if not company.c_owner_person_fullName or not company.c_owner_person_email or not company.c_owner_person_phone or not company.c_owner_person_docoment %}
+                        <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); margin-right: 5px;" title="Missing Owner Info">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </span>
+                    {% endif %}
+                    {% if company.c_active %}
+                        <span class="status-badge status-active"><i class="fa-solid fa-circle-check"></i> Active</span>
+                    {% else %}
+                        <span class="status-badge status-pending"><i class="fa-solid fa-hourglass-half"></i> Pending</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h3 class="company-name searchable">{{ company.c_name }}</h3>
+            <div class="company-meta">
+                <i class="fa-solid fa-calendar-plus"></i> Joined: {{ company.c_joined|date:"M d, Y" }}
+            </div>
+
+            <!-- Company Stats Row -->
+            <div class="company-stats-row" style="display: flex; gap: 15px; margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center;">
+                <div style="flex: 1;">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;"><i class="fa-solid fa-briefcase" style="font-size: 0.8rem;"></i> Jobs</div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent-blue);">{{ company.total_jobs }}</div>
+                </div>
+                <div style="width: 1px; background: var(--border-color); margin: 5px 0;"></div>
+                <div style="flex: 1;">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;"><i class="fa-solid fa-file-lines" style="font-size: 0.8rem;"></i> Apps</div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent-emerald);">{{ company.total_applications }}</div>
+                </div>
+            </div>
+
+            <ul class="info-list">
+                <li class="searchable">
+                    <i class="fa-solid fa-envelope"></i>
+                    {{ company.c_email }}
+                </li>
+                <li>
+                    <i class="fa-solid fa-phone"></i>
+                    {{ company.c_phone|default:"No phone provided" }}
+                </li>
+                <li class="searchable">
+                    <i class="fa-solid fa-at"></i>
+                    {{ company.c_username }}
+                </li>
+            </ul>
+
+            <div class="card-actions">
+                <a href="{% url 'adminapp:company_detail' company.id %}" class="btn btn-view" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.2); grid-column: span 2; text-decoration: none;">
+                    <i class="fa-solid fa-eye"></i> View Full Profile
+                </a>
+                
+                {% if not company.c_active %}
+                    <button data-url="{% url 'adminapp:company_activate' company.id %}" data-action="activate" data-name="{{ company.c_name|escapejs }}" class="btn btn-verify action-btn-trigger">
+                        <i class="fa-solid fa-shield-check"></i> Activate
+                    </button>
+                {% else %}
+                    <button data-url="{% url 'adminapp:company_deactivate' company.id %}" data-action="deactivate" data-name="{{ company.c_name|escapejs }}" class="btn btn-deactivate action-btn-trigger">
+                        <i class="fa-solid fa-ban"></i> Deact.
+                    </button>
+                {% endif %}
+                
+                <button data-url="{% url 'adminapp:company_delete' company.id %}" data-action="delete" data-name="{{ company.c_name|escapejs }}" class="btn btn-delete action-btn-trigger">
+                    <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-building-circle-xmark"></i>
+            <h2>No Companies Found</h2>
+            <p>There are no registered companies in the database yet.</p>
+        </div>
+    {% endif %}
+    
+    <!-- No Results Placeholder for JS Filtering -->
+    <div class="empty-state" id="noResultsMsg" style="display: none;">
+        <i class="fa-solid fa-search-minus"></i>
+        <h2>No Results Match</h2>
+        <p>Try adjusting your search query or filters.</p>
+    </div>
+</div>
+
+<!-- Modern Confirmation Modal -->
+<div class="confirm-modal-overlay" id="confirmModalOverlay">
+    <div class="confirm-modal">
+        <div class="confirm-icon" id="confirmIcon">
+            <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <h3 class="confirm-title" id="confirmTitle">Confirm Action</h3>
+        <p class="confirm-text" id="confirmText">Are you sure you want to proceed?</p>
+        <div class="confirm-actions">
+            <button class="btn btn-cancel" id="btnCancelModal">Cancel</button>
+            <a href="#" class="btn" id="btnConfirmModal">Confirm</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const cards = document.querySelectorAll('.company-card');
+        const noResultsMsg = document.getElementById('noResultsMsg');
+
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // Real-time Search
+        searchInput.addEventListener('input', function(e) {
+            searchQuery = e.target.value.toLowerCase();
+            filterCards();
+        });
+
+        // Filter Select
+        statusFilter.addEventListener('change', function(e) {
+            currentFilter = e.target.value;
+            filterCards();
+        });
+
+        function filterCards() {
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const status = card.getAttribute('data-status');
+                const searchableElements = card.querySelectorAll('.searchable');
+                let matchesSearch = false;
+
+                // Check search text
+                if (searchQuery === '') {
+                    matchesSearch = true;
+                } else {
+                    searchableElements.forEach(el => {
+                        if (el.textContent.toLowerCase().includes(searchQuery)) {
+                            matchesSearch = true;
+                        }
+                    });
+                }
+
+                // Check status filter
+                const matchesFilter = (currentFilter === 'all') || (status === currentFilter);
+
+                if (matchesSearch && matchesFilter) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show "No Results" message if all cards are hidden
+            if (visibleCount === 0 && cards.length > 0) {
+                noResultsMsg.style.display = 'block';
+            } else {
+                noResultsMsg.style.display = 'none';
+            }
+        }
+
+        // Custom Modal Logic
+        const modalOverlay = document.getElementById('confirmModalOverlay');
+        const btnCancel = document.getElementById('btnCancelModal');
+        const btnConfirm = document.getElementById('btnConfirmModal');
+        const confirmIcon = document.getElementById('confirmIcon');
+        const confirmIconI = confirmIcon.querySelector('i');
+        const confirmTitle = document.getElementById('confirmTitle');
+        const confirmText = document.getElementById('confirmText');
+        const actionTriggers = document.querySelectorAll('.action-btn-trigger');
+
+        actionTriggers.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+                const action = this.getAttribute('data-action');
+                const name = this.getAttribute('data-name');
+                
+                btnConfirm.href = url;
+                
+                if (action === 'activate') {
+                    confirmIcon.style.background = 'rgba(16, 185, 129, 0.1)';
+                    confirmIcon.style.color = 'var(--accent-emerald)';
+                    confirmIcon.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+                    confirmIconI.className = 'fa-solid fa-shield-check';
+                    confirmTitle.textContent = 'Activate Company';
+                    confirmText.innerHTML = `Are you sure you want to activate <strong>${name}</strong>?`;
+                    btnConfirm.className = 'btn btn-verify';
+                    btnConfirm.innerHTML = '<i class="fa-solid fa-check"></i> Activate';
+                } else if (action === 'deactivate') {
+                    confirmIcon.style.background = 'rgba(245, 158, 11, 0.1)';
+                    confirmIcon.style.color = 'var(--accent-amber)';
+                    confirmIcon.style.border = '1px solid rgba(245, 158, 11, 0.2)';
+                    confirmIconI.className = 'fa-solid fa-ban';
+                    confirmTitle.textContent = 'Deactivate Company';
+                    confirmText.innerHTML = `Are you sure you want to deactivate <strong>${name}</strong>? They will no longer be able to login.`;
+                    btnConfirm.className = 'btn btn-deactivate';
+                    btnConfirm.innerHTML = '<i class="fa-solid fa-ban"></i> Deactivate';
+                } else if (action === 'delete') {
+                    confirmIcon.style.background = 'rgba(239, 68, 68, 0.1)';
+                    confirmIcon.style.color = 'var(--accent-danger)';
+                    confirmIcon.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+                    confirmIconI.className = 'fa-solid fa-trash-can';
+                    confirmTitle.textContent = 'Delete Company';
+                    confirmText.innerHTML = `WARNING: Are you sure you want to completely delete <strong>${name}</strong>? This action cannot be undone.`;
+                    btnConfirm.className = 'btn btn-delete';
+                    btnConfirm.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+                }
+                
+                // Show modal
+                modalOverlay.classList.add('active');
+            });
+        });
+
+        // Close modal handlers
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        btnCancel.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+    });
+</script>
+{% endblock %}

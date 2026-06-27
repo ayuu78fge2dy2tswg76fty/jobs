@@ -1,0 +1,393 @@
+{% extends 'coreapp/base.html' %}
+{% load static %}
+
+{% block title %}About Us | Fursad {% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <!-- Hero Section -->
+    <section style="padding: 6rem 0 4rem 0; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 70%); pointer-events: none;"></div>
+        <h1 style="font-size: 4rem; font-weight: 900; color: white; margin-bottom: 1.5rem; letter-spacing: -2px; line-height: 1.1;">Empowering Careers,<br><span style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Connecting Futures</span></h1>
+        <p style="color: var(--text-muted); font-size: 1.25rem; max-width: 700px; margin: 0 auto; line-height: 1.8;">Fursad is the region's leading job portal, dedicated to bridging the gap between talented professionals and visionary companies.</p>
+    </section>
+
+    <!-- Mission & Vision Cards -->
+    <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 6rem;">
+        <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; padding: 3rem; transition: 0.4s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-10px)'" onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.transform='translateY(0)'">
+            <div style="width: 60px; height: 60px; background: rgba(16, 185, 129, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; margin-bottom: 2rem;">
+                <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <h2 style="font-size: 1.75rem; font-weight: 800; color: white; margin-bottom: 1.25rem;">Our Mission</h2>
+            <p style="color: var(--text-muted); line-height: 1.7; font-size: 1.05rem;">To provide a seamless and efficient platform where job seekers find their dream careers and employers discover the talent that drives innovation and growth.</p>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; padding: 3rem; transition: 0.4s;" onmouseover="this.style.borderColor='var(--secondary)'; this.style.transform='translateY(-10px)'" onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.transform='translateY(0)'">
+            <div style="width: 60px; height: 60px; background: rgba(99, 102, 241, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.5rem; margin-bottom: 2rem;">
+                <i class="fa-solid fa-eye"></i>
+            </div>
+            <h2 style="font-size: 1.75rem; font-weight: 800; color: white; margin-bottom: 1.25rem;">Our Vision</h2>
+            <p style="color: var(--text-muted); line-height: 1.7; font-size: 1.05rem;">To become the most trusted and innovative recruitment ecosystem, transforming how people work and how organizations build world-class teams.</p>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section style="margin-bottom: 8rem;">
+        <div style="text-align: center; margin-bottom: 6rem;">
+            <span style="display: inline-block; padding: 6px 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 100px; color: var(--primary); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem;">Our Team</span>
+            <h2 style="font-size: 3.5rem; font-weight: 900; color: white; margin-bottom: 1rem; letter-spacing: -1px;">Meet Our <span style="background: linear-gradient(135deg, var(--primary), #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Team</span></h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 1.5rem auto 0 auto; line-height: 1.6;">The passionate minds behind the Fursad revolution, dedicated to building the future of recruitment.</p>
+        </div>
+
+        <div class="team-grid">
+            <!-- Team Member 1: Omar Gaciye -->
+            <div class="team-card">
+                <div class="team-img-wrapper">
+                    <div class="team-img-glow"></div>
+                    <div class="team-img-inner">
+                        <img src="{% static 'assets/team/Omar.png' %}" alt="Omar Gaciye">
+                    </div>
+                </div>
+                <h3 class="team-name">Omar Gaciye</h3>
+                <p class="team-role" style="background: linear-gradient(to right, #e7706e, #1078b9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Supervisor</p>
+                <div class="team-divider"></div>
+                <p class="team-bio">Omar is the dedicated supervisor of our team, bringing extensive experience and a passion for excellence to every project.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/mrayuub24" target="_blank" class="social-link" title="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="mailto:cadeayuub310@.com" class="social-link social-email" title="Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                    <a href="https://wa.me/+252 907 256 540" target="_blank" class="social-link social-whatsapp" title="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+             <!-- Team Member 2: Ibrahim -->
+            <div class="team-card">
+                <div class="team-img-wrapper">
+                    <div class="team-img-glow"></div>
+                    <div class="team-img-inner">
+                        <img src="{% static 'assets/team/Ayuub.png' %}" alt="Ayuub Siciid">
+                    </div>
+                </div>
+                <h3 class="team-name">Ayuub Siciid</h3>
+                <p class="team-role" style="background: linear-gradient(to right, #6ee7b7, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Team Lead</p>
+                <div class="team-divider"></div>
+                <p class="team-bio">Transforming the recruitment landscape with visionary leadership and a commitment to excellence.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/mrayuub24" target="_blank" class="social-link" title="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="mailto:cadeayuub310@.com" class="social-link social-email" title="Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                    <a href="https://wa.me/907525744" target="_blank" class="social-link social-whatsapp" title="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+
+            <!-- Team Member 2: Ibrahim -->
+            <div class="team-card">
+                <div class="team-img-wrapper">
+                    <div class="team-img-glow" style="background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);"></div>
+                    <div class="team-img-inner">
+                        <img src="{% static 'assets/team/ibrahim.png' %}" alt="Ibraahim">
+                    </div>
+                </div>
+                <h3 class="team-name">Ibraahim</h3>
+                <p class="team-role" style="background: linear-gradient(to right, #93c5fd, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Team Member</p>
+                <div class="team-divider"></div>
+                <p class="team-bio">Architecting robust digital ecosystems that empower businesses and talent through innovation.</p>
+                <div class="social-links">
+                    <a href="https://facebook.com/ibrahim" target="_blank" class="social-link" title="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="mailto:ibrahim@fursad.com" class="social-link social-email" title="Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                    <a href="https://wa.me/252610000001" target="_blank" class="social-link social-whatsapp" title="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Team Member 3: Sundus -->
+            <div class="team-card">
+                <div class="team-img-wrapper">
+                    <div class="team-img-glow" style="background: radial-gradient(circle, #f472b6 0%, transparent 70%);"></div>
+                    <div class="team-img-inner">
+                        <img src="{% static 'assets/team/sundus.png' %}" alt="Sundus Maxamed">
+                    </div>
+                </div>
+                <h3 class="team-name">Sundus Ahmed</h3>
+                <p class="team-role" style="background: linear-gradient(to right, #fbcfe8, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Team Member</p>
+                <div class="team-divider"></div>
+                <p class="team-bio">Designing beautiful experiences that connect and inspire.</p>
+                <div class="social-links">
+                    <a href="https://facebook.com/sundus" target="_blank" class="social-link" title="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="mailto:sundus@fursad.com" class="social-link social-email" title="Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                    <a href="https://wa.me/252610000002" target="_blank" class="social-link social-whatsapp" title="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(255,255,255,0.08); border-radius: 40px; padding: 4rem; text-align: center; margin-bottom: 6rem;">
+        <h2 style="font-size: 2.25rem; font-weight: 800; color: white; margin-bottom: 3rem;">Why Choose Fursad?</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem;">
+            <div>
+                <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem;"></i>
+                <h4 style="color: white; font-weight: 700; margin-bottom: 10px;">Secure & Verified</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Every employer and job is manually verified by our team.</p>
+            </div>
+            <div>
+                <i class="fa-solid fa-bolt" style="font-size: 2.5rem; color: #fbbf24; margin-bottom: 1.5rem;"></i>
+                <h4 style="color: white; font-weight: 700; margin-bottom: 10px;">Fast Response</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Get real-time updates on your application status instantly.</p>
+            </div>
+            <div>
+                <i class="fa-solid fa-users-gear" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 1.5rem;"></i>
+                <h4 style="color: white; font-weight: 700; margin-bottom: 10px;">Expert Support</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Our support team is here to help you at every step of the way.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .team-grid {
+        display: flex;
+        gap: 3rem;
+        margin-top: 2rem;
+        padding: 7rem 5% 5rem 5%;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        max-width: 100vw;
+    }
+
+    @media (min-width: 1024px) {
+        .team-grid {
+            justify-content: center;
+        }
+    }
+
+    .team-grid::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
+    .team-card {
+        scroll-snap-align: center;
+        flex: 0 0 320px;
+        max-width: 85vw; /* Responsive on very small screens */
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.45), rgba(15, 23, 42, 0.7));
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 40px;
+        padding: 6.5rem 2rem 3rem 2rem;
+        position: relative;
+        text-align: center;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        min-height: 460px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .team-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 40px;
+        padding: 1.5px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent, rgba(255,255,255,0.05));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .team-card:hover {
+        transform: translateY(-15px) scale(1.03);
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.85));
+        box-shadow: 0 45px 90px rgba(0, 0, 0, 0.6);
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .team-img-wrapper {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 160px;
+        height: 160px;
+        z-index: 10;
+    }
+
+    .team-img-glow {
+        position: absolute;
+        inset: -15px;
+        background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+        border-radius: 50%;
+        opacity: 0.15;
+        filter: blur(20px);
+        transition: all 0.5s ease;
+    }
+
+    .team-card:hover .team-img-glow {
+        opacity: 0.55;
+        transform: scale(1.15);
+    }
+
+    .team-img-inner {
+        width: 100%;
+        height: 100%;
+        background: #0f172a;
+        border-radius: 50%;
+        padding: 6px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .team-img-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .team-card:hover .team-img-inner img {
+        transform: scale(1.15);
+    }
+
+    .team-name {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 6px;
+        letter-spacing: -0.5px;
+    }
+
+    .team-role {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        margin-bottom: 1.25rem;
+        background: linear-gradient(to right, var(--primary-light), var(--primary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .team-divider {
+        width: 30px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.25rem;
+        border-radius: 2px;
+        transition: all 0.4s ease;
+    }
+
+    .team-card:hover .team-divider {
+        width: 60px;
+        background: var(--primary);
+    }
+
+    .team-bio {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        padding: 0 0.5rem;
+        flex-grow: 1;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: auto;
+    }
+
+    .social-link {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 1rem;
+    }
+
+    .social-link:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-8px) rotate(10deg);
+        border-color: var(--primary);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .social-email:hover { background: #ea4335 !important; border-color: #ea4335 !important; box-shadow: 0 10px 20px rgba(234, 67, 53, 0.3) !important; }
+    .social-whatsapp:hover { background: #25d366 !important; border-color: #25d366 !important; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3) !important; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const teamGrid = document.querySelector('.team-grid');
+        if (!teamGrid) return;
+        
+        let scrollSpeed = 1; 
+        let scrollDirection = 1;
+        let autoScrollTimer;
+
+        function startAutoScroll() {
+            clearInterval(autoScrollTimer);
+            autoScrollTimer = setInterval(() => {
+                // Pause if user is hovering or touching
+                if (!teamGrid.matches(':hover') && !teamGrid.matches(':active')) {
+                    teamGrid.scrollLeft += scrollSpeed * scrollDirection;
+                    
+                    // Reverse direction when reaching ends
+                    if (teamGrid.scrollLeft >= (teamGrid.scrollWidth - teamGrid.clientWidth - 2)) {
+                        scrollDirection = -1;
+                    } else if (teamGrid.scrollLeft <= 0) {
+                        scrollDirection = 1;
+                    }
+                }
+            }, 30);
+        }
+        
+        // Start the auto-scroll
+        startAutoScroll();
+        
+        // Pause on touch to allow manual scroll
+        teamGrid.addEventListener('touchstart', () => clearInterval(autoScrollTimer));
+        teamGrid.addEventListener('touchend', () => {
+            setTimeout(startAutoScroll, 1000);
+        });
+    });
+</script>
+{% endblock %}

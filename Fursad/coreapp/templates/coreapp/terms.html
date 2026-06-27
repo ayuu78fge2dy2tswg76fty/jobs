@@ -1,0 +1,41 @@
+{% extends 'coreapp/base.html' %}
+
+{% block title %}Terms of Service | Fursad{% endblock %}
+
+{% block content %}
+<div class="animate-fade" style="padding: 4rem 5%; max-width: 1000px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 1rem;">Terms of Service</h1>
+        <p style="color: var(--text-muted);">Please read these terms carefully before using Fursad.</p>
+    </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .content-card { padding: 2rem !important; border-radius: 20px !important; }
+        }
+    </style>
+
+    <div class="content-card" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; padding: 4rem; color: var(--text-muted); line-height: 1.8;">
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-handshake" style="color: var(--primary);"></i> 1. Acceptance of Terms</h2>
+        <p style="margin-bottom: 2rem;">By accessing or using Fursad, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-user-check" style="color: var(--accent-color);"></i> 2. User Conduct</h2>
+        <p style="margin-bottom: 2rem;">Users must provide accurate information and are prohibited from posting fraudulent job listings, spam, or infringing on intellectual property rights.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-building-user" style="color: #fbbf24;"></i> 3. Employer Responsibilities</h2>
+        <p style="margin-bottom: 2rem;">Employers are responsible for the content of their job postings and must comply with local labor laws and regulations.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-user-tie" style="color: var(--secondary);"></i> 4. Jobseeker Responsibilities</h2>
+        <p style="margin-bottom: 2rem;">Jobseekers are responsible for the accuracy of their CVs and profile information. Fursad does not guarantee employment.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-user-minus" style="color: #ef4444;"></i> 5. Account Termination</h2>
+        <p style="margin-bottom: 2rem;">We reserve the right to suspend or terminate accounts that violate our terms or engage in suspicious activity.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-scale-balanced" style="color: #38bdf8;"></i> 6. Limitation of Liability</h2>
+        <p style="margin-bottom: 2rem;">Fursad is not liable for any disputes between employers and candidates or for the quality of services provided by third parties.</p>
+
+        <h2 style="color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-rotate" style="color: #a855f7;"></i> 7. Changes to Terms</h2>
+        <p>We may update these terms from time to time. Your continued use of the platform constitutes acceptance of the new terms.</p>
+    </div>
+</div>
+{% endblock %}

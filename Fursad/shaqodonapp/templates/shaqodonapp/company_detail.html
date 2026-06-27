@@ -1,0 +1,156 @@
+{% extends 'shaqodonapp/base.html' %}
+
+{% block title %}{{ company.c_name }} | Company Profile{% endblock %}
+
+{% block content %}
+<div class="animate-fade" style="max-width: 1100px; margin: 0 auto;">
+    <!-- Back Button -->
+    <a href="{% url 'shaqodonapp:shaqodon_companies' %}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; margin-bottom: 1.5rem; font-weight: 600; transition: 0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+        <i class="fa-solid fa-arrow-left"></i> Back to Companies
+    </a>
+
+    <!-- Company Header Card -->
+    <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.1)); padding: 4rem 2.5rem; position: relative;">
+            <div style="display: flex; gap: 2.5rem; align-items: center; position: relative; z-index: 2; flex-wrap: wrap;">
+                <div style="width: 140px; height: 140px; border-radius: 32px; border: 4px solid var(--bg-card); box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; background: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    {% if company.c_logo %}
+                        <img src="{{ company.c_logo.url }}" alt="{{ company.c_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <i class="fa-solid fa-building" style="font-size: 3.5rem; color: #cbd5e1;"></i>
+                    {% endif %}
+                </div>
+                <div style="flex: 1; min-width: 300px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <h1 style="font-size: 3rem; font-weight: 800; color: white; letter-spacing: -1px; margin: 0;">{{ company.c_name }}</h1>
+                        {% if company.c_verivaed %}
+                        <i class="fa-solid fa-circle-check" style="color: #3b82f6; font-size: 1.8rem;" title="Verified Employer"></i>
+                        {% else %}
+                        <span style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle-xmark"></i> Unverified
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; max-width: 700px; margin-bottom: 2rem;">
+                        {{ company.c_description|default:"No description provided for this company." }}
+                    </p>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+                        {% if company.c_header_location %}
+                        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 600;">
+                            <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> {{ company.c_header_location }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if company.c_contect_address %}
+                        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 600;">
+                            <i class="fa-solid fa-map-pin" style="color: var(--primary);"></i> {{ company.c_contect_address }}
+                        </div>
+                        {% endif %}
+
+                        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 600;">
+                            <i class="fa-solid fa-calendar-days" style="color: var(--primary);"></i> Joined {{ company.c_joined|date:"M Y" }}
+                        </div>
+                        
+                        <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.1); margin: 0 10px;"></div>
+                        
+                        <!-- Socials -->
+                        {% if company.c_wbsite %}
+                        <a href="{{ company.c_wbsite }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'" title="Website"><i class="fa-solid fa-globe" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_facebook_page %}
+                        <a href="{{ company.c_facebook_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#1877f2'" onmouseout="this.style.color='var(--text-muted)'" title="Facebook"><i class="fa-brands fa-facebook" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_twitter_page %}
+                        <a href="{{ company.c_twitter_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#1da1f2'" onmouseout="this.style.color='var(--text-muted)'" title="Twitter"><i class="fa-brands fa-twitter" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_linkdin_page %}
+                        <a href="{{ company.c_linkdin_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#0a66c2'" onmouseout="this.style.color='var(--text-muted)'" title="LinkedIn"><i class="fa-brands fa-linkedin" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_instegram_page %}
+                        <a href="{{ company.c_instegram_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#e1306c'" onmouseout="this.style.color='var(--text-muted)'" title="Instagram"><i class="fa-brands fa-instagram" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                        {% if company.c_youtube_page %}
+                        <a href="{{ company.c_youtube_page }}" target="_blank" style="color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='#ff0000'" onmouseout="this.style.color='var(--text-muted)'" title="YouTube"><i class="fa-brands fa-youtube" style="font-size: 1.4rem;"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- Background Glow -->
+            <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: var(--primary); filter: blur(120px); opacity: 0.15;"></div>
+        </div>
+    </div>
+
+    <!-- Company Jobs Section -->
+    <div style="margin-top: 4rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+            <div>
+                <h2 style="font-size: 2rem; font-weight: 800; color: white; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 15px;">
+                    <span style="width: 5px; height: 30px; background: var(--primary); border-radius: 3px;"></span>
+                    Available Positions
+                </h2>
+                <p style="color: var(--text-muted); font-size: 1rem;">Discover all active job opportunities at {{ company.c_name }}</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 0.75rem 1.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+                <span style="color: var(--primary); font-weight: 800; font-size: 1.2rem;">{{ jobs.count }}</span>
+                <span style="color: var(--text-muted); font-weight: 600; margin-left: 5px;">Active Roles</span>
+            </div>
+        </div>
+
+        <div style="display: grid; gap: 1.25rem;">
+            {% for job in jobs %}
+            <div class="job-card-premium" style="
+                background: rgba(30, 41, 59, 0.4);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 24px;
+                padding: 1.5rem 2rem;
+                display: flex;
+                align-items: center;
+                gap: 2rem;
+                transition: all 0.3s ease;
+                text-decoration: none;
+            " onmouseover="this.style.background='rgba(30, 41, 59, 0.6)'; this.style.borderColor='var(--primary)'; this.style.transform='translateX(10px)'" onmouseout="this.style.background='rgba(30, 41, 59, 0.4)'; this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.transform='translateX(0)'">
+                
+                <div style="width: 60px; height: 60px; border-radius: 16px; background: white; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 8px 16px rgba(0,0,0,0.2);">
+                    {% if job.j_logo %}
+                        <img src="{{ job.j_logo.url }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <i class="fa-solid fa-briefcase" style="font-size: 1.5rem; color: #cbd5e1;"></i>
+                    {% endif %}
+                </div>
+
+                <div style="flex: 1;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 6px;">{{ job.j_title }}</h3>
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <span style="color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-location-dot" style="color: var(--danger-color);"></i> {{ job.j_location }}
+                        </span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-briefcase" style="color: var(--secondary);"></i> {{ job.get_j_jobtype_display }}
+                        </span>
+                        <span style="color: #fbbf24; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-coins"></i> {% if job.j_salary %}${{ job.j_salary }}{% else %}Negotiable{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="text-align: right; min-width: 120px;">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Posted {{ job.j_posted|timesince }} ago</p>
+                    <a href="{% url 'shaqodonapp:shaqodon_job_detail' job.id %}" style="display: inline-block; padding: 10px 24px; background: rgba(16, 185, 129, 0.1); color: var(--primary); border-radius: 12px; font-weight: 700; text-decoration: none; border: 1px solid rgba(16, 185, 129, 0.2); transition: 0.3s;" onmouseover="this.style.background='var(--primary)'; this.style.color='white'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='var(--primary)'">
+                        View Job
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 5rem 2rem; background: rgba(30, 41, 59, 0.2); border: 2px dashed rgba(255,255,255,0.05); border-radius: 32px;">
+                <div style="font-size: 3rem; color: rgba(255,255,255,0.05); margin-bottom: 1rem;">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 style="color: var(--text-muted); font-size: 1.25rem; font-weight: 700;">No active openings</h3>
+                <p style="color: var(--text-muted); margin-top: 8px;">This company hasn't posted any jobs recently. Check back soon!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+<mxfile host="65bd71144e">
+    <diagram id="GBvmf5QLjoH2ZTFsV6o7" name="Page-1">
+        <mxGraphModel dx="702" dy="283" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Vertical Flow Layout" style="swimlane;startSize=20;horizontal=1;childLayout=flowLayout;flowOrientation=north;resizable=0;interRankCellSpacing=50;containerType=tree;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="10" y="20" width="270" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Start" style="whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                    <mxGeometry x="85" y="40" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Task" style="whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                    <mxGeometry x="20" y="130" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="" style="html=1;rounded=1;curved=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startSize=6;endSize=6;noEdgeStyle=1;orthogonal=1;" parent="2" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="112.5" y="92"/>
+                            <mxPoint x="70" y="118"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6" value="Task" style="whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                    <mxGeometry x="150" y="130" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="" style="html=1;rounded=1;curved=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startSize=6;endSize=6;noEdgeStyle=1;orthogonal=1;" parent="2" source="3" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="157.5" y="92"/>
+                            <mxPoint x="200" y="118"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" value="End" style="whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                    <mxGeometry x="85" y="220" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="" style="html=1;rounded=1;curved=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startSize=6;endSize=6;noEdgeStyle=1;orthogonal=1;" parent="2" source="4" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="70" y="182"/>
+                            <mxPoint x="112.5" y="208"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="" style="html=1;rounded=1;curved=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startSize=6;endSize=6;noEdgeStyle=1;orthogonal=1;" parent="2" source="6" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="200" y="182"/>
+                            <mxPoint x="157.5" y="208"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="erd-page" name="ERD">
+        <mxGraphModel dx="702" dy="283" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="company" value="&lt;div&gt;&lt;b&gt;Company_DB&lt;/b&gt;&lt;br&gt;PK id&lt;br&gt;c_name&lt;br&gt;c_email (unique)&lt;br&gt;c_phone&lt;br&gt;c_username&lt;br&gt;c_password&lt;br&gt;c_joined&lt;br&gt;c_logo&lt;br&gt;c_active&lt;br&gt;c_verivaed&lt;br&gt;c_header_location&lt;br&gt;c_contect_address&lt;br&gt;c_owner_person&lt;br&gt;c_owner_person_email&lt;br&gt;c_wbsite&lt;br&gt;c_facebook_page&lt;br&gt;c_twitter_page&lt;br&gt;c_instegram_page&lt;br&gt;c_linkdin_page&lt;br&gt;c_youtube_page&lt;br&gt;c_telegram_page&lt;br&gt;c_whatsapp_page&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="120" width="320" height="520" as="geometry"/>
+                </mxCell>
+                <mxCell id="jobs" value="&lt;div&gt;&lt;b&gt;jops_DB&lt;/b&gt;&lt;br&gt;PK id&lt;br&gt;j_title&lt;br&gt;j_description&lt;br&gt;FK j_company&lt;br&gt;j_location&lt;br&gt;j_salary&lt;br&gt;j_posted&lt;br&gt;j_active&lt;br&gt;j_logo&lt;br&gt;j_jobtype&lt;br&gt;j_EXP&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="120" width="300" height="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="applicants" value="&lt;div&gt;&lt;b&gt;shaqod_DB&lt;/b&gt;&lt;br&gt;PK id&lt;br&gt;s_fullname&lt;br&gt;s_email (unique)&lt;br&gt;s_username (unique)&lt;br&gt;s_password&lt;br&gt;s_phone&lt;br&gt;s_profile_img&lt;br&gt;s_status&lt;br&gt;s_geneder&lt;br&gt;s_created&lt;br&gt;s_address&lt;br&gt;s_cv&lt;br&gt;s_experience&lt;br&gt;s_skills&lt;br&gt;s_education&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="700" width="320" height="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="applications" value="&lt;div&gt;&lt;b&gt;Application_DB&lt;/b&gt;&lt;br&gt;PK id&lt;br&gt;FK a_job&lt;br&gt;FK a_shaqod&lt;br&gt;a_cv&lt;br&gt;a_cover_letter&lt;br&gt;a_applied_date&lt;br&gt;a_current_location&lt;br&gt;a_status&lt;br&gt;a_deleted_by_company&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="620" width="320" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_company_jobs" value="1 to many" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12;" parent="1" source="company" target="jobs" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_jobs_applications" value="1 to many" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12;" parent="1" source="jobs" target="applications" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_applicants_applications" value="1 to many" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#b85450;fontSize=12;" parent="1" source="applicants" target="applications" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="erd_note" value="&lt;div&gt;&lt;b&gt;Key rules&lt;/b&gt;&lt;br&gt;A company can post many jobs.&lt;br&gt;A job can receive many applications.&lt;br&gt;A job seeker can submit many applications.&lt;br&gt;Applications link one job seeker to one job.&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="120" width="340" height="180" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="context-page" name="Context">
+        <mxGraphModel dx="702" dy="563" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="system" value="&lt;div&gt;&lt;b&gt;Fursad Job Portal&lt;/b&gt;&lt;br&gt;Job posting, job search, and applications&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="300" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="jobseeker" value="&lt;div&gt;&lt;b&gt;Job Seeker&lt;/b&gt;&lt;br&gt;Create profile&lt;br&gt;Upload CV&lt;br&gt;Apply for jobs&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="320" width="260" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="company_actor" value="&lt;div&gt;&lt;b&gt;Company&lt;/b&gt;&lt;br&gt;Post jobs&lt;br&gt;Review applicants&lt;br&gt;Manage company profile&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="1260" y="320" width="260" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin_actor" value="&lt;div&gt;&lt;b&gt;Admin&lt;/b&gt;&lt;br&gt;Verify companies&lt;br&gt;Manage users&lt;br&gt;Moderate content&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="70" width="360" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow_jobseeker" value="Search, profile, apply" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#b85450;fontSize=11;" parent="1" source="jobseeker" target="system" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow_company" value="Post jobs, review applications" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=11;" parent="1" source="company_actor" target="system" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow_admin" value="Manage platform" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=11;" parent="1" source="admin_actor" target="system" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="context_note" value="&lt;div&gt;Internal data store is represented by the ERD page.&lt;br&gt;This page shows the main external actors and how they use the platform.&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="600" width="740" height="100" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

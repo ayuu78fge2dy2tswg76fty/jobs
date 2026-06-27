@@ -1,0 +1,669 @@
+{% extends 'companyapp/base.html' %}
+
+{% block title %}Manage Applications - Fursad{% endblock %}
+{% block header_title %}Manage Applications{% endblock %}
+
+{% block content %}
+<style>
+    /* Stats Cards Styling */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        transition: transform 0.3s, border-color 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-color: var(--primary-color);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-color);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-card.pending::before { background-color: var(--warning-color); }
+    .stat-card.pending .stat-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+    
+    .stat-card.reviewed::before { background-color: var(--primary-color); }
+    .stat-card.reviewed .stat-icon { background: rgba(59, 130, 246, 0.1); color: var(--primary-color); }
+
+    .stat-card.accepted::before { background-color: var(--accent-color); }
+    .stat-card.accepted .stat-icon { background: rgba(16, 185, 129, 0.1); color: var(--accent-color); }
+
+    .stat-card.rejected::before { background-color: var(--danger-color); }
+    .stat-card.rejected .stat-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
+
+    .stat-details { display: flex; flex-direction: column; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text-light); line-height: 1.2; }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+    /* Filters & Search */
+    .filter-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: flex-end;
+    }
+
+    .search-box {
+        flex: 2;
+        min-width: 250px;
+        position: relative;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.8rem;
+        background: var(--bg-darker);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        color: var(--text-light);
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .search-box input:focus { border-color: var(--primary-color); }
+
+    .filter-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 0.5rem; }
+    .filter-group label { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
+    .filter-select {
+        padding: 0.8rem 1rem;
+        background: var(--bg-darker);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        color: var(--text-light);
+        font-size: 0.95rem;
+        outline: none;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    /* Applications Table */
+    .table-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .premier-table { width: 100%; border-collapse: collapse; }
+    .premier-table th {
+        background: rgba(0,0,0,0.2);
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .premier-table td {
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+    }
+
+    .app-row { transition: background 0.2s; }
+    .app-row:hover { background: rgba(255,255,255,0.02); }
+
+    .applicant-info { display: flex; align-items: center; gap: 1rem; }
+    .applicant-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .applicant-details { display: flex; flex-direction: column; }
+    .applicant-name { font-weight: 600; color: var(--text-light); font-size: 1rem; }
+    .applicant-email { font-size: 0.85rem; color: var(--text-muted); }
+
+    .job-badge {
+        padding: 0.4rem 0.8rem;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .status-pill {
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .status-reviewed { background: rgba(59, 130, 246, 0.1); color: var(--primary-color); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .status-accepted { background: rgba(16, 185, 129, 0.1); color: var(--accent-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    .actions-group { display: flex; gap: 0.5rem; }
+    .action-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid var(--border-color);
+        background: var(--bg-darker);
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .action-btn:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(59, 130, 246, 0.05); }
+    .action-btn.download:hover { border-color: var(--accent-color); color: var(--accent-color); background: rgba(16, 185, 129, 0.05); }
+    .action-btn.edit:hover { border-color: var(--warning-color); color: var(--warning-color); background: rgba(245, 158, 11, 0.05); }
+    .action-btn.delete:hover { border-color: var(--danger-color); color: var(--danger-color); background: rgba(239, 68, 68, 0.05); }
+
+    /* Modal Styling */
+    .custom-modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(8px);
+        z-index: 2000;
+        justify-content: center;
+        align-items: flex-start; /* Align to top to prevent clipping */
+        padding: 2rem 1rem;
+        overflow-y: auto; /* Enable scrolling for tall content */
+    }
+    .custom-modal.active { display: flex; }
+    .modal-content {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        width: 100%;
+        max-width: 600px;
+        padding: 2.5rem;
+        position: relative;
+        margin: auto; /* Centering + Scroll fix */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .modal-close {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 10;
+    }
+    .modal-close:hover { background: var(--danger-color); color: white; }
+    .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+    
+    .detail-item { margin-bottom: 1.5rem; }
+    .detail-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 0.5rem; display: block; }
+    .detail-value { font-size: 1rem; color: var(--text-light); line-height: 1.6; }
+    .cover-letter-box {
+        background: var(--bg-darker);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        max-height: 200px;
+        overflow-y: auto;
+        white-space: pre-line;
+    }
+
+    @media (max-width: 768px) {
+        .filter-container {
+            flex-direction: column;
+            align-items: stretch !important;
+            padding: 1rem !important;
+        }
+        .search-box {
+            width: 100%;
+        }
+        .modal-content {
+            padding: 1.5rem !important;
+        }
+    }
+</style>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-details">
+            <span class="stat-value">{{ total_applications }}</span>
+            <span class="stat-label">Total Applications</span>
+        </div>
+    </div>
+    <div class="stat-card pending">
+        <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+        <div class="stat-details">
+            <span class="stat-value">{{ pending }}</span>
+            <span class="stat-label">Pending Review</span>
+        </div>
+    </div>
+    <div class="stat-card accepted">
+        <div class="stat-icon"><i class="fa-solid fa-user-check"></i></div>
+        <div class="stat-details">
+            <span class="stat-value">{{ accepted }}</span>
+            <span class="stat-label">Accepted</span>
+        </div>
+    </div>
+    <div class="stat-card rejected">
+        <div class="stat-icon"><i class="fa-solid fa-user-xmark"></i></div>
+        <div class="stat-details">
+            <span class="stat-value">{{ rejected }}</span>
+            <span class="stat-label">Rejected</span>
+        </div>
+    </div>
+</div>
+
+<!-- Filters & Search -->
+<div class="filter-container" style="display: flex; gap: 1.5rem; background: var(--bg-card); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 2rem; align-items: flex-end; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <div class="search-box" style="flex: 2; position: relative;">
+        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+        <input type="text" id="appSearch" placeholder="Search by name or email..." 
+            style="width: 100%; padding: 0.8rem 1rem 0.8rem 3rem; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-light); font-size: 0.95rem;"
+            onkeyup="filterApplications()">
+    </div>
+    <div class="filter-group" style="flex: 1; min-width: 180px; position: relative;">
+        <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;"><i class="fa-solid fa-briefcase" style="margin-right: 5px;"></i> Job Title</label>
+        <div style="position: relative;">
+            <i class="fa-solid fa-briefcase" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); z-index: 1;"></i>
+            <select class="filter-select" id="jobFilter" onchange="filterApplications()"
+                style="width: 100%; padding: 0.8rem 1rem 0.8rem 2.8rem; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-light); cursor: pointer; outline: none; appearance: auto;">
+                <option value="all">All Jobs</option>
+                {% for job in jobs_list %}
+                <option value="{{ job.j_title }}">{{ job.j_title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="filter-group" style="flex: 1; min-width: 180px; position: relative;">
+        <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;"><i class="fa-solid fa-tag" style="margin-right: 5px;"></i> Status</label>
+        <div style="position: relative;">
+            <i class="fa-solid fa-filter" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); z-index: 1;"></i>
+            <select class="filter-select" id="statusFilter" onchange="filterApplications()"
+                style="width: 100%; padding: 0.8rem 1rem 0.8rem 2.8rem; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-light); cursor: pointer; outline: none; appearance: auto;">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="reviewed">Reviewed</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+    </div>
+    <div id="resultsCounter" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; min-width: 120px; text-align: right; padding-bottom: 12px;">
+        Showing all apps
+    </div>
+</div>
+
+<!-- Applications Table -->
+<div class="table-container">
+    <div class="table-responsive">
+        <table class="premier-table" id="appsTable">
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Applied Job</th>
+                    <th>Date Applied</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr class="app-row" data-status="{{ app.a_status }}" data-job="{{ app.a_job.j_title }}">
+                    <td>
+                        <div class="applicant-info">
+                            <div class="applicant-avatar">{{ app.a_shaqod.s_fullname|make_list|first|upper }}</div>
+                            <div class="applicant-details">
+                                <span class="applicant-name">{{ app.a_shaqod.s_fullname }}</span>
+                                <span class="applicant-email">{{ app.a_shaqod.s_email }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(59, 130, 246, 0.1); display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid var(--border-color); flex-shrink: 0;">
+                            {% if app.a_job.j_logo %}
+                                <img src="{{ app.a_job.j_logo.url }}" alt="Job Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <i class="fa-solid fa-briefcase" style="font-size: 1rem; color: var(--primary-color);"></i>
+                            {% endif %}
+                        </div>
+                        <span class="job-badge">{{ app.a_job.j_title }}</span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.9rem;">{{ app.a_applied_date|date:"M d, Y" }}</td>
+                    <td>
+                        <span class="status-pill status-{{ app.a_status }}">{{ app.a_status }}</span>
+                    </td>
+                    <td>
+                        <div class="actions-group">
+                            <button class="action-btn view" title="View Details" 
+                                onclick="openDetailModal({
+                                    id: '{{ app.id }}',
+                                    name: '{{ app.a_shaqod.s_fullname }}',
+                                    email: '{{ app.a_shaqod.s_email }}',
+                                    phone: '{{ app.a_shaqod.s_phone }}',
+                                    location: '{{ app.a_current_location|default:"Not specified" }}',
+                                    job: '{{ app.a_job.j_title }}',
+                                    date: '{{ app.a_applied_date|date:"M d, Y" }}',
+                                    status: '{{ app.a_status }}',
+                                    cv_url: '{% if app.a_cv %}{{ app.a_cv.url }}{% endif %}',
+                                    cover_letter: `{{ app.a_cover_letter|default:"No cover letter provided."|escapejs }}`
+                                })">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="action-btn edit" title="Update Status" onclick="openStatusModal('{{ app.id }}', '{{ app.a_status }}', '{{ app.a_shaqod.s_fullname }}')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="action-btn delete" title="Remove Application" onclick="openDeleteModal('{{ app.id }}', '{{ app.a_shaqod.s_fullname }}', '{{ app.a_job.j_title }}')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                        <div style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.2;">
+                            <i class="fa-solid fa-inbox"></i>
+                        </div>
+                        <h3>No applications yet</h3>
+                        <p>When candidates apply to your jobs, they will appear here.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div id="noResults" style="display: none; text-align: center; padding: 4rem; color: var(--text-muted);">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.2;"></i>
+            <h3>No matching applications found</h3>
+            <p>Try adjusting your search or filters to find what you're looking for.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Status Update Modal -->
+<div class="custom-modal" id="statusModal">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-close" onclick="closeModal('statusModal')"><i class="fa-solid fa-xmark"></i></div>
+        <h2 class="modal-title">Update Status</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Updating status for <strong id="modalApplicantName" style="color: var(--text-light);"></strong></p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_status">
+            <input type="hidden" name="app_id" id="modalAppId">
+            
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label class="detail-label">Select New Status</label>
+                <select name="status" id="modalStatusSelect" class="filter-select">
+                    <option value="pending">Pending</option>
+                    <option value="reviewed">Reviewed</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; border-radius: 12px; font-weight: 600; background: var(--primary-color); border: none; color: white; cursor: pointer; transition: background 0.2s;">
+                <i class="fa-solid fa-check" style="margin-right: 0.5rem;"></i> Update Status
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Application Modal (Company Soft-Delete) -->
+<div class="custom-modal" id="deleteModal">
+    <div class="modal-content" style="max-width: 440px; text-align: center;">
+        <div class="modal-close" onclick="closeModal('deleteModal')"><i class="fa-solid fa-xmark"></i></div>
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(239,68,68,0.1); border: 2px solid rgba(239,68,68,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 2rem; color: var(--danger-color);">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+        <h2 class="modal-title" style="color: var(--danger-color);">Remove Application</h2>
+        <p style="color: var(--text-muted); margin-bottom: 0.5rem;">You are about to remove <strong id="delApplicantName" style="color: var(--text-light);"></strong>'s application for <strong id="delJobTitle" style="color: var(--text-light);"></strong>.</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); padding: 0.75rem 1rem; border-radius: 10px;">
+            <i class="fa-solid fa-circle-info" style="color: #f59e0b; margin-right: 6px;"></i>
+            This only removes it from <strong>your view</strong>. The applicant will still see it.
+        </p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_application">
+            <input type="hidden" name="app_id" id="delAppId">
+            <div style="display: flex; gap: 1rem;">
+                <button type="button" onclick="closeModal('deleteModal')" style="flex: 1; padding: 0.9rem; border-radius: 12px; background: var(--bg-darker); border: 1px solid var(--border-color); color: var(--text-light); font-weight: 600; cursor: pointer;">Cancel</button>
+                <button type="submit" style="flex: 1; padding: 0.9rem; border-radius: 12px; background: var(--danger-color); border: none; color: white; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-trash" style="margin-right: 0.5rem;"></i>Remove
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Application Detail Modal -->
+<div class="custom-modal" id="detailModal">
+    <div class="modal-content">
+        <div class="modal-close" onclick="closeModal('detailModal')"><i class="fa-solid fa-xmark"></i></div>
+        <div id="modalDetailContent">
+            <!-- Dynamic Content -->
+            <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+                <div id="detAvatar" class="applicant-avatar" style="width: 70px; height: 70px; font-size: 2rem;"></div>
+                <div>
+                    <h2 id="detName" style="margin-bottom: 0.25rem;"></h2>
+                    <span id="detEmail" style="color: var(--text-muted);"></span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="detail-item">
+                    <span class="detail-label">Phone Number</span>
+                    <span id="detPhone" class="detail-value"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Location</span>
+                    <span id="detLocation" class="detail-value"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Applied For</span>
+                    <span id="detJob" class="job-badge"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Applied Date</span>
+                    <span id="detDate" class="detail-value"></span>
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Cover Letter</span>
+                <div id="detCoverLetter" class="cover-letter-box"></div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <a id="detCvLink" href="#" class="btn btn-primary" style="flex: 1; text-align: center; padding: 1rem; border-radius: 12px; background: var(--accent-color); color: white; text-decoration: none; font-weight: 600;" download>
+                    <i class="fa-solid fa-file-pdf" style="margin-right: 0.5rem;"></i> Download CV
+                </a>
+                <button onclick="switchToStatusModal()" class="btn" style="flex: 1; padding: 1rem; border-radius: 12px; background: var(--bg-darker); border: 1px solid var(--border-color); color: var(--text-light); font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-pen" style="margin-right: 0.5rem;"></i> Change Status
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentAppData = null;
+
+    function filterApplications() {
+        const searchText = document.getElementById('appSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const jobFilter = document.getElementById('jobFilter').value;
+        const rows = document.querySelectorAll('.app-row');
+        const resultsCounter = document.getElementById('resultsCounter');
+        const noResults = document.getElementById('noResults');
+        const table = document.getElementById('appsTable');
+        
+        let visibleCount = 0;
+        let totalRows = rows.length;
+
+        rows.forEach(row => {
+            const name = row.querySelector('.applicant-name').innerText.toLowerCase();
+            const email = row.querySelector('.applicant-email').innerText.toLowerCase();
+            const status = row.getAttribute('data-status');
+            const job = row.getAttribute('data-job');
+
+            const matchesSearch = name.includes(searchText) || email.includes(searchText);
+            const matchesStatus = statusFilter === 'all' || status === statusFilter;
+            const matchesJob = jobFilter === 'all' || job === jobFilter;
+
+            if (matchesSearch && matchesStatus && matchesJob) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Update results counter
+        if (searchText === '' && statusFilter === 'all' && jobFilter === 'all') {
+            resultsCounter.innerText = `Total: ${totalRows} apps`;
+        } else {
+            resultsCounter.innerText = `Found: ${visibleCount} apps`;
+        }
+
+        // Show/hide no results message
+        if (visibleCount === 0 && totalRows > 0) {
+            noResults.style.display = 'block';
+            table.querySelector('thead').style.display = 'none';
+        } else if (totalRows > 0) {
+            noResults.style.display = 'none';
+            table.querySelector('thead').style.display = 'table-header-group';
+        }
+    }
+    
+    // Run filter on load to update counter
+    document.addEventListener('DOMContentLoaded', filterApplications);
+
+    function openStatusModal(appId, currentStatus, applicantName) {
+        document.getElementById('modalAppId').value = appId;
+        document.getElementById('modalStatusSelect').value = currentStatus;
+        document.getElementById('modalApplicantName').innerText = applicantName;
+        document.getElementById('statusModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function openDetailModal(data) {
+        currentAppData = data;
+        document.getElementById('detName').innerText = data.name;
+        document.getElementById('detEmail').innerText = data.email;
+        document.getElementById('detPhone').innerText = data.phone;
+        document.getElementById('detLocation').innerText = data.location;
+        document.getElementById('detJob').innerText = data.job;
+        document.getElementById('detDate').innerText = data.date;
+        document.getElementById('detCoverLetter').innerText = data.cover_letter;
+        document.getElementById('detAvatar').innerText = data.name.charAt(0).toUpperCase();
+        
+        const cvBtn = document.getElementById('detCvLink');
+        if (data.cv_url) {
+            cvBtn.href = data.cv_url;
+            cvBtn.style.display = 'block';
+        } else {
+            cvBtn.style.display = 'none';
+        }
+
+        document.getElementById('detailModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function switchToStatusModal() {
+        if (currentAppData) {
+            closeModal('detailModal');
+            openStatusModal(currentAppData.id, currentAppData.status, currentAppData.name);
+        }
+    }
+
+    function openDeleteModal(appId, applicantName, jobTitle) {
+        document.getElementById('delAppId').value = appId;
+        document.getElementById('delApplicantName').innerText = applicantName;
+        document.getElementById('delJobTitle').innerText = jobTitle;
+        document.getElementById('deleteModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modal on outside click
+    window.onclick = function(event) {
+        if (event.target.classList.contains('custom-modal')) {
+            event.target.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    }
+</script>
+
+{% endblock content %}

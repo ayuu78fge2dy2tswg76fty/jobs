@@ -1,0 +1,662 @@
+{% extends 'adminapp/base.html' %}
+
+{% block title %}Manage Jobs - Fursad {% endblock %}
+{% block header_title %}Manage Jobs{% endblock %}
+{% block header_subtitle %}Overview and moderate all job postings across the platform.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stats Bar */
+    .mini-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .mini-stat-card {
+        background: var(--bg-surface);
+        padding: 1.5rem;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .mini-stat-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--border-hover);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .stat-icon.blue { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); }
+    .stat-icon.emerald { background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); }
+
+    .stat-info h3 { font-size: 2rem; color: var(--text-primary); margin-bottom: 0.2rem; }
+    .stat-info p { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Search and Filter Bar */
+    .filter-bar {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .search-row {
+        width: 100%;
+        position: relative;
+    }
+
+    .search-row i {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        padding: 1rem 1rem 1rem 3rem;
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+    
+    .filters-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    /* Modern Select Tag */
+    .modern-select {
+        flex: 1;
+        min-width: 150px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 0.9rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.2em;
+        padding-right: 3rem;
+    }
+    .modern-select:focus {
+        outline: none; border-color: var(--accent-blue);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+    .modern-select option { background: var(--bg-surface); color: var(--text-primary); padding: 10px; }
+
+    /* Cards Grid */
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Job Card */
+    .job-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.8rem;
+        position: relative;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .job-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--border-hover);
+        box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5);
+    }
+
+    .job-card.active-card { border-top: 3px solid var(--accent-emerald); }
+    .job-card.inactive-card { border-top: 3px solid var(--accent-danger); }
+    .job-card.expired-card { border-top: 3px solid var(--accent-amber); opacity: 0.8; }
+
+    /* Card Header */
+    .card-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+
+    .company-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .company-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background: var(--bg-card);
+        color: var(--accent-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border: 1px solid var(--border-color);
+    }
+    .company-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+
+    .company-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .status-active { background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); }
+    .status-inactive { background: rgba(239, 68, 68, 0.1); color: var(--accent-danger); }
+    .status-expired { background: rgba(245, 158, 11, 0.1); color: var(--accent-amber); }
+
+    /* Card Info */
+    .job-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .job-meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex: 1;
+    }
+
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .meta-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+    .meta-value { font-size: 0.95rem; color: var(--text-primary); font-weight: 500; display: flex; align-items: center; gap: 6px;}
+    .meta-value i { color: var(--accent-blue); font-size: 0.85rem; }
+
+    /* Card Actions */
+    .card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .btn {
+        padding: 12px 15px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-view {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent-blue);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .btn-view:hover { background: var(--accent-blue); color: white; }
+
+    .btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--accent-danger);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .btn-delete:hover { background: var(--accent-danger); color: white; }
+
+    /* Empty State */
+    .empty-state {
+        grid-column: 1 / -1; text-align: center; padding: 5rem 2rem;
+        background: var(--bg-surface); border-radius: 16px; border: 1px dashed var(--border-color);
+    }
+    .empty-state i { font-size: 4rem; color: var(--border-hover); margin-bottom: 1.5rem; }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+        display: flex; align-items: center; justify-content: center; z-index: 9999;
+        opacity: 0; visibility: hidden; transition: all 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    
+    .modal-container {
+        background: var(--bg-surface); border: 1px solid var(--border-color);
+        border-radius: 20px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+        transform: translateY(30px) scale(0.95); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+    }
+    .modal-overlay.active .modal-container { transform: translateY(0) scale(1); }
+    
+    .modal-header {
+        padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-color);
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h3 { font-size: 1.25rem; margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+    .modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
+    .modal-close:hover { color: var(--accent-danger); }
+    
+    .modal-body { padding: 2rem; }
+    .job-detail-row { display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+    .job-detail-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .job-detail-value { color: var(--text-primary); font-weight: 500; text-align: right; max-width: 70%; }
+    .job-desc-box { background: var(--bg-card); padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Confirm Modal */
+    .confirm-modal { max-width: 420px; text-align: center; padding: 2.5rem; }
+    .confirm-icon {
+        width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 2.5rem; margin: 0 auto 1.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        background: rgba(239, 68, 68, 0.1); color: var(--accent-danger); border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .confirm-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.8rem; }
+    .confirm-text { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6; }
+    .confirm-actions { display: flex; gap: 1rem; }
+    .confirm-actions .btn { flex: 1; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border:none; border-radius: 8px; cursor: pointer; text-decoration: none; font-weight: 500;}
+    .btn-cancel { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); }
+    .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); }
+    .btn-confirm-delete { background: rgba(239, 68, 68, 0.1); color: var(--accent-danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .btn-confirm-delete:hover { background: var(--accent-danger); color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div class="mini-stats">
+    <div class="mini-stat-card">
+        <div class="stat-icon blue">
+            <i class="fa-solid fa-briefcase"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ total_jobs }}</h3>
+            <p>Total Jobs</p>
+        </div>
+    </div>
+    <div class="mini-stat-card">
+        <div class="stat-icon emerald">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ active_jobs }}</h3>
+            <p>Active Jobs</p>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="filter-bar">
+    <div class="search-row">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search jobs by title or company name...">
+    </div>
+    <div class="filters-row">
+        <select id="statusFilter" class="modern-select">
+            <option value="all">All Statuses</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
+            <option value="expired">Expired Only</option>
+        </select>
+        
+        <select id="companyFilter" class="modern-select">
+            <option value="all">All Companies</option>
+            {% for comp in companies %}
+            <option value="{{ comp.c_name }}">{{ comp.c_name }}</option>
+            {% endfor %}
+        </select>
+        
+        <select id="typeFilter" class="modern-select">
+            <option value="all">All Job Types</option>
+            {% for value, display in jobtypes %}
+            <option value="{{ value }}">{{ display }}</option>
+            {% endfor %}
+        </select>
+        
+        <select id="locationFilter" class="modern-select">
+            <option value="all">All Locations</option>
+            {% for loc in locations %}
+            <option value="{{ loc|lower }}">{{ loc }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Cards Grid -->
+<div class="cards-grid" id="cardsGrid">
+    {% if jobs %}
+        {% for job in jobs %}
+        
+        <div class="job-card {% if job.j_EXP < today %}expired-card{% elif job.j_active %}active-card{% else %}inactive-card{% endif %}" 
+             data-status="{% if job.j_EXP < today %}expired{% elif job.j_active %}active{% else %}inactive{% endif %}"
+             data-company="{{ job.j_company.c_name }}"
+             data-type="{{ job.j_jobtype }}"
+             data-location="{{ job.j_location|lower }}">
+            
+            <div class="card-header-top">
+                <div class="company-info searchable-company">
+                    <div class="company-logo">
+                        {% if job.j_logo %}
+                            <img src="{{ job.j_logo.url }}" alt="Job Logo">
+                        {% elif job.j_company.c_logo %}
+                            <img src="{{ job.j_company.c_logo.url }}" alt="{{ job.j_company.c_name }}">
+                        {% else %}
+                            {{ job.j_company.c_name|make_list|first|upper }}
+                        {% endif %}
+                    </div>
+                    <span class="company-name">{{ job.j_company.c_name }}</span>
+                </div>
+                <div>
+                    {% if job.j_EXP < today %}
+                        <span class="status-badge status-expired">Expired</span>
+                    {% elif job.j_active %}
+                        <span class="status-badge status-active">Active</span>
+                    {% else %}
+                        <span class="status-badge status-inactive">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h3 class="job-title searchable-title">{{ job.j_title }}</h3>
+            
+            <div class="job-meta-grid">
+                <div class="meta-item">
+                    <span class="meta-label">Job Type</span>
+                    <span class="meta-value"><i class="fa-solid fa-clock"></i> {{ job.get_j_jobtype_display|default:job.j_jobtype }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Salary</span>
+                    <span class="meta-value"><i class="fa-solid fa-money-bill-wave" style="color: var(--accent-emerald);"></i> ${{ job.j_salary|default:"N/A" }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Location</span>
+                    <span class="meta-value"><i class="fa-solid fa-location-dot"></i> {{ job.j_location|default:"N/A" }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Deadline</span>
+                    <span class="meta-value"><i class="fa-solid fa-hourglass-end" style="color: var(--accent-amber);"></i> {{ job.j_EXP|date:"M d, Y" }}</span>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="btn btn-view view-job-btn"
+                    data-title="{{ job.j_title|escapejs }}"
+                    data-company="{{ job.j_company.c_name|escapejs }}"
+                    data-type="{{ job.get_j_jobtype_display|default:job.j_jobtype|escapejs }}"
+                    data-salary="${{ job.j_salary|default:'N/A'|escapejs }}"
+                    data-status="{% if job.j_EXP < today %}Expired{% elif job.j_active %}Active{% else %}Inactive{% endif %}"
+                    data-posted="{{ job.j_posted|date:'M d, Y' }}"
+                    data-deadline="{{ job.j_EXP|date:'M d, Y' }}"
+                    data-location="{{ job.j_location|default:'N/A'|escapejs }}"
+                    data-desc="{{ job.j_description|escapejs }}">
+                    <i class="fa-solid fa-eye"></i> View Details
+                </button>
+                
+                <button class="btn btn-delete delete-job-btn"
+                    data-url="{% url 'adminapp:job_delete' job.id %}"
+                    data-title="{{ job.j_title|escapejs }}">
+                    <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-briefcase"></i>
+            <h2>No Jobs Found</h2>
+            <p>There are no job postings in the database yet.</p>
+        </div>
+    {% endif %}
+    
+    <!-- No Results Placeholder for JS Filtering -->
+    <div class="empty-state" id="noResultsMsg" style="display: none;">
+        <i class="fa-solid fa-search-minus"></i>
+        <h2>No Results Match</h2>
+        <p>Try adjusting your search query or filters.</p>
+    </div>
+</div>
+
+<!-- Job Details Modal -->
+<div class="modal-overlay" id="jobDetailModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-briefcase" style="color: var(--accent-blue);"></i> Job Details</h3>
+            <button class="modal-close" onclick="closeJobModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <h2 id="modalJobTitle" style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.5rem;">Job Title</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-building" style="color: var(--accent-blue);"></i> <span id="modalJobCompany">Company Name</span>
+                <span style="margin: 0 10px;">|</span>
+                <i class="fa-solid fa-location-dot" style="color: var(--accent-blue);"></i> <span id="modalJobLocation">Location</span>
+            </p>
+            
+            <div class="job-detail-row">
+                <span class="job-detail-label">Employment Type</span>
+                <span class="job-detail-value status-badge badge-blue" style="background: rgba(59,130,246,0.1); color: var(--accent-blue);" id="modalJobType">Full Time</span>
+            </div>
+            
+            <div class="job-detail-row">
+                <span class="job-detail-label">Salary Range</span>
+                <span class="job-detail-value" id="modalJobSalary" style="color: var(--accent-emerald); font-weight: bold;">$0</span>
+            </div>
+            
+            <div class="job-detail-row">
+                <span class="job-detail-label">Current Status</span>
+                <span class="job-detail-value" id="modalJobStatus">Active</span>
+            </div>
+            
+            <div class="job-detail-row">
+                <span class="job-detail-label">Posted Date</span>
+                <span class="job-detail-value" id="modalJobPosted">Jan 1, 2024</span>
+            </div>
+
+            <div class="job-detail-row" style="border-bottom: none;">
+                <span class="job-detail-label">Deadline (Exp)</span>
+                <span class="job-detail-value" id="modalJobDeadline" style="color: var(--accent-amber);">Jan 1, 2024</span>
+            </div>
+            
+            <div class="job-desc-box">
+                <h4 style="color: var(--text-primary); margin-bottom: 10px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-align-left" style="color: var(--text-muted); margin-right: 5px;"></i> Job Description</h4>
+                <div id="modalJobDesc" style="white-space: pre-wrap;">Description goes here...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="confirmDeleteModal">
+    <div class="modal-container confirm-modal">
+        <div class="confirm-icon">
+            <i class="fa-solid fa-trash-can"></i>
+        </div>
+        <h3 class="confirm-title">Delete Job Post</h3>
+        <p class="confirm-text" id="confirmDeleteText">Are you sure you want to delete this job?</p>
+        <div class="confirm-actions">
+            <button class="btn btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <a href="#" class="btn btn-confirm-delete" id="btnConfirmDelete"><i class="fa-solid fa-trash"></i> Yes, Delete it</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Live Search & Multiple Filters Logic ---
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const companyFilter = document.getElementById('companyFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        const locationFilter = document.getElementById('locationFilter');
+        
+        const cards = document.querySelectorAll('.job-card');
+        const noResultsMsg = document.getElementById('noResultsMsg');
+
+        function filterCards() {
+            let visibleCount = 0;
+            const sq = searchInput.value.toLowerCase();
+            const sf = statusFilter.value;
+            const cf = companyFilter.value;
+            const tf = typeFilter.value;
+            const lf = locationFilter.value;
+
+            cards.forEach(card => {
+                const status = card.getAttribute('data-status');
+                const company = card.getAttribute('data-company');
+                const type = card.getAttribute('data-type');
+                const location = card.getAttribute('data-location');
+                
+                const titleText = card.querySelector('.searchable-title').textContent.toLowerCase();
+                const companyText = card.querySelector('.searchable-company').textContent.toLowerCase();
+                
+                // Text Search
+                let matchesSearch = false;
+                if (sq === '' || titleText.includes(sq) || companyText.includes(sq)) {
+                    matchesSearch = true;
+                }
+
+                // Dropdown Filters
+                let matchesStatus = (sf === 'all' || status === sf);
+                let matchesCompany = (cf === 'all' || company === cf);
+                let matchesType = (tf === 'all' || type === tf);
+                let matchesLocation = (lf === 'all' || location === lf);
+
+                if (matchesSearch && matchesStatus && matchesCompany && matchesType && matchesLocation) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0 && cards.length > 0) {
+                noResultsMsg.style.display = 'block';
+            } else {
+                noResultsMsg.style.display = 'none';
+            }
+        }
+
+        // Add event listeners to all filter inputs
+        searchInput.addEventListener('input', filterCards);
+        statusFilter.addEventListener('change', filterCards);
+        companyFilter.addEventListener('change', filterCards);
+        typeFilter.addEventListener('change', filterCards);
+        locationFilter.addEventListener('change', filterCards);
+
+        // --- Modals Logic ---
+        const jobDetailModal = document.getElementById('jobDetailModal');
+        const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+
+        window.closeJobModal = function() { jobDetailModal.classList.remove('active'); }
+        window.closeDeleteModal = function() { confirmDeleteModal.classList.remove('active'); }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === jobDetailModal) closeJobModal();
+            if (e.target === confirmDeleteModal) closeDeleteModal();
+        });
+
+        document.querySelectorAll('.view-job-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('modalJobTitle').textContent = this.getAttribute('data-title');
+                document.getElementById('modalJobCompany').textContent = this.getAttribute('data-company');
+                document.getElementById('modalJobLocation').textContent = this.getAttribute('data-location');
+                document.getElementById('modalJobType').textContent = this.getAttribute('data-type');
+                document.getElementById('modalJobSalary').textContent = this.getAttribute('data-salary');
+                
+                const status = this.getAttribute('data-status');
+                const statusEl = document.getElementById('modalJobStatus');
+                statusEl.textContent = status;
+                
+                if(status === 'Active') {
+                    statusEl.className = 'job-detail-value action-badge badge-green';
+                    statusEl.style.color = 'var(--accent-emerald)';
+                } else if(status === 'Expired') {
+                    statusEl.className = 'job-detail-value action-badge badge-amber';
+                    statusEl.style.color = 'var(--accent-amber)';
+                } else {
+                    statusEl.className = 'job-detail-value action-badge badge-red';
+                    statusEl.style.color = 'var(--accent-danger)';
+                }
+                
+                document.getElementById('modalJobPosted').textContent = this.getAttribute('data-posted');
+                document.getElementById('modalJobDeadline').textContent = this.getAttribute('data-deadline');
+                document.getElementById('modalJobDesc').textContent = this.getAttribute('data-desc') || 'No description provided.';
+                
+                jobDetailModal.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.delete-job-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const title = this.getAttribute('data-title');
+                const url = this.getAttribute('data-url');
+                
+                document.getElementById('confirmDeleteText').innerHTML = `WARNING: Are you sure you want to permanently delete the job <strong>"${title}"</strong>? This will also remove any applications related to it.`;
+                document.getElementById('btnConfirmDelete').href = url;
+                
+                confirmDeleteModal.classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Fursad</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <link rel="icon" type="image/png" href="{% static 'logo.png' %}">
+    <style>
+        :root {
+            --bg-base: #030712;
+            --bg-surface: #111827;
+            --bg-card: #1f2937;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f9fafb;
+            --text-muted: #6b7280;
+            --accent-blue: #3b82f6;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            margin: 0;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-blue), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .alert-box {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--danger-color);
+            padding: 12px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .django-messages {
+            margin-bottom: 20px;
+        }
+        
+        .django-message {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon input {
+            padding-left: 40px;
+        }
+        
+        .input-with-icon i.icon-left {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h2>Fursad Admin Login</h2>
+            <p style="color: var(--text-muted); margin: 0;">Manage your Fursad admin panel</p>
+        </div>
+
+        {% if messages %}
+        <div class="django-messages">
+            {% for message in messages %}
+            <div class="django-message {% if message.tags == 'error' %}error-message{% endif %}">
+                <i class="fa-solid fa-circle-exclamation" style="margin-right: 5px;"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="alert-box">
+            <i class="fa-solid fa-shield-halved" style="color: var(--danger-color); margin-right: 5px;"></i> 
+            Access restricted to <strong>Administrators</strong>.
+        </div>
+
+        <form method="POST" action="{% url 'adminapp:admin_login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username or Email</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-user icon-left"></i>
+                    <input type="text" name="identifier" class="form-control" required placeholder="Enter admin username">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-lock icon-left"></i>
+                    <input type="password" id="adminLoginPwd" name="password" class="form-control" required placeholder="••••••••" style="padding-right: 40px;">
+                    <i class="fa-solid fa-eye" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);" 
+                       onclick="const pwd = document.getElementById('adminLoginPwd'); if(pwd.type === 'password'){ pwd.type = 'text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); } else { pwd.type = 'password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); }"></i>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-right-to-bracket"></i> Login to Dashboard
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'home' %}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
