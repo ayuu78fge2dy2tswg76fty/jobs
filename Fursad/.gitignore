@@ -3,9 +3,6 @@
 # =========================
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-*.so
 
 # =========================
 # Virtual environments
@@ -16,7 +13,7 @@ venv/
 ENV/
 
 # =========================
-# Django database & logs
+# Django
 # =========================
 db.sqlite3
 db.sqlite3-journal
@@ -24,26 +21,20 @@ db.sqlite3-journal
 local_settings.py
 
 # =========================
-# Media files (uploads)
-# ⚠️ Ka saar Git (production use Cloudinary)
+# Media & Static
 # =========================
 media/
-
-# =========================
-# Static files (collected)
-# =========================
 staticfiles/
+images/
 
 # =========================
 # Environment variables
 # =========================
 .env
 .env.*
-.env.local
-.env.production
 
 # =========================
-# Testing & coverage
+# Testing
 # =========================
 .coverage
 htmlcov/
@@ -52,14 +43,9 @@ htmlcov/
 .ruff_cache/
 
 # =========================
-# IDE / OS files
+# IDE / OS
 # =========================
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
-
-# =========================
-# Project-specific folders
-# =========================
-images/
