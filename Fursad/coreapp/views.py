@@ -188,7 +188,7 @@ def forgot_password_request(request):
     otp = PasswordResetOTP.generate_otp()
     PasswordResetOTP.objects.create(email=email, otp=otp, user_type=user_type)
 
-
+    # Build premium HTML email
     html_message = f"""
     <!DOCTYPE html>
     <html lang="en">
