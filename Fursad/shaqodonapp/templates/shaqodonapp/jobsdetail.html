@@ -71,14 +71,102 @@
 
             <!-- Detailed Description -->
             <div style="margin-bottom: 3.5rem;">
-                <h2 style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;">
-                    <span style="width: 4px; height: 24px; background: var(--primary); border-radius: 2px;"></span>
-                    Job Description & Requirements
-                </h2>
-                <div style="color: var(--text-main); line-height: 1.8; font-size: 1.1rem; white-space: pre-wrap; padding-left: 16px;">
-                    {{ job.j_description }}
+                <!-- Section Header -->
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.75rem;">
+                    <div style="width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(99,102,241,0.2)); border: 1px solid rgba(16,185,129,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fa-solid fa-file-lines" style="color: var(--primary); font-size: 1.2rem;"></i>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.5rem; font-weight: 800; color: white; margin: 0; letter-spacing: -0.5px;">Job Description <span style="color: var(--primary);">&</span> Requirements</h2>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 3px 0 0 0;">Read carefully before applying</p>
+                    </div>
+                </div>
+
+                <!-- Description Card -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 24px; overflow: hidden; position: relative;">
+                    <!-- Top accent line -->
+                    <div style="height: 3px; background: linear-gradient(90deg, var(--primary), var(--secondary), transparent);"></div>
+
+                    <div style="padding: 2rem 2.25rem;" id="jobDescriptionBody">
+                        {{ job.j_description|linebreaks }}
+                    </div>
+
+                    <!-- Fade-out mask if content is long + Read More -->
+                    <div id="descFade" style="position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(to top, rgba(15,23,42,0.95), transparent); border-radius: 0 0 24px 24px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.25rem;">
+                        <button onclick="expandDesc()" id="readMoreBtn" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: white; padding: 9px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px);" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                            <i class="fa-solid fa-chevron-down"></i> Read Full Description
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <style>
+                #jobDescriptionBody p {
+                    color: var(--text-main);
+                    line-height: 1.9;
+                    font-size: 1rem;
+                    margin-bottom: 1rem;
+                }
+                #jobDescriptionBody ul, #jobDescriptionBody ol {
+                    padding-left: 0;
+                    list-style: none;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    margin-bottom: 1.25rem;
+                }
+                #jobDescriptionBody li {
+                    color: var(--text-main);
+                    font-size: 1rem;
+                    line-height: 1.7;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 10px;
+                }
+                #jobDescriptionBody li::before {
+                    content: '';
+                    display: inline-block;
+                    width: 7px;
+                    height: 7px;
+                    min-width: 7px;
+                    border-radius: 50%;
+                    background: var(--primary);
+                    margin-top: 9px;
+                }
+                #jobDescriptionBody strong {
+                    color: white;
+                    font-weight: 700;
+                }
+                #jobDescriptionBody h1, #jobDescriptionBody h2, #jobDescriptionBody h3 {
+                    color: white;
+                    font-weight: 800;
+                    margin: 1.5rem 0 0.75rem;
+                    letter-spacing: -0.5px;
+                }
+                #jobDescriptionBody.collapsed {
+                    max-height: 260px;
+                    overflow: hidden;
+                }
+            </style>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const body = document.getElementById('jobDescriptionBody');
+                    body.classList.add('collapsed');
+                    if (body.scrollHeight <= 270) {
+                        document.getElementById('descFade').style.display = 'none';
+                        body.classList.remove('collapsed');
+                    }
+                });
+                function expandDesc() {
+                    const body = document.getElementById('jobDescriptionBody');
+                    body.classList.remove('collapsed');
+                    body.style.transition = 'max-height 0.5s ease';
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                    document.getElementById('descFade').style.display = 'none';
+                }
+            </script>
+
 
             <!-- Footer Action Section -->
             <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
@@ -106,7 +194,7 @@
 
 <!-- Application Modal (Popup) -->
 <div id="applyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center;">
-    <div style="background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 550px; border-radius: 28px; padding: 2.5rem; position: relative; animation: modalSlide 0.4s ease;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 550px; max-height: 90vh; overflow-y: auto; border-radius: 28px; padding: 2.5rem; position: relative; animation: modalSlide 0.4s ease;">
         <i class="fa-solid fa-xmark" onclick="closeApplyModal()" style="position: absolute; top: 1.5rem; right: 1.5rem; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;"></i>
         
         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem;">
@@ -132,32 +220,58 @@
 
 
             <div style="margin-bottom: 2rem;">
-                {% if shaqodon.s_cv %}
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Your Profile CV</label>
-                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <i class="fa-solid fa-file-pdf" style="color: var(--primary); font-size: 1.5rem;"></i>
-                            <div>
-                                <p style="color: white; font-weight: 600; margin: 0; font-size: 0.95rem;">Using profile CV</p>
-                                <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">{{ shaqodon.s_cv.name|slice:"14:" }}</p>
+                {% if shaqodon.s_cv or past_cvs %}
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Select a Previously Saved CV</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                        <!-- Profile CV -->
+                        {% if shaqodon.s_cv %}
+                        <label class="cv-radio-label" style="display: flex; align-items: center; gap: 10px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s;">
+                            <input type="radio" name="selected_past_cv" value="{{ shaqodon.s_cv.url }}" checked onclick="highlightSelectedCV()" style="accent-color: var(--primary); transform: scale(1.2);">
+                            <i class="fa-solid fa-file-pdf" style="color: var(--primary); font-size: 1.2rem;"></i>
+                            <div style="flex: 1;">
+                                <p style="color: white; font-weight: 600; margin: 0; font-size: 0.9rem;">Main Profile CV</p>
+                                <p style="color: var(--text-muted); margin: 0; font-size: 0.8rem;">{{ shaqodon.s_cv.name|slice:"14:" }}</p>
                             </div>
-                        </div>
-                        <i class="fa-solid fa-circle-check" style="color: var(--primary); font-size: 1.2rem;"></i>
+                            <button type="button" onclick="openCvPreviewModal('{{ shaqodon.s_cv.url }}', '{{ shaqodon.s_cv.name|slice:"14:" }}'); event.preventDefault();" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; z-index: 10;"><i class="fa-solid fa-eye"></i> View</button>
+                        </label>
+                        {% endif %}
+                        
+                        <!-- Past Application CVs -->
+                        {% for cv in past_cvs %}
+                        <label class="cv-radio-label" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s;">
+                            <input type="radio" name="selected_past_cv" value="{{ cv.url }}" {% if not shaqodon.s_cv and forloop.first %}checked{% endif %} onclick="highlightSelectedCV()" style="accent-color: var(--primary); transform: scale(1.2);">
+                            <i class="fa-solid fa-file-lines" style="color: var(--secondary); font-size: 1.2rem;"></i>
+                            <div style="flex: 1;">
+                                <p style="color: white; font-weight: 600; margin: 0; font-size: 0.9rem;">Past Application CV</p>
+                                <p style="color: var(--text-muted); margin: 0; font-size: 0.8rem;">{{ cv.name|slice:"10:" }}</p>
+                            </div>
+                            <button type="button" onclick="openCvPreviewModal('{{ cv.url }}', '{{ cv.name|slice:"10:" }}'); event.preventDefault();" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; z-index: 10;"><i class="fa-solid fa-eye"></i> View</button>
+                        </label>
+                        {% endfor %}
                     </div>
                     
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Or upload a different CV (Optional)</label>
-                    <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; position: relative; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
-                        <input type="file" name="cv" accept=".pdf,.doc,.docx" id="newCvInput" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;" onchange="document.getElementById('newCvText').innerText = this.files[0] ? this.files[0].name : 'Click to upload a new CV'">
-                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 10px;"></i>
-                        <p id="newCvText" style="font-size: 0.9rem; color: var(--text-muted);">Click to upload a new CV</p>
+                    <div style="text-align: center; margin-bottom: 15px; position: relative;">
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 0;">
+                        <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 0 10px; color: var(--text-muted); font-size: 0.8rem; font-weight: 600;">OR</span>
                     </div>
+
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Upload a New CV (Overrides selection above)</label>
+                    <div class="file-drop-area" id="fileDropArea">
+                        <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                        <span class="drop-msg">Drag & Drop files here or click to browse</span>
+                        <span class="drop-sub-msg">Supports PDF, DOC, DOCX, JPG, PNG</span>
+                        <input type="file" name="cv" id="cvFileInput" class="file-drop-input" accept=".pdf,.doc,.docx,image/*" multiple onchange="clearCvSelection()">
+                    </div>
+                    <div id="filePreviewContainer" class="file-preview-container"></div>
                 {% else %}
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Upload CV (Required)</label>
-                    <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; position: relative; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
-                        <input type="file" name="cv" required accept=".pdf,.doc,.docx" id="newCvInput" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;" onchange="document.getElementById('newCvText').innerText = this.files[0] ? this.files[0].name : 'Click to upload or drag and drop'">
-                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                        <p id="newCvText" style="font-size: 0.9rem; color: var(--text-muted);">Click to upload or drag and drop</p>
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Upload Documents (CV, Resume, Images)</label>
+                    <div class="file-drop-area" id="fileDropArea">
+                        <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                        <span class="drop-msg">Drag & Drop files here or click to browse</span>
+                        <span class="drop-sub-msg">Supports PDF, DOC, DOCX, JPG, PNG</span>
+                        <input type="file" name="cv" id="cvFileInput" class="file-drop-input" accept=".pdf,.doc,.docx,image/*" multiple required>
                     </div>
+                    <div id="filePreviewContainer" class="file-preview-container"></div>
                 {% endif %}
             </div>
 
@@ -168,13 +282,182 @@
     </div>
 </div>
 
+<!-- CV Preview Modal -->
+<div id="cvPreviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 3000; justify-content: center; align-items: center; flex-direction: column;">
+    <div style="width: 90%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 id="cvPreviewTitle" style="color: white; margin: 0; font-size: 1.2rem; font-weight: 600;">Document Preview</h3>
+        <div style="display: flex; gap: 15px;">
+            <a id="cvPreviewDownloadBtn" href="#" download style="background: var(--primary); color: white; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-download"></i> Download</a>
+            <button type="button" onclick="closeCvPreviewModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+    <div id="cvPreviewContent" style="width: 90%; max-width: 800px; height: 80vh; background: var(--bg-card); border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border);">
+        <!-- Content injected via JS -->
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_css %}
 <style>
     @keyframes modalSlide {
         from { transform: scale(0.9); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
     }
-</style>
+    
+    /* Premier File Drop Area */
+    .file-drop-area {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 2.5rem 2rem;
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.02);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-align: center;
+        overflow: hidden;
+    }
 
+    .file-drop-area.dragover {
+        background-color: rgba(16, 185, 129, 0.1);
+        border-color: var(--primary);
+        transform: scale(1.02);
+    }
+
+    .file-drop-area .drop-icon {
+        font-size: 3rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .file-drop-area:hover .drop-icon {
+        transform: translateY(-5px);
+        color: var(--primary);
+    }
+    
+    .file-drop-area.dragover .drop-icon {
+        color: var(--primary);
+    }
+
+    .file-drop-area .drop-msg {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+    }
+
+    .file-drop-area .drop-sub-msg {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .file-drop-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .file-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .file-preview-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background: var(--bg-body);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.8rem;
+        width: calc(50% - 0.5rem);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .file-preview-item.image-preview {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .file-preview-icon {
+        font-size: 2rem;
+        color: #ef4444;
+    }
+
+    .file-preview-thumb {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .file-preview-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .file-preview-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .file-preview-size {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .file-remove-btn {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+        border: 2px solid var(--bg-card);
+        transition: transform 0.2s;
+        z-index: 5;
+    }
+
+    .file-remove-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    @media (max-width: 768px) {
+        .file-preview-item {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
     function openApplyModal() {
         document.getElementById('applyModal').style.display = 'flex';
@@ -183,6 +466,279 @@
     function closeApplyModal() {
         document.getElementById('applyModal').style.display = 'none';
         document.body.style.overflow = 'auto';
+    }
+    
+    function openCvPreviewModal(url, filename) {
+        document.getElementById('cvPreviewModal').style.display = 'flex';
+        document.getElementById('cvPreviewTitle').innerText = filename;
+        document.getElementById('cvPreviewDownloadBtn').href = url;
+        
+        const contentDiv = document.getElementById('cvPreviewContent');
+        contentDiv.innerHTML = ''; // clear previous
+        
+        const ext = url.split('.').pop().toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+            contentDiv.innerHTML = `
+            <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 20px;">
+                <img src="${url}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            </div>`;
+        } else if (ext === 'pdf') {
+            contentDiv.innerHTML = `<iframe src="${url}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+        } else if (ext === 'zip') {
+            contentDiv.innerHTML = `
+                <div id="zipLoading" style="text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h2 style="color: white; margin-bottom: 10px;">Extracting Package...</h2>
+                    <p>Loading files inside this ZIP for preview...</p>
+                </div>
+                <div id="zipContents" style="width: 100%; height: 100%; overflow-y: auto; display: none; padding: 20px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; align-content: start;"></div>
+            `;
+            
+            fetch(url)
+            .then(response => {
+                if(!response.ok) throw new Error("Network response was not ok");
+                return response.blob();
+            })
+            .then(blob => JSZip.loadAsync(blob))
+            .then(zip => {
+                document.getElementById('zipLoading').style.display = 'none';
+                const zipContents = document.getElementById('zipContents');
+                zipContents.style.display = 'grid'; // changed to grid
+                
+                let filePromises = [];
+                zip.forEach(function (relativePath, zipEntry) {
+                    if (!zipEntry.dir) {
+                        const fileExt = zipEntry.name.split('.').pop().toLowerCase();
+                        
+                        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt)) {
+                            filePromises.push(
+                                zipEntry.async("base64").then(base64 => {
+                                    return `
+                                    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column;">
+                                        <p style="color: white; font-weight: 600; margin-bottom: 12px; font-size: 0.9rem; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><i class="fa-regular fa-image" style="color: var(--primary);"></i> ${zipEntry.name}</p>
+                                        <div style="width: 100%; height: 180px; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                                            <img src="data:image/${fileExt};base64,${base64}" style="max-width: 100%; max-height: 100%; object-fit: cover; transition: 0.3s; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Click to view full image (will open in new tab)" onclick="let w = window.open('about:blank'); let img = w.document.createElement('img'); img.src=this.src; img.style='max-width:100%; max-height:100%; object-fit:contain;'; w.document.body.style='margin:0; background:#000; display:flex; justify-content:center; align-items:center; height:100vh;'; w.document.body.appendChild(img);">
+                                        </div>
+                                    </div>`;
+                                })
+                            );
+                        } else if (fileExt === 'pdf') {
+                            filePromises.push(
+                                zipEntry.async("base64").then(base64 => {
+                                    return `
+                                    <div style="grid-column: 1 / -1; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); height: 600px; display: flex; flex-direction: column; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                                        <p style="color: white; font-weight: 600; margin-bottom: 12px; font-size: 0.9rem;"><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> ${zipEntry.name}</p>
+                                        <iframe src="data:application/pdf;base64,${base64}" style="width: 100%; flex: 1; border: none; border-radius: 10px; background: white;"></iframe>
+                                    </div>`;
+                                })
+                            );
+                        } else {
+                            filePromises.push(Promise.resolve(`
+                                <div style="grid-column: 1 / -1; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 15px;">
+                                    <i class="fa-solid fa-file-word" style="color: var(--secondary); font-size: 2rem;"></i>
+                                    <div>
+                                        <p style="color: white; font-weight: 600; margin: 0; font-size: 1rem;">${zipEntry.name}</p>
+                                        <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">Preview not available for this format</p>
+                                    </div>
+                                </div>
+                            `));
+                        }
+                    }
+                });
+                
+                Promise.all(filePromises).then(htmlArray => {
+                    zipContents.innerHTML = htmlArray.join('');
+                });
+            })
+            .catch(error => {
+                contentDiv.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 4rem; color: #ef4444; margin-bottom: 20px;"></i>
+                        <h2 style="color: white; margin-bottom: 10px;">Failed to Extract ZIP</h2>
+                        <p>Could not read the ZIP file contents for preview. You can still download it.</p>
+                    </div>
+                `;
+                console.error(error);
+            });
+        } else {
+            contentDiv.innerHTML = `
+                <div style="text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                    <i class="fa-solid fa-file-lines" style="font-size: 5rem; color: var(--secondary); margin-bottom: 20px;"></i>
+                    <h2 style="color: white; margin-bottom: 10px;">Document File</h2>
+                    <p>Preview is not available for this file format. Please download to view.</p>
+                </div>
+            `;
+        }
+    }
+    
+    function closeCvPreviewModal() {
+        document.getElementById('cvPreviewModal').style.display = 'none';
+        document.getElementById('cvPreviewContent').innerHTML = ''; // clear iframe memory
+    }
+    
+    function removeProfileCV() {
+        if(confirm("Are you sure you want to discard your profile CV for this application? You MUST upload a different CV to continue.")){
+            document.getElementById('removeProfileCvInput').value = 'true';
+            const container = document.getElementById('profileCvContainer');
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 300);
+            
+            // Make the file input required since we removed the profile CV
+            const fileInput = document.getElementById('cvFileInput');
+            if (fileInput) fileInput.required = true;
+        }
+    }
+
+    function highlightSelectedCV() {
+        document.querySelectorAll('.cv-radio-label').forEach(label => {
+            const radio = label.querySelector('input[type="radio"]');
+            if (radio && radio.checked) {
+                label.style.background = 'rgba(16, 185, 129, 0.1)';
+                label.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            } else {
+                label.style.background = 'rgba(255, 255, 255, 0.03)';
+                label.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }
+        });
+    }
+
+    function clearCvSelection() {
+        // If user uploads a new file, deselect all radio buttons
+        const fileInput = document.getElementById('cvFileInput');
+        if (fileInput.files.length > 0) {
+            document.querySelectorAll('.cv-radio-label input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+            });
+            highlightSelectedCV();
+        }
+    }
+    
+    // Call once on load to set initial state
+    document.addEventListener('DOMContentLoaded', function() {
+        highlightSelectedCV();
+    });
+
+    // ─── FILE DROP AND PREVIEW LOGIC ───────────────────────────────────────────
+    const dropArea = document.getElementById('fileDropArea');
+    const fileInput = document.getElementById('cvFileInput');
+    const previewContainer = document.getElementById('filePreviewContainer');
+    let selectedFiles = []; // Array to keep track of files
+
+    if (dropArea && fileInput && previewContainer) {
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Highlight drop area when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        // Handle dropped files
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        // Handle selected files
+        fileInput.addEventListener('change', handleFiles, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            dropArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dropArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles({ target: { files: files } });
+        }
+
+        function handleFiles(e) {
+            const newFiles = Array.from(e.target.files);
+            selectedFiles = [...selectedFiles, ...newFiles];
+            updateFileInput();
+            renderPreviews();
+        }
+
+        function updateFileInput() {
+            // Create a new DataTransfer object to update the file input
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            fileInput.files = dataTransfer.files;
+            
+            // Trigger visual validation update if required
+            if(fileInput.required && selectedFiles.length > 0) {
+                fileInput.setCustomValidity("");
+            }
+        }
+
+        // Expose globally for the onclick handler
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            updateFileInput();
+            renderPreviews();
+        }
+
+        function renderPreviews() {
+            previewContainer.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'file-preview-item';
+                
+                const size = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                const isImage = file.type.startsWith('image/');
+
+                if (isImage) {
+                    item.classList.add('image-preview');
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        item.innerHTML = `
+                            <div class="file-remove-btn" onclick="removeFile(${index})"><i class="fa-solid fa-xmark"></i></div>
+                            <img src="${e.target.result}" class="file-preview-thumb" alt="preview">
+                            <div class="file-preview-info">
+                                <span class="file-preview-name">${file.name}</span>
+                                <span class="file-preview-size">${size}</span>
+                            </div>
+                        `;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    // Document preview
+                    let iconClass = 'fa-file-pdf';
+                    let iconColor = '#ef4444';
+                    if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                        iconClass = 'fa-file-word';
+                        iconColor = '#6366f1';
+                    }
+                    
+                    item.innerHTML = `
+                        <div class="file-remove-btn" onclick="removeFile(${index})"><i class="fa-solid fa-xmark"></i></div>
+                        <i class="fa-solid ${iconClass} file-preview-icon" style="color: ${iconColor};"></i>
+                        <div class="file-preview-info">
+                            <span class="file-preview-name">${file.name}</span>
+                            <span class="file-preview-size">${size}</span>
+                        </div>
+                    `;
+                }
+                previewContainer.appendChild(item);
+            });
+        }
     }
 </script>
 {% endblock %}

@@ -674,6 +674,152 @@
                 transform: translateX(6px);
             }
         }
+
+        /* Premier File Drop Area */
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 2.5rem 2rem;
+            border: 2px dashed var(--primary-color);
+            border-radius: 12px;
+            background-color: rgba(59, 130, 246, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .file-drop-area.dragover {
+            background-color: rgba(59, 130, 246, 0.15);
+            border-color: var(--accent-color);
+            transform: scale(1.02);
+        }
+
+        .file-drop-area .drop-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .file-drop-area:hover .drop-icon {
+            transform: translateY(-5px);
+        }
+
+        .file-drop-area .drop-msg {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-drop-area .drop-sub-msg {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .file-drop-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .file-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .file-preview-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.8rem;
+            width: calc(50% - 0.5rem);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .file-preview-item.image-preview {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .file-preview-icon {
+            font-size: 2rem;
+            color: var(--danger-color);
+        }
+
+        .file-preview-thumb {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .file-preview-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .file-preview-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-preview-size {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .file-remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            border: 2px solid var(--bg-dark);
+            transition: transform 0.2s;
+            z-index: 5;
+        }
+
+        .file-remove-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .file-preview-item {
+                width: 100%;
+            }
+        }
+
     </style>
 </head>
 
@@ -928,13 +1074,101 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Company License</label>
-                                <div class="input-with-icon">
-                                    <i class="fa-solid fa-file-contract" style="top: 25px"></i>
-                                    <input type="file" name="company_lence" class="form-control" accept="image/*"
-                                        style="padding-top: 10px;">
+                                <label>Company License <span style="color:#ef4444; font-size:0.8rem;">(PDF or DOCX only)</span></label>
+                                <!-- Drop Zone -->
+                                <div id="licenseDropZone" onclick="document.getElementById('licenseFileInput').click()" ondragover="event.preventDefault(); this.style.borderColor='var(--accent-color)'; this.style.background='rgba(99,102,241,0.08)';" ondragleave="this.style.borderColor='rgba(255,255,255,0.12)'; this.style.background='rgba(255,255,255,0.02)';" ondrop="handleLicenseDrop(event)" style="border: 2px dashed rgba(255,255,255,0.12); border-radius: 14px; background: rgba(255,255,255,0.02); padding: 22px 16px; text-align: center; cursor: pointer; transition: all 0.3s; position: relative;">
+                                    <i class="fa-solid fa-file-contract" style="font-size: 2rem; color: var(--accent-color); margin-bottom: 8px; display: block;"></i>
+                                    <p id="licenseDropText" style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin: 0;">Drag & drop or <span style="color: var(--accent-color); font-weight: 700;">click to upload</span></p>
+                                    <p style="color: rgba(255,255,255,0.3); font-size: 0.75rem; margin-top: 4px;">Supported: <strong style="color:rgba(255,255,255,0.5)">PDF, DOCX</strong></p>
+                                    <input type="file" id="licenseFileInput" name="company_lence" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display: none;" onchange="handleLicenseChange(this)">
+                                </div>
+
+                                <!-- Preview Panel -->
+                                <div id="licensePreview" style="display: none; margin-top: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; position: relative;">
+                                    <!-- PDF Preview -->
+                                    <div id="licensePdfPreview" style="display: none;">
+                                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                            <i class="fa-solid fa-file-pdf" style="font-size: 1.5rem; color: #ef4444;"></i>
+                                            <div>
+                                                <p id="licensePdfName" style="color: white; font-weight: 700; margin: 0; font-size: 0.9rem;"></p>
+                                                <p id="licensePdfSize" style="color: rgba(255,255,255,0.4); margin: 0; font-size: 0.75rem;"></p>
+                                            </div>
+                                        </div>
+                                        <iframe id="licensePdfFrame" style="width: 100%; height: 320px; border: none; border-radius: 10px; background: white;"></iframe>
+                                    </div>
+                                    <!-- DOCX Preview -->
+                                    <div id="licenseDocxPreview" style="display: none; text-align: center; padding: 20px 0;">
+                                        <i class="fa-solid fa-file-word" style="font-size: 3rem; color: #2b7cd3; margin-bottom: 10px;"></i>
+                                        <p id="licenseDocxName" style="color: white; font-weight: 700; margin: 0;"></p>
+                                        <p id="licenseDocxSize" style="color: rgba(255,255,255,0.4); margin: 4px 0 0 0; font-size: 0.8rem;"></p>
+                                        <p style="color: rgba(255,255,255,0.3); font-size: 0.78rem; margin-top: 8px;">DOCX preview not available in browser — file is ready to upload.</p>
+                                    </div>
+                                    <!-- Remove button -->
+                                    <button type="button" onclick="removeLicenseFile()" style="position: absolute; top: 10px; right: 10px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: 0.8rem; transition: 0.3s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                                        <i class="fa-solid fa-xmark"></i> Remove
+                                    </button>
                                 </div>
                             </div>
+
+                            <script>
+                            function handleLicenseDrop(e) {
+                                e.preventDefault();
+                                document.getElementById('licenseDropZone').style.borderColor = 'rgba(255,255,255,0.12)';
+                                document.getElementById('licenseDropZone').style.background = 'rgba(255,255,255,0.02)';
+                                const file = e.dataTransfer.files[0];
+                                if (file) processLicenseFile(file);
+                            }
+                            function handleLicenseChange(input) {
+                                const file = input.files[0];
+                                if (file) processLicenseFile(file);
+                            }
+                            function processLicenseFile(file) {
+                                const allowed = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                                const allowedExt = ['.pdf', '.docx'];
+                                const ext = '.' + file.name.split('.').pop().toLowerCase();
+                                if (!allowed.includes(file.type) && !allowedExt.includes(ext)) {
+                                    alert('Only PDF or DOCX files are allowed!');
+                                    document.getElementById('licenseFileInput').value = '';
+                                    return;
+                                }
+                                const sizeKB = (file.size / 1024).toFixed(1);
+                                const sizeMB = (file.size / (1024*1024)).toFixed(2);
+                                const sizeStr = file.size > 1048576 ? sizeMB + ' MB' : sizeKB + ' KB';
+
+                                document.getElementById('licenseDropText').innerHTML = '<i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 6px;"></i><span style="color: white; font-weight: 600;">' + file.name + '</span>';
+                                document.getElementById('licensePreview').style.display = 'block';
+
+                                if (ext === '.pdf' || file.type === 'application/pdf') {
+                                    document.getElementById('licensePdfPreview').style.display = 'block';
+                                    document.getElementById('licenseDocxPreview').style.display = 'none';
+                                    document.getElementById('licensePdfName').textContent = file.name;
+                                    document.getElementById('licensePdfSize').textContent = sizeStr;
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        document.getElementById('licensePdfFrame').src = e.target.result;
+                                    };
+                                    reader.readAsDataURL(file);
+                                } else {
+                                    document.getElementById('licenseDocxPreview').style.display = 'block';
+                                    document.getElementById('licensePdfPreview').style.display = 'none';
+                                    document.getElementById('licenseDocxName').textContent = file.name;
+                                    document.getElementById('licenseDocxSize').textContent = sizeStr;
+                                }
+
+                                // Sync to actual input if drag-dropped
+                                const dt = new DataTransfer();
+                                dt.items.add(file);
+                                document.getElementById('licenseFileInput').files = dt.files;
+                            }
+                            function removeLicenseFile() {
+                                document.getElementById('licenseFileInput').value = '';
+                                document.getElementById('licensePreview').style.display = 'none';
+                                document.getElementById('licensePdfPreview').style.display = 'none';
+                                document.getElementById('licenseDocxPreview').style.display = 'none';
+                                document.getElementById('licenseDropText').innerHTML = 'Drag & drop or <span style="color: var(--accent-color); font-weight: 700;">click to upload</span>';
+                            }
+                            </script>
+
                         </div>
                         <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
                             <i class="fa-solid fa-user-plus"></i> Create Account
@@ -1060,12 +1294,14 @@
                                     placeholder="Describe your work experience..." rows="2"></textarea>
                             </div>
                             <div class="form-group full-width">
-                                <label>CV / Resume (PDF or Doc)</label>
-                                <div class="input-with-icon">
-                                    <i class="fa-solid fa-file-pdf" style="top: 25px"></i>
-                                    <input type="file" name="cv" class="form-control" accept=".pdf,.doc,.docx" required
-                                        style="padding-top: 10px;">
+                                <label>Upload Documents (CV, Resume, Images)</label>
+                                <div class="file-drop-area" id="fileDropArea">
+                                    <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                                    <span class="drop-msg">Drag & Drop files here or click to browse</span>
+                                    <span class="drop-sub-msg">Supports PDF, DOC, DOCX, JPG, PNG</span>
+                                    <input type="file" name="cv" id="cvFileInput" class="file-drop-input" accept=".pdf,.doc,.docx,image/*" multiple required>
                                 </div>
+                                <div id="filePreviewContainer" class="file-preview-container"></div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary"
@@ -1634,6 +1870,122 @@
                 }
             });
         });
+
+        // ─── FILE DROP AND PREVIEW LOGIC ───────────────────────────────────────────
+        const dropArea = document.getElementById('fileDropArea');
+        const fileInput = document.getElementById('cvFileInput');
+        const previewContainer = document.getElementById('filePreviewContainer');
+        let selectedFiles = []; // Array to keep track of files
+
+        if (dropArea && fileInput && previewContainer) {
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            // Handle dropped files
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            // Handle selected files
+            fileInput.addEventListener('change', handleFiles, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function highlight(e) {
+                dropArea.classList.add('dragover');
+            }
+
+            function unhighlight(e) {
+                dropArea.classList.remove('dragover');
+            }
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles({ target: { files: files } });
+            }
+
+            function handleFiles(e) {
+                const newFiles = Array.from(e.target.files);
+                selectedFiles = [...selectedFiles, ...newFiles];
+                updateFileInput();
+                renderPreviews();
+            }
+
+            function updateFileInput() {
+                // Create a new DataTransfer object to update the file input
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                fileInput.files = dataTransfer.files;
+            }
+
+            // Expose globally for the onclick handler
+            window.removeFile = function(index) {
+                selectedFiles.splice(index, 1);
+                updateFileInput();
+                renderPreviews();
+            }
+
+            function renderPreviews() {
+                previewContainer.innerHTML = '';
+                selectedFiles.forEach((file, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'file-preview-item';
+                    
+                    const size = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                    const isImage = file.type.startsWith('image/');
+
+                    if (isImage) {
+                        item.classList.add('image-preview');
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            item.innerHTML = `
+                                <div class="file-remove-btn" onclick="removeFile(${index})"><i class="fa-solid fa-xmark"></i></div>
+                                <img src="${e.target.result}" class="file-preview-thumb" alt="preview">
+                                <div class="file-preview-info">
+                                    <span class="file-preview-name">${file.name}</span>
+                                    <span class="file-preview-size">${size}</span>
+                                </div>
+                            `;
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        // Document preview
+                        let iconClass = 'fa-file-pdf';
+                        let iconColor = 'var(--danger-color)';
+                        if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                            iconClass = 'fa-file-word';
+                            iconColor = '#2563eb';
+                        }
+                        
+                        item.innerHTML = `
+                            <div class="file-remove-btn" onclick="removeFile(${index})"><i class="fa-solid fa-xmark"></i></div>
+                            <i class="fa-solid ${iconClass} file-preview-icon" style="color: ${iconColor};"></i>
+                            <div class="file-preview-info">
+                                <span class="file-preview-name">${file.name}</span>
+                                <span class="file-preview-size">${size}</span>
+                            </div>
+                        `;
+                    }
+                    previewContainer.appendChild(item);
+                });
+            }
+        }
     </script>
 </body>
 

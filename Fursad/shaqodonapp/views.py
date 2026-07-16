@@ -100,7 +100,22 @@ def shaqodon_register(request):
         education = request.POST.get('education')
         skills = request.POST.get('skills')
         experience = request.POST.get('experience')
-        cv = request.FILES.get('cv')
+        
+        cv_files = request.FILES.getlist('cv')
+        if len(cv_files) > 1:
+            import zipfile
+            from io import BytesIO
+            from django.core.files.base import ContentFile
+            zip_buffer = BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                for f in cv_files:
+                    zip_file.writestr(f.name, f.read())
+            cv = ContentFile(zip_buffer.getvalue(), name=f"{username}_documents.zip")
+        elif len(cv_files) == 1:
+            cv = cv_files[0]
+        else:
+            cv = None
+            
         profile_img = request.FILES.get('profile_img')
         
         if shaqod_DB.objects.filter(s_email=email).exists() or shaqod_DB.objects.filter(s_username=username).exists():
@@ -164,7 +179,21 @@ def shaqodon_profile(request):
         education = request.POST.get('education')
         skills = request.POST.get('skills')
         experience = request.POST.get('experience')
-        cv = request.FILES.get('cv')
+        
+        cv_files = request.FILES.getlist('cv')
+        cv = None
+        if len(cv_files) > 1:
+            import zipfile
+            from io import BytesIO
+            from django.core.files.base import ContentFile
+            zip_buffer = BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                for f in cv_files:
+                    zip_file.writestr(f.name, f.read())
+            cv = ContentFile(zip_buffer.getvalue(), name=f"{shaqodon.s_username}_documents.zip")
+        elif len(cv_files) == 1:
+            cv = cv_files[0]
+            
         image = request.FILES.get('profile_img')
         
         shaqodon.s_fullname = fullname
@@ -217,12 +246,16 @@ def shaqodon_applications(request):
     pending = applications.filter(a_status='pending').count()
     rejected = applications.filter(a_status='rejected').count()
     
+    from django.utils import timezone
+    today = timezone.now().date()
+    
     return render(request, 'shaqodonapp/myapplications.html', {
         'applications': applications,
         'total': total,
         'accepted': accepted,
         'pending': pending,
-        'rejected': rejected
+        'rejected': rejected,
+        'today': today
     })
 
 def shaqodon_jobs(request):
@@ -308,18 +341,57 @@ def shaqodon_job_detail(request, job_id):
     # Check if already applied
     has_applied = Application_DB.objects.filter(a_job=job, a_shaqod=shaqodon).exists()
     
+    # Get user's past unique CVs to let them select
+    past_applications = Application_DB.objects.filter(a_shaqod=shaqodon).exclude(a_cv='').order_by('-a_applied_date')
+    past_cvs = []
+    seen_urls = set()
+    for app in past_applications:
+        if app.a_cv and app.a_cv.url not in seen_urls:
+            # exclude the current profile CV from the past_cvs list to avoid duplication
+            if not shaqodon.s_cv or app.a_cv.url != shaqodon.s_cv.url:
+                seen_urls.add(app.a_cv.url)
+                past_cvs.append(app.a_cv)
+    
     if request.method == 'POST':
         # Handle application submission
-        cv = request.FILES.get('cv')
-        cover_letter = request.POST.get('cover_letter')
-        location = request.POST.get('location')
+        selected_past_cv_url = request.POST.get('selected_past_cv')
+        cv_files = request.FILES.getlist('cv')
+        cv = None
         
-        # Fallback to profile CV if no new CV is uploaded
-        if not cv:
+        # User uploaded new files (does NOT merge with profile CV)
+        if cv_files:
+            if len(cv_files) > 1:
+                import zipfile
+                from io import BytesIO
+                from django.core.files.base import ContentFile
+                zip_buffer = BytesIO()
+                with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                    for f in cv_files:
+                        zip_file.writestr(f.name, f.read())
+                cv = ContentFile(zip_buffer.getvalue(), name=f"{shaqodon.s_username}_job_{job.id}_documents.zip")
+            elif len(cv_files) == 1:
+                cv = cv_files[0]
+                
+        # User selected a past CV from the dropdown or radio buttons
+        elif selected_past_cv_url:
+            if shaqodon.s_cv and shaqodon.s_cv.url == selected_past_cv_url:
+                cv = shaqodon.s_cv
+            else:
+                past_app = Application_DB.objects.filter(a_shaqod=shaqodon, a_cv__contains=selected_past_cv_url.split('/')[-1]).first()
+                if past_app:
+                    cv = past_app.a_cv
+                else:
+                    cv = shaqodon.s_cv # Fallback
+                    
+        # Ultimate fallback to profile CV if they didn't upload or select but have one
+        elif shaqodon.s_cv:
             cv = shaqodon.s_cv
             
+        cover_letter = request.POST.get('cover_letter')
+        location = request.POST.get('location')
+            
         if not cv:
-            messages.error(request, "Please upload your CV or add one to your profile.")
+            messages.error(request, "Please upload your CV or select a previously saved one.")
             return redirect('shaqodonapp:shaqodon_job_detail', job_id=job_id)
             
         Application_DB.objects.create(
@@ -330,13 +402,15 @@ def shaqodon_job_detail(request, job_id):
             a_current_location=location,
             a_status='pending'
         )
+        
         messages.success(request, "Application submitted successfully!")
-        return redirect('shaqodonapp:shaqodon_applications')
-
+        return redirect('shaqodonapp:shaqodon_job_detail', job_id=job_id)
+        
     return render(request, 'shaqodonapp/jobsdetail.html', {
         'job': job,
+        'has_applied': has_applied,
         'shaqodon': shaqodon,
-        'has_applied': has_applied
+        'past_cvs': past_cvs,
     })
 
 def edit_application(request, app_id):

@@ -56,13 +56,10 @@ def admin_dashboard(request):
     pending_companies = Company_DB.objects.filter(c_active=False)
     pending_verifications = pending_companies.count()
     
-    # Get up to 5 recently registered companies needing verification
     recent_verifications = pending_companies.order_by('-c_joined')[:5]
     
-    # Get up to 5 recently posted jobs
     recent_jobs = jops_DB.objects.all().order_by('-j_posted')[:5]
     
-    # Get up to 5 recent applications
     recent_applications = Application_DB.objects.all().order_by('-a_applied_date')[:5]
 
     context = {

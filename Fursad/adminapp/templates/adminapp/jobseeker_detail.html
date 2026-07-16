@@ -391,15 +391,7 @@
                     <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-phone" style="margin-right: 5px;"></i>Phone</span>
                     <span style="color: white; font-weight: 600;">{{ jobseeker.s_phone|default:"N/A" }}</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; border-bottom: 1px dashed rgba(255,255,255,0.05);">
-                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-key" style="margin-right: 5px;"></i>Password</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="pwdText" style="color: white; font-family: monospace; font-size: 1rem; letter-spacing: 2px;">••••••••</span>
-                        <button onclick="togglePassword('{{ jobseeker.s_password|escapejs }}')" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: var(--accent-amber); padding: 4px 8px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.3s;" onmouseover="this.style.background='var(--accent-amber)'; this.style.color='white'" onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.color='var(--accent-amber)'">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
+
             </div>
             
             <div style="margin-top: 1.5rem; display: flex; gap: 10px; position: relative; z-index: 1;">

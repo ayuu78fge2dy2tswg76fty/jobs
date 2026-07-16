@@ -623,51 +623,92 @@
     </div>
 </div>
 
-<!-- View Job Modal -->
+<!-- View Job Modal - Premier Design -->
 <div class="modal-overlay" id="viewJobModal">
-    <div class="modal-content" style="max-width: 600px;">
-        <i class="fa-solid fa-xmark modal-close" onclick="closeJobModal('viewJobModal')"></i>
-        
-        <!-- Header with Logo -->
-        <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 1.5rem;">
-            <div id="viewLogo" style="width: 70px; height: 70px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid var(--border-color);">
-                <i class="fa-solid fa-briefcase" style="font-size: 2rem; color: var(--primary-color);"></i>
-            </div>
-            <div>
-                <h2 class="modal-title" style="text-align: left; margin-bottom: 0.25rem;" id="viewTitle">Job Title</h2>
-                <div style="color: var(--primary-color); display: flex; gap: 1rem; font-size: 0.9rem;">
-                    <span id="viewCompany"><i class="fa-solid fa-building"></i> Company</span>
-                    <span id="viewLocation"><i class="fa-solid fa-location-dot"></i> Location</span>
-                    <span id="viewPosted" style="color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> Posted Date</span>
+    <div class="modal-content" style="max-width: 680px; padding: 0; overflow: hidden; border-radius: 28px; border: 1px solid rgba(255,255,255,0.08); background: #0f172a;">
+        <i class="fa-solid fa-xmark modal-close" onclick="closeJobModal('viewJobModal')" style="z-index: 20; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; top: 1.25rem; right: 1.25rem;"></i>
+
+        <!-- Gradient Banner Header -->
+        <div id="viewHeader" style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(99,102,241,0.15)); padding: 2rem 2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: var(--primary-color); filter: blur(80px); opacity: 0.12;"></div>
+            <div style="display: flex; gap: 1.25rem; align-items: center; position: relative; z-index: 2;">
+                <div id="viewLogo" style="width: 72px; height: 72px; border-radius: 18px; border: 3px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); display: flex; justify-content: center; align-items: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3);">
+                    <i class="fa-solid fa-briefcase" style="font-size: 1.8rem; color: var(--primary-color);"></i>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                    <h2 id="viewTitle" style="font-size: 1.6rem; font-weight: 800; color: white; margin: 0 0 6px; letter-spacing: -0.5px; line-height: 1.2; padding-right: 2rem;"></h2>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span id="viewCompany" style="color: #10b981; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 5px;"><i class="fa-solid fa-building"></i></span>
+                        <span style="width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.2);"></span>
+                        <span id="viewLocation" style="color: rgba(255,255,255,0.5); font-size: 0.88rem; display: flex; align-items: center; gap: 5px;"><i class="fa-solid fa-location-dot" style="color: #ef4444;"></i></span>
+                        <span style="width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.2);"></span>
+                        <span id="viewPosted" style="color: rgba(255,255,255,0.4); font-size: 0.82rem;"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i></span>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-briefcase" style="margin-right: 5px;"></i> Job Type</div>
-                <div style="font-weight: 600;" id="viewType">Full Time</div>
+
+        <!-- Body -->
+        <div style="padding: 1.75rem 2rem; max-height: 65vh; overflow-y: auto;">
+
+            <!-- Stats Pills Row -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.75rem;">
+                <div style="background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.18); border-radius: 14px; padding: 12px 10px; text-align: center;">
+                    <i class="fa-solid fa-briefcase" style="color: #818cf8; font-size: 1.1rem; margin-bottom: 5px; display: block;"></i>
+                    <p style="font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 3px;">Type</p>
+                    <p id="viewType" style="color: white; font-weight: 700; font-size: 0.82rem; margin: 0;"></p>
+                </div>
+                <div style="background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.18); border-radius: 14px; padding: 12px 10px; text-align: center;">
+                    <i class="fa-solid fa-coins" style="color: #fbbf24; font-size: 1.1rem; margin-bottom: 5px; display: block;"></i>
+                    <p style="font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 3px;">Salary</p>
+                    <p id="viewSalary" style="color: white; font-weight: 700; font-size: 0.82rem; margin: 0;"></p>
+                </div>
+                <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.18); border-radius: 14px; padding: 12px 10px; text-align: center;">
+                    <i class="fa-solid fa-hourglass-end" style="color: #ef4444; font-size: 1.1rem; margin-bottom: 5px; display: block;"></i>
+                    <p style="font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 3px;">Deadline</p>
+                    <p id="viewExp" style="color: white; font-weight: 700; font-size: 0.82rem; margin: 0;"></p>
+                </div>
+                <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.18); border-radius: 14px; padding: 12px 10px; text-align: center;">
+                    <i class="fa-solid fa-toggle-on" style="font-size: 1.1rem; margin-bottom: 5px; display: block;" id="viewStatusIcon"></i>
+                    <p style="font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 3px;">Status</p>
+                    <p id="viewStatus" style="font-weight: 700; font-size: 0.82rem; margin: 0;"></p>
+                </div>
             </div>
-            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-sack-dollar" style="margin-right: 5px;"></i> Salary</div>
-                <div style="font-weight: 600;" id="viewSalary">$0.00</div>
+
+            <!-- Description Card -->
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 20px; overflow: hidden;">
+                <div style="height: 3px; background: linear-gradient(90deg, #10b981, #6366f1, transparent);"></div>
+                <div style="padding: 1.25rem 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                        <div style="width: 34px; height: 34px; border-radius: 10px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2); display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-file-lines" style="color: #10b981; font-size: 0.95rem;"></i>
+                        </div>
+                        <div>
+                            <p style="color: white; font-weight: 800; font-size: 0.95rem; margin: 0;">Job Description</p>
+                            <p style="color: rgba(255,255,255,0.35); font-size: 0.75rem; margin: 0;">Responsibilities & Requirements</p>
+                        </div>
+                    </div>
+                    <div id="viewDescCollapsed" style="position: relative; overflow: hidden; max-height: 180px; transition: max-height 0.4s ease;">
+                        <div id="viewDesc" style="color: rgba(255,255,255,0.7); line-height: 1.85; font-size: 0.92rem; white-space: pre-wrap;"></div>
+                        <div id="viewDescFade" style="position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(to top, #0f172a, transparent); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px;">
+                            <button onclick="expandViewDesc()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: white; padding: 6px 20px; border-radius: 50px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: 0.3s; backdrop-filter: blur(8px);" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                                <i class="fa-solid fa-chevron-down" style="margin-right: 5px;"></i>Show Full Description
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-regular fa-calendar-xmark" style="margin-right: 5px;"></i> Experience Needed</div>
-                <div style="font-weight: 600;" id="viewExp">N/A</div>
-            </div>
-            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                <div style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-toggle-on" style="margin-right: 5px;"></i> Status</div>
-                <div style="font-weight: 600;" id="viewStatus">Active</div>
-            </div>
-        </div>
-        
-        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light);"><i class="fa-solid fa-align-left" style="margin-right: 5px;"></i> Job Description</h3>
-        <div style="background: var(--bg-darker); padding: 1rem; border-radius: 8px; color: var(--text-muted); line-height: 1.6; max-height: 150px; overflow-y: auto;" id="viewDesc">
-            Description goes here...
         </div>
     </div>
 </div>
+<script>
+function expandViewDesc() {
+    const c = document.getElementById('viewDescCollapsed');
+    c.style.maxHeight = c.scrollHeight + 'px';
+    document.getElementById('viewDescFade').style.display = 'none';
+}
+</script>
+
 
 <!-- Edit Job Modal -->
 <div class="modal-overlay" id="editJobModal">
@@ -887,27 +928,64 @@
     }
 
     function openViewModal(title, location, type, salary, exp, status, desc, company, posted, logoUrl) {
-        document.getElementById('viewTitle').innerText = title;
-        document.getElementById('viewCompany').innerHTML = `<i class="fa-solid fa-building"></i> ${company}`;
-        document.getElementById('viewLocation').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${location}`;
-        document.getElementById('viewPosted').innerHTML = `<i class="fa-regular fa-calendar"></i> ${posted}`;
-        
-        document.getElementById('viewType').innerText = type;
-        document.getElementById('viewSalary').innerText = salary || 'N/A';
-        document.getElementById('viewExp').innerText = exp || 'N/A';
-        document.getElementById('viewStatus').innerText = status;
-        document.getElementById('viewDesc').innerText = desc || 'No description provided.';
-        
+        document.getElementById('viewTitle').textContent = title;
+
+        const companyEl = document.getElementById('viewCompany');
+        companyEl.innerHTML = `<i class="fa-solid fa-building"></i> ${company}`;
+
+        const locationEl = document.getElementById('viewLocation');
+        locationEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${location}`;
+
+        const postedEl = document.getElementById('viewPosted');
+        postedEl.innerHTML = `<i class="fa-regular fa-calendar" style="margin-right:4px;"></i>${posted}`;
+
+        document.getElementById('viewType').textContent = type || 'N/A';
+        document.getElementById('viewSalary').textContent = salary ? '$' + salary : 'Negotiable';
+        document.getElementById('viewExp').textContent = exp || 'N/A';
+
+        // Status with color
+        const statusEl = document.getElementById('viewStatus');
+        const statusIcon = document.getElementById('viewStatusIcon');
+        if (status === 'Active') {
+            statusEl.textContent = 'Active';
+            statusEl.style.color = '#10b981';
+            statusIcon.style.color = '#10b981';
+        } else {
+            statusEl.textContent = 'Closed';
+            statusEl.style.color = '#ef4444';
+            statusIcon.style.color = '#ef4444';
+            statusIcon.className = 'fa-solid fa-toggle-off';
+        }
+
+        document.getElementById('viewDesc').textContent = desc || 'No description provided.';
+
+        // Reset description collapse
+        const collapsed = document.getElementById('viewDescCollapsed');
+        collapsed.style.maxHeight = '180px';
+        const fade = document.getElementById('viewDescFade');
+        fade.style.display = 'flex';
+
+        // Logo
         const logoDiv = document.getElementById('viewLogo');
         if (logoUrl && logoUrl.trim() !== '') {
-            logoDiv.innerHTML = `<img src="${logoUrl}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">`;
+            logoDiv.innerHTML = `<img src="${logoUrl}" alt="Logo" style="width:100%; height:100%; object-fit:cover;">`;
         } else {
-            logoDiv.innerHTML = `<i class="fa-solid fa-briefcase" style="font-size: 2rem; color: var(--primary-color);"></i>`;
+            logoDiv.innerHTML = `<i class="fa-solid fa-briefcase" style="font-size:1.8rem; color:var(--primary-color);"></i>`;
         }
-        
+
         document.getElementById('viewJobModal').classList.add('active');
         document.body.style.overflow = 'hidden';
+
+        // After open, check if description is short enough to not need collapse
+        setTimeout(() => {
+            const body = document.getElementById('viewDesc');
+            if (body.scrollHeight <= 185) {
+                fade.style.display = 'none';
+                collapsed.style.maxHeight = 'none';
+            }
+        }, 80);
     }
+
 
     function openEditModal(id, title, location, type, status, desc, salary, exp, logoUrl) {
         // Reset file input
